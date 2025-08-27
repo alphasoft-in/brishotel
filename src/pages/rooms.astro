@@ -1,0 +1,76 @@
+---
+import RoomsSection from "../components/RoomsSection.astro";
+import ThingsYouLove from "../components/ThingsYouLove.astro";
+import Layout from "../layouts/Layout.astro";
+import RoomPure from "../components/RoomPure.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import CallToAction from "../components/CallToAction.astro";
+import NewsletterSection from "../components/NewsletterSection.astro";
+---
+
+<Layout>
+    <Navbar />
+    <RoomsSection />
+    <ThingsYouLove />
+    <RoomPure subtitle="Matrimonial" title="HABITACIÓN"
+        features={[
+            "40 sq. m. double room for 2 persons",
+            "Ensuite bathroom with bathtub",
+            "Apple TV & Netflix",
+            "Breakfast included",
+            "Pet friendly",
+            "Baby cot available on request",
+        ]}
+        images={[
+            "/rooms/matrimonial.png",
+            "/rooms/matrimonial-1.png",
+            "/rooms/matrimonial-2.png",
+        ]}/>
+
+    <RoomPure reverse subtitle="Queen" title="HABITACIÓN"
+        features={[
+            "60 sq. m. suite with living area",
+            "Private balcony with city view",
+            "Apple TV & Netflix",
+            "Breakfast included",
+        ]}
+        images={[
+            "/rooms/queen.png",
+            "/rooms/lavender2.jpg",
+            "/rooms/lavender3.jpg",
+            "/rooms/lavender4.jpg",
+        ]}/>
+
+    <RoomPure subtitle="Simple" title="HABITACIÓN"
+        features={[
+            "40 sq. m. double room for 2 persons",
+            "Ensuite bathroom with bathtub",
+            "Apple TV & Netflix",
+            "Breakfast included",
+            "Pet friendly",
+            "Baby cot available on request",
+        ]}
+        images={[
+            "/rooms/simple.png",
+            "/rooms/matrimonial-1.png",
+            "/rooms/matrimonial-2.png",
+        ]}/>
+
+    <RoomPure reverse subtitle="Triple" title="HABITACIÓN"
+        features={[
+            "60 sq. m. suite with living area",
+            "Private balcony with city view",
+            "Apple TV & Netflix",
+            "Breakfast included",
+        ]}
+        images={[
+            "/rooms/triple.png",
+            "/rooms/lavender2.jpg",
+            "/rooms/lavender3.jpg",
+            "/rooms/lavender4.jpg",
+        ]}/>
+    <CallToAction />
+    <NewsletterSection />
+    <Footer />
+</Layout>

@@ -1,0 +1,163 @@
+---
+const images = [
+  "slide1.png",
+  "slide2.png",
+  "slide3.png",
+];
+---
+
+<section class="relative w-full h-[90vh] sm:h-[80vh] md:h-[85vh] overflow-hidden">
+  <!-- SLIDER -->
+  <div id="hero-slider" class="absolute inset-0 w-full h-full">
+    {images.map((src, i) => (
+      <img 
+        src={src} 
+        alt="Hotel" 
+        class={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
+          i === 0 ? "opacity-100" : "opacity-0"
+        }`} 
+        data-index={i}
+      />
+    ))}
+  </div>
+
+  <!-- Overlay -->
+  <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/60"></div>
+
+  <!-- TEXT CONTENT -->
+  <div class="absolute inset-0 flex flex-col 
+            items-center sm:items-start justify-center 
+            text-center sm:text-left 
+            px-6 sm:px-12 md:px-20 
+            lg:ml-32 xl:ml-48
+            z-10">
+    
+    <!-- Título con Gwendolyn bold -->
+    <h1 class="gwendolyn-bold text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-white leading-tight drop-shadow-lg">
+		Escapa a Nasca
+	</h1>
+
+    <!-- Subtítulo con Montserrat -->
+    <p class="montserrat text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200">
+  		Tómate un descanso y disfruta de esta joya escondida.
+	</p>
+
+    <!-- Botón -->
+    <button class="mt-6 px-8 py-3 bg-rose-600 hover:bg-rose-700 text-white montserrat font-semibold rounded-full shadow-lg transition">
+      RESERVA AHORA
+    </button>
+  </div>
+
+  <!-- NAVIGATION BUTTONS -->
+  <button id="prev" 
+    class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-3 rounded-full shadow-lg transition z-20">
+    ❮
+  </button>
+  <button id="next" 
+    class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-3 rounded-full shadow-lg transition z-20">
+    ❯
+  </button>
+
+  <!-- DOTS -->
+  <div id="dots" class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 z-20"></div>
+</section>
+
+<!-- BOOKING BOX -->
+<div 
+  id="booking" 
+  class="absolute bottom-6 left-1/2 -translate-x-1/2
+         w-[95%] sm:w-[90%] md:w-full max-w-lg md:max-w-3xl lg:max-w-2xl 
+         bg-white/95 backdrop-blur-md p-6 md:p-8 rounded-2xl shadow-2xl z-30
+
+         lg:left-auto lg:right-12 lg:bottom-12 lg:translate-x-0"
+>
+  <!-- Parisienne -->
+  <h2 class="parisienne-regular text-xl sm:text-2xl md:text-3xl lg:text-4xl text-gray-900 mb-4 text-center lg:text-center">
+  	Reserva tu escape perfecto a Nasca
+  </h2>
+
+  <form onsubmit="sendToWhatsApp(event)" 
+        class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start montserrat">
+    <input 
+      type="date" id="checkin"
+      class="border border-gray-300 rounded-lg px-4 py-3 text-gray-700 w-full sm:w-1/3 focus:outline-none focus:ring-2 focus:ring-rose-500 transition"
+      required
+    />
+    <input 
+      type="date" id="checkout"
+      class="border border-gray-300 rounded-lg px-4 py-3 text-gray-700 w-full sm:w-1/3 focus:outline-none focus:ring-2 focus:ring-rose-500 transition"
+      required
+    />
+    <button 
+      type="submit" 
+      class="bg-rose-600 hover:bg-rose-700 text-white px-6 py-3 rounded-lg shadow-lg uppercase font-semibold tracking-wide w-full sm:w-auto transition">
+      Book Now
+    </button>
+  </form>
+</div>
+
+
+<!-- SCRIPT -->
+<script is:inline>
+  let current = 0;
+  const slides = document.querySelectorAll("#hero-slider img");
+  const total = slides.length;
+  const dotsContainer = document.getElementById("dots");
+
+  // Crear dots
+  slides.forEach((_, i) => {
+    const dot = document.createElement("span");
+    dot.className = "w-3 h-3 rounded-full bg-white/60 hover:bg-white cursor-pointer transition";
+    dot.dataset.index = i;
+    dot.addEventListener("click", () => {
+      showSlide(i);
+      resetInterval();
+    });
+    dotsContainer.appendChild(dot);
+  });
+
+  function showSlide(index) {
+    slides.forEach((slide, i) => {
+      slide.classList.toggle("opacity-100", i === index);
+      slide.classList.toggle("opacity-0", i !== index);
+    });
+
+    dotsContainer.querySelectorAll("span").forEach((dot, i) => {
+      dot.classList.toggle("bg-rose-500", i === index);
+      dot.classList.toggle("bg-white/60", i !== index);
+    });
+
+    current = index;
+  }
+
+  function nextSlide() { showSlide((current + 1) % total); }
+  function prevSlide() { showSlide((current - 1 + total) % total); }
+
+  document.getElementById("next").addEventListener("click", () => {
+    nextSlide(); resetInterval();
+  });
+  document.getElementById("prev").addEventListener("click", () => {
+    prevSlide(); resetInterval();
+  });
+
+  let interval = setInterval(() => nextSlide(), 5000);
+  function resetInterval() {
+    clearInterval(interval);
+    interval = setInterval(() => nextSlide(), 5000);
+  }
+
+  // Inicializar
+  showSlide(0);
+
+  // WhatsApp
+  function sendToWhatsApp(event) {
+    event.preventDefault();
+    const phone = "5215512345678"; 
+    const checkin = document.getElementById("checkin").value;
+    const checkout = document.getElementById("checkout").value;
+
+    const message = `Hola, quiero reservar una habitación en Amadoka.%0A📅 Check-in: ${checkin}%0A📅 Check-out: ${checkout}`;
+    const url = `https://wa.me/${phone}?text=${message}`;
+    window.open(url, "_blank");
+  }
+</script>

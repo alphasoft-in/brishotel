@@ -1,0 +1,172 @@
+---
+const reviews = [
+  {
+    name: "CHUCK K",
+    text: "We were there with my husband and after hiking all we want to do was going back to the motel and spend time relaxing in our room with a breathtaking view. I highly recommend this place if you don’t like hotel chains or big places. We’ll definitely go back.",
+  },
+  {
+    name: "RAJ P",
+    text: "We were there with my husband and after hiking all we want to do was going back to the motel and spend time relaxing in our room with a breathtaking view. I highly recommend this place if you don’t like hotel chains or big places. We’ll definitely go back.",
+  },
+  {
+    name: "JOHN DOE",
+    text: "We were there with my husband and after hiking all we want to do was going back to the motel and spend time relaxing in our room with a breathtaking view. I highly recommend this place if you don’t like hotel chains or big places. We’ll definitely go back.",
+  },
+  {
+    name: "ANNA S",
+    text: "We were there with my husband and after hiking all we want to do was going back to the motel and spend time relaxing in our room with a breathtaking view. I highly recommend this place if you don’t like hotel chains or big places. We’ll definitely go back.",
+  },
+  {
+    name: "MARK T",
+    text: "We were there with my husband and after hiking all we want to do was going back to the motel and spend time relaxing in our room with a breathtaking view. I highly recommend this place if you don’t like hotel chains or big places. We’ll definitely go back.",
+  },
+  {
+    name: "CHUCK K",
+    text: "We were there with my husband and after hiking all we want to do was going back to the motel and spend time relaxing in our room with a breathtaking view. I highly recommend this place if you don’t like hotel chains or big places. We’ll definitely go back.",
+  },
+  {
+    name: "RAJ P",
+    text: "We were there with my husband and after hiking all we want to do was going back to the motel and spend time relaxing in our room with a breathtaking view. I highly recommend this place if you don’t like hotel chains or big places. We’ll definitely go back.",
+  },
+  {
+    name: "JOHN DOE",
+    text: "We were there with my husband and after hiking all we want to do was going back to the motel and spend time relaxing in our room with a breathtaking view. I highly recommend this place if you don’t like hotel chains or big places. We’ll definitely go back.",
+  },
+  {
+    name: "ANNA S",
+    text: "We were there with my husband and after hiking all we want to do was going back to the motel and spend time relaxing in our room with a breathtaking view. I highly recommend this place if you don’t like hotel chains or big places. We’ll definitely go back.",
+  },
+  {
+    name: "MARK T",
+    text: "We were there with my husband and after hiking all we want to do was going back to the motel and spend time relaxing in our room with a breathtaking view. I highly recommend this place if you don’t like hotel chains or big places. We’ll definitely go back.",
+  },
+  {
+    name: "CHUCK K",
+    text: "We were there with my husband and after hiking all we want to do was going back to the motel and spend time relaxing in our room with a breathtaking view. I highly recommend this place if you don’t like hotel chains or big places. We’ll definitely go back.",
+  },
+  {
+    name: "RAJ P",
+    text: "We were there with my husband and after hiking all we want to do was going back to the motel and spend time relaxing in our room with a breathtaking view. I highly recommend this place if you don’t like hotel chains or big places. We’ll definitely go back.",
+  },
+  {
+    name: "JOHN DOE",
+    text: "We were there with my husband and after hiking all we want to do was going back to the motel and spend time relaxing in our room with a breathtaking view. I highly recommend this place if you don’t like hotel chains or big places. We’ll definitely go back.",
+  },
+  {
+    name: "ANNA S",
+    text: "We were there with my husband and after hiking all we want to do was going back to the motel and spend time relaxing in our room with a breathtaking view. I highly recommend this place if you don’t like hotel chains or big places. We’ll definitely go back.",
+  },
+  {
+    name: "MARK T",
+    text: "We were there with my husband and after hiking all we want to do was going back to the motel and spend time relaxing in our room with a breathtaking view. I highly recommend this place if you don’t like hotel chains or big places. We’ll definitely go back.",
+  },
+];
+---
+<section class="bg-[#f4ecec] py-16">
+  <div class="max-w-6xl mx-auto text-center px-6">
+    <h2 class="text-5xl gwendolyn-bold md:text-4xl font-[cursive] mb-12">Guest Reviews</h2>
+
+    <!-- Slider wrapper -->
+    <div class="relative overflow-hidden">
+      <!-- Slides container -->
+      <div 
+        id="testimonial-track" 
+        class="flex transition-transform duration-700 ease-in-out"
+        data-length={reviews.length}
+      >
+        {reviews.map((r) => (
+          <div class="w-full md:w-1/3 flex-shrink-0 px-6">
+            <p class="text-gray-700 leading-relaxed mb-6">{r.text}</p>
+            <span class="font-bold tracking-wide">{r.name}</span>
+          </div>
+        ))}
+      </div>
+
+      <!-- Dots -->
+      <div id="testimonial-dots" class="flex justify-center mt-10 space-x-3">
+        {Array.from({ length: Math.ceil(reviews.length / 3) }).map((_, i) => (
+          <button
+            class="w-2 h-2 rounded-full bg-gray-400"
+            data-index={i}
+          ></button>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 👇 Script en cliente (JS puro, sin acceso a "reviews") -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const track = document.getElementById("testimonial-track");
+
+  // Si no existe, salimos y evitamos que el resto del script corra
+  if (!track) return;
+
+  const trackEl = track as HTMLElement; // ✅ ahora TS sabe que no es null
+  const dots = document.querySelectorAll<HTMLButtonElement>("#testimonial-dots [data-index]");
+
+  if (dots.length === 0) return;
+
+  const totalReviews = trackEl.children.length;
+  let index = 0;
+  let timer: ReturnType<typeof setInterval> | null = null;
+
+  function getItemsPerView(): number {
+    return window.innerWidth >= 768 ? 3 : 1;
+  }
+
+  function getTotalGroups(): number {
+    return Math.ceil(totalReviews / getItemsPerView());
+  }
+
+  function applyTransform() {
+  const itemsPerView = getItemsPerView();
+  const containerWidth = trackEl.parentElement ? trackEl.parentElement.clientWidth : 0;
+  trackEl.style.transform = `translateX(-${index * containerWidth}px)`;
+}
+
+  function updateDots() {
+    dots.forEach((dot, idx) => {
+      dot.classList.toggle("bg-gray-400", idx === index);
+      dot.classList.toggle("bg-gray-300", idx !== index);
+    });
+  }
+
+  function showSlide(i: number) {
+    const totalGroups = getTotalGroups();
+    index = ((i % totalGroups) + totalGroups) % totalGroups;
+    trackEl.style.transition = "transform 0.7s ease-in-out";
+    applyTransform();
+    updateDots();
+  }
+
+  function startAuto() {
+    stopAuto();
+    timer = setInterval(() => showSlide(index + 1), 5000);
+  }
+
+  function stopAuto() {
+    if (timer) clearInterval(timer);
+  }
+
+  dots.forEach((dot) => {
+    dot.addEventListener("click", () => {
+      const i = Number(dot.dataset.index || 0);
+      showSlide(i);
+      startAuto();
+    });
+  });
+
+  window.addEventListener("resize", () => {
+    const prev = trackEl.style.transition;
+    trackEl.style.transition = "none";
+    applyTransform();
+    void trackEl.offsetHeight;
+    trackEl.style.transition = prev;
+  });
+
+  showSlide(0);
+  startAuto();
+});
+</script>
