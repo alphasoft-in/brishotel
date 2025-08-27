@@ -1,10 +1,10 @@
 ---
 interface Props {
-  title: string;           // "DOUBLE ROOM"
-  subtitle: string;        // "Sage"
-  features: string[];      // bullets
-  images: string[];        // hasta 5 rutas
-  reverse?: boolean;       // invierte layout en ≥md
+  title: string;
+  subtitle: string;
+  features: string[];
+  images: string[];
+  reverse?: boolean;
   ctaHref?: string;
   ctaLabel?: string;
 }
@@ -19,10 +19,10 @@ const {
   ctaLabel = "CHECK AVAILABILITY",
 } = Astro.props;
 
-const uid = `room-${Math.random().toString(36).slice(2, 9)}`; // para aislar el JS de cada instancia
+const id = `room-${subtitle.toLowerCase()}`;
 ---
 
-<section id={uid} class="py-16">
+<section id={id} class="py-16">
   <!-- Wrapper: en desktop uso flex para poder invertir el orden -->
   <div class={`max-w-6xl mx-auto px-6 md:flex md:items-center md:gap-10 ${reverse ? "md:flex-row-reverse" : ""}`}>
 

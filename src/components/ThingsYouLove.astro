@@ -1,33 +1,31 @@
 ---
 const features = [
-  "BREAKFAST INCLUDED",
-  "ULTRA FAST WIFI",
-  "NETFLIX & APPLE TV",
-  "IN ROOM DINING",
-  "SOUND ISOLATION WINDOWS & DOORS",
-  "ONLINE CHECK-IN & CHECK-OUT",
-  "CLIMATE CONTROL",
-  "PET FRIENDLY",
-  "EARLY CHECK-IN & LATE CHECK-OUT",
+  	"BREAKFAST INCLUDED",
+  	"ULTRA FAST WIFI",
+  	"NETFLIX & APPLE TV",
+  	"IN ROOM DINING",
+  	"SOUND ISOLATION WINDOWS & DOORS",
+  	"ONLINE CHECK-IN & CHECK-OUT",
+  	"CLIMATE CONTROL",
+  	"PET FRIENDLY",
+  	"EARLY CHECK-IN & LATE CHECK-OUT",
 ];
 
 const rooms = [
-  "Cardamom",
-  "Vanilla",
-  "Oregano",
-  "Nutmeg",
-  "Cardamom",
-  "Cinnamon",
-  "Verbena",
+  	"Matrimonial",
+  	"Queen",
+  	"Simple",
+  	"Triple"
 ];
 ---
 <section class="py-8 bg-white text-center">
   {/* Menú de habitaciones */}
   <div class="flex flex-wrap justify-center gap-6 text-gray-700 text-lg mb-12">
     {rooms.map((room) => (
-      <button class="hover:text-[#7a4a4a] transition-colors">
+      <a href={`#room-${room.toLowerCase()}`}
+         class="hover:text-[#7a4a4a] transition-colors">
         {room}
-      </button>
+      </a>
     ))}
   </div>
 
