@@ -5,7 +5,7 @@ const images = [
   	"slide3.png",
 ];
 ---
-<section class="relative w-full min-h-[100vh] sm:min-h-[95vh] md:min-h-[100vh] overflow-hidden flex items-center">
+<section class="relative w-full min-h-[100svh] sm:min-h-[95svh] md:min-h-[100dvh] overflow-hidden flex items-center">
   	<div id="hero-slider" class="absolute inset-0 w-full h-full">
     	{images.map((src, i) => (
       		<img src={src} alt="Bris Hotel" class={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out ${i === 0 ? "opacity-100" : "opacity-0"}`} data-index={i} />
@@ -39,7 +39,7 @@ const images = [
   	<div id="dots" class="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20"></div>
 </section>
 
-<div id="booking" class="absolute bottom-2 left-1/2 -translate-x-1/2 w-[92%] sm:w-[85%] md:w-full max-w-md md:max-w-2xl lg:max-w-xl bg-white backdrop-blur-xl p-4 md:p-6 rounded-2xl shadow-2xl z-30 border border-white/40 hover:shadow-rose-200/30 transition-all duration-300 lg:left-auto lg:right-12 lg:bottom-0 lg:translate-x-0">
+<div id="booking" class="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 w-[92%] sm:w-[85%] md:w-full max-w-md md:max-w-2xl lg:max-w-xl bg-white backdrop-blur-xl p-4 md:p-6 rounded-2xl shadow-2xl z-30 border border-white/40 hover:shadow-rose-200/30 transition-all duration-300 lg:left-auto lg:right-12 lg:bottom-0 lg:translate-x-0">
   	<h2 class="font-kestrel text-2xl sm:text-3xl lg:text-4xl text-[#5a3d37] mb-3 text-center">
     	Reserva tu escape a Nasca
   	</h2>
