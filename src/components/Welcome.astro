@@ -44,33 +44,19 @@ const images = [
     	Reserva tu escape a Nasca
   	</h2>
 
-  	<form onsubmit="sendToWhatsApp(event)" class="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start font-sans">
-  <div class="relative w-full sm:w-1/3">
-    <input
-      type="date"
-      id="checkin"
-      class="appearance-none border border-[#759120] rounded-xl px-3 py-2 text-[#5a3d37] w-full bg-white focus:outline-none focus:ring-1 focus:ring-[#759120] text-sm placeholder:text-[#5a3d37]/60"
-      required
-    />
-  </div>
+  	<form onsubmit="sendToWhatsApp(event)" class="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+  		<div class="relative w-full sm:w-1/3">
+    		<input type="date" id="checkin" class="border border-[#759120] rounded-xl px-3 py-2 text-[#5a3d37] w-full bg-white focus:outline-none focus:ring-1 focus:ring-[#759120] text-sm placeholder:text-[#5a3d37]/60" required />
+  		</div>
 
-  <div class="relative w-full sm:w-1/3">
-    <input
-      type="date"
-      id="checkout"
-      class="appearance-none border border-[#759120] rounded-xl px-3 py-2 text-[#5a3d37] w-full bg-white focus:outline-none focus:ring-1 focus:ring-[#759120] text-sm placeholder:text-[#5a3d37]/60"
-      required
-    />
-  </div>
+  		<div class="relative w-full sm:w-1/3">
+    		<input type="date" id="checkout" class="border border-[#759120] rounded-xl px-3 py-2 text-[#5a3d37] w-full bg-white focus:outline-none focus:ring-1 focus:ring-[#759120] text-sm placeholder:text-[#5a3d37]/60" required />
+  		</div>
 
-  <button
-    type="submit"
-    class="merriweather bg-[#759120] text-white px-6 py-2 rounded-xl uppercase tracking-wide w-full sm:w-auto text-sm transition-transform duration-300 hover:scale-105 active:scale-95"
-  >
-    Reservar
-  </button>
-</form>
-
+  		<button type="submit" class="merriweather bg-[#759120] text-white px-6 py-2 rounded-xl uppercase tracking-wide w-full sm:w-auto text-sm transition-transform duration-300 hover:scale-105 active:scale-95">
+    		Reservar
+  		</button>
+	</form>
 </div>
 
 <script is:inline>
