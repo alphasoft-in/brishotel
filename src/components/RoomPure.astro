@@ -1,126 +1,128 @@
 ---
-const { title, subtitle, features, images, reverse, ctaLabel = "CONSULTAR DISPONIBILIDAD" } = Astro.props;
+const { 
+	title, 
+	subtitle, 
+	features, 
+	images, 
+	reverse, 
+	ctaLabel = "CONSULTAR DISPONIBILIDAD" 
+} = Astro.props;
 
-// Generamos un id único para cada instancia
 const id = `room-${subtitle.toLowerCase().replace(/\s+/g, '-')}`;
 ---
-
 <section id={id} class="py-16" data-room-id={id}>
-  <div class={`max-w-6xl mx-auto px-6 md:flex md:items-center md:gap-10 ${reverse ? "md:flex-row-reverse" : ""}`}>
-    <div class="md:w-1/2">
-      <h3 class="text-5xl text-[#5a3d37] font-kestrel">{subtitle}</h3>
-      <h4 class="text-xl md:text-2xl tracking-[0.35em] uppercase font-semibold merriweather text-[#759120]">
-        {title}
-      </h4>
+  	<div class={`max-w-6xl mx-auto px-6 md:flex md:items-center md:gap-10 ${reverse ? "md:flex-row-reverse" : ""}`}>
+    	<div class="md:w-1/2">
+      		<h3 class="text-5xl text-[#5a3d37] font-kestrel">{subtitle}</h3>
+      		<h4 class="text-xl md:text-2xl tracking-[0.35em] uppercase font-semibold merriweather text-[#759120]">
+        		{title}
+      		</h4>
 
-      <ul class="mt-6 text-[#5a3d37] merriweather space-y-2">
-        {features.map((f:any) => (
-          <li class="list-disc list-inside">{f}</li>
-        ))}
-      </ul>
+      		<ul class="mt-6 text-[#5a3d37] merriweather space-y-2">
+        		{features.map((f:any) => (
+          			<li class="list-disc list-inside">{f}</li>
+        		))}
+      		</ul>
 
-      <a href="javascript:void(0);" onclick={`sendToWhatsApp('${title}', '${subtitle}')`} class="inline-block mt-8 px-6 py-3 bg-[#759120] text-white font-semibold tracking-wide hover:bg-[#5a3d37] merriweather transition">
-        {ctaLabel}
-      </a>
-    </div>
+      		<a href="javascript:void(0);" onclick={`sendToWhatsApp('${title}', '${subtitle}')`} class="inline-block mt-8 px-6 py-3 bg-[#759120] text-white font-semibold tracking-wide hover:bg-[#5a3d37] merriweather transition">
+        		{ctaLabel}
+      		</a>
+    	</div>
 
-    <div class="md:w-1/2 mt-8 md:mt-0">
-      <div class="relative overflow-hidden rounded-sm shadow-sm bg-black/5">
-        <div class="viewport h-[420px]">
-          <div class="track flex h-full transition-transform duration-500 ease-in-out">
-            {images.map((src:any, i:number) => (
-              <div class="slide min-w-full h-full">
-                <img src={src} alt={subtitle} class="w-full h-full object-cover" loading="lazy" />
-              </div>
-            ))}
-          </div>
-        </div>
+    	<div class="md:w-1/2 mt-8 md:mt-0">
+      		<div class="relative overflow-hidden rounded-sm shadow-sm bg-black/5">
+        		<div class="viewport h-[420px] overflow-hidden rounded-lg">
+  					<div class="track flex h-full transition-transform duration-500 ease-in-out">
+    					{images.map((src:any, i:number) => (
+      						<div class="slide min-w-full h-full">
+        						<img src={src} alt={subtitle} class="w-full h-full object-cover rounded-lg" loading="lazy" />
+      						</div>
+    					))}
+  					</div>
+				</div>
 
-        <button class="prev absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white px-2 py-1 rounded shadow">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <button class="next absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white px-2 py-1 rounded shadow">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-        <div class="dots absolute left-0 right-0 bottom-3 flex justify-center gap-2"></div>
-      </div>
-    </div>
-  </div>
+        		<button class="prev absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white px-2 py-1 rounded shadow">
+          			<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7" />
+          			</svg>
+        		</button>
+        		<button class="next absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white px-2 py-1 rounded shadow">
+          			<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
+          			</svg>
+        		</button>
+        		<div class="dots absolute left-0 right-0 bottom-3 flex justify-center gap-2"></div>
+      		</div>
+    	</div>
+  	</div>
 </section>
 
 <script is:inline>
-  function sendToWhatsApp(title, subtitle) {
-    const phone = "51940948536";
-    const message = `Hola Bris Hotel, quiero consultar la disponibilidad de una %0A%F0%9F%93%9C ${encodeURIComponent(title)}%0A%F0%9F%8F%A1 ${encodeURIComponent(subtitle)}`;
-    const url = `https://wa.me/${phone}?text=${message}`;
-    window.open(url, "_blank");
-  }
+  	function sendToWhatsApp(title, subtitle) {
+    	const phone = "51940948536";
+    	const message = `Hola Bris Hotel, quiero consultar la disponibilidad de una %0A%F0%9F%93%9C ${encodeURIComponent(title)}%0A%F0%9F%8F%A1 ${encodeURIComponent(subtitle)}`;
+    	const url = `https://wa.me/${phone}?text=${message}`;
+    	window.open(url, "_blank");
+  	}
 
-  document.addEventListener("DOMContentLoaded", () => {
-    // Usamos 'querySelectorAll' para manejar todos los sliders
-    const sliders = document.querySelectorAll('[data-room-id]');
+  	document.addEventListener("DOMContentLoaded", () => {
+    	const sliders = document.querySelectorAll('[data-room-id]');
 
-    sliders.forEach(slider => {
-      const roomId = slider.getAttribute('data-room-id');
-      const viewport = slider.querySelector(".viewport");
-      const track = slider.querySelector(".track");
-      const slides = slider.querySelectorAll(".slide");
-      const prev = slider.querySelector(".prev");
-      const next = slider.querySelector(".next");
-      const dotsWrap = slider.querySelector(".dots");
+    	sliders.forEach(slider => {
+      		const roomId = slider.getAttribute('data-room-id');
+      		const viewport = slider.querySelector(".viewport");
+      		const track = slider.querySelector(".track");
+      		const slides = slider.querySelectorAll(".slide");
+      		const prev = slider.querySelector(".prev");
+      		const next = slider.querySelector(".next");
+      		const dotsWrap = slider.querySelector(".dots");
 
-      if (!slides.length) return;
+      		if (!slides.length) return;
 
-      const dots = [];
-      // Limpiamos los puntos existentes para evitar duplicados
-      dotsWrap.innerHTML = '';
+      		const dots = [];
+      		dotsWrap.innerHTML = '';
 
-      slides.forEach((_, i) => {
-        const b = document.createElement("button");
-        b.className = "w-2.5 h-2.5 rounded-full bg-white/70 ring-1 ring-black/20";
-        b.setAttribute("aria-label", "Go to slide " + (i + 1));
-        b.addEventListener("click", () => goTo(i));
-        dotsWrap.appendChild(b);
-        dots.push(b);
-      });
+      		slides.forEach((_, i) => {
+        		const b = document.createElement("button");
+        		b.className = "w-2.5 h-2.5 rounded-full bg-white/80 ring-1 ring-[#759120]/20";
+        		b.setAttribute("aria-label", "Go to slide " + (i + 1));
+        		b.addEventListener("click", () => goTo(i));
+        		dotsWrap.appendChild(b);
+        		dots.push(b);
+      		});
 
-      let index = 0;
-      let autoChange = setInterval(onNext, 5000); // Intervalo de 5 segundos para la transición automática
+      		let index = 0;
+      		let autoChange = setInterval(onNext, 5000);
 
-      function update() {
-        const w = viewport.clientWidth;
-        track.style.transform = `translateX(-${index * w}px)`;  // Movimiento de deslizamiento
-        dots.forEach((d, i) => {
-          d.classList.toggle("bg-white", i === index);
-          d.classList.toggle("opacity-50", i !== index);
-        });
-      }
+      		function update() {
+        		const w = viewport.clientWidth;
+        		track.style.transform = `translateX(-${index * w}px)`;
+        		dots.forEach((d, i) => {
+          			d.classList.toggle("bg-white", i === index);
+          			d.classList.toggle("opacity-50", i !== index);
+        		});
+      		}
 
-      function goTo(i) {
-        index = (i + slides.length) % slides.length;
-        update();
-      }
+      		function goTo(i) {
+        		index = (i + slides.length) % slides.length;
+        		update();
+      		}
 
-      function onPrev() {
-        clearInterval(autoChange); // Detenemos el cambio automático al hacer clic
-        goTo(index - 1);
-      }
+      		function onPrev() {
+        		clearInterval(autoChange);
+        		goTo(index - 1);
+      		}
 
-      function onNext() {
-        clearInterval(autoChange); // Detenemos el cambio automático al hacer clic
-        goTo(index + 1);
-      }
+      		function onNext() {
+        		clearInterval(autoChange);
+        		goTo(index + 1);
+      		}
 
-      // Eventos de navegación
-      prev.addEventListener("click", onPrev);
-      next.addEventListener("click", onNext);
-      window.addEventListener("resize", update, { passive: true });
+      		prev.addEventListener("click", onPrev);
+      		next.addEventListener("click", onNext);
+      		window.addEventListener("resize", update, { passive: true });
 
-      update();
-    });
-  });
+      		update();
+    	});
+  	});
 </script>
