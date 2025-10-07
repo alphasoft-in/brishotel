@@ -1,37 +1,44 @@
 <section class="bg-[#f4ecec] py-16">
-  	<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 px-6 items-center">
-    
-    	<div class="text-center md:text-left space-y-3">
-      		<h3 class="text-3xl md:text-4xl font-kestrel text-[#5a3d37]">
-				Suscríbete
-			</h3>
-      		<p class="text-[#5a3d37] text-sm md:text-base merriweather max-w-xs md:max-w-sm mx-auto md:mx-0">
-        		Para recibir ofertas especiales.
-      		</p>
-    	</div>
+  <div class="max-w-7xl mx-auto px-6">
+    <!-- Contenedor con grid para pantallas grandes y flex para pantallas pequeñas -->
+    <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-10 items-center">
 
-    	<form class="flex flex-col sm:flex-row gap-3 justify-center items-center w-full">
-      		<input type="text" placeholder="Full Name" required class="bg-white shadow-sm focus:outline-none border merriweather border-[#5a3d37] px-4 py-2 rounded-lg focus:ring-1 focus:ring-[#5a3d37] text-sm w-full sm:w-44" />
-      		<input type="email" placeholder="Your Email" required class="bg-white shadow-sm focus:outline-none border merriweather border-[#5a3d37] px-4 py-2 rounded-lg focus:ring-1 focus:ring-[#5a3d37] text-sm w-full sm:w-52" />
-      		<button type="submit" class="bg-[#5a3d37] text-white px-5 py-2.5 rounded-lg font-medium shadow-md hover:bg-[#5a3d37] transition text-sm w-full sm:w-auto">
-        		Subscribe
-      		</button>
-    	</form>
+      <!-- Sección de texto: título y descripción -->
+      <div class="text-center space-y-3">
+        <h3 class="text-3xl md:text-4xl font-kestrel text-[#5a3d37]">
+          Suscríbete
+        </h3>
+        <p class="text-[#5a3d37] text-sm md:text-base merriweather max-w-xs md:max-w-sm mx-auto">
+          Para recibir ofertas especiales.
+        </p>
+      </div>
 
-    	<div class="text-center md:text-right space-y-4 text-gray-700 text-sm">
-      		<div>
-        		<h4 class="font-kestrel tracking-wide text-[#5a3d37] text-2xl">Dirección</h4>
-        		<p class="merriweather text-[#5a3d37] leading-relaxed">
-          			Calle Callao 907<br />
-					Nasca - Perú
-        		</p>
-      		</div>
-      		<div>
-        		<h4 class="font-kestrel tracking-wide text-[#5a3d37] text-2xl">Horario</h4>
-        		<p class="merriweather text-[#5a3d37] leading-relaxed">
-					Lunes a Domingo - 24 horas
-				</p>
-      		</div>
-    	</div>
-  	</div>
+      <!-- Formulario de suscripción -->
+      <form class="flex flex-col gap-3 justify-center items-center w-full xl:flex-row xl:gap-5">
+        <input type="text" placeholder="Full Name" required class="bg-white shadow-sm focus:outline-none border merriweather border-[#5a3d37] px-4 py-2 rounded-lg focus:ring-1 focus:ring-[#5a3d37] text-sm w-full sm:w-80" />
+        <input type="email" placeholder="Your Email" required class="bg-white shadow-sm focus:outline-none border merriweather border-[#5a3d37] px-4 py-2 rounded-lg focus:ring-1 focus:ring-[#5a3d37] text-sm w-full sm:w-80" />
+        <button type="submit" class="bg-[#5a3d37] text-white px-5 py-2.5 rounded-lg font-medium shadow-md hover:bg-[#5a3d37] transition text-sm w-full sm:w-80">
+          Subscribe
+        </button>
+      </form>
+
+      <!-- Información de contacto -->
+      <div class="text-center space-y-4 text-gray-700 text-sm">
+        <div>
+          <h4 class="font-kestrel tracking-wide text-[#5a3d37] text-2xl">Dirección</h4>
+          <p class="merriweather text-[#5a3d37] leading-relaxed">
+            Calle Callao 907<br />
+            Nasca - Perú
+          </p>
+        </div>
+        <div>
+          <h4 class="font-kestrel tracking-wide text-[#5a3d37] text-2xl">Horario</h4>
+          <p class="merriweather text-[#5a3d37] leading-relaxed">
+            Lunes a Domingo - 24 horas
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </section>
