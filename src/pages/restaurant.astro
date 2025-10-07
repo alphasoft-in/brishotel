@@ -1,33 +1,17 @@
 ---
 import Layout from "../layouts/Layout.astro"
 import Navbar from "../components/Navbar.astro"
+import RestaurantSection from "../components/RestaurantSection.astro"
+import DescripcionHotel from "../components/DescripcionHotel.astro"
+import InstagramFeed from "../components/InstagramFeed.astro"
+import CallToAction from "../components/CallToAction.astro"
+import Footer from "../components/Footer.astro"
 ---
 <Layout>
     <Navbar />
-
-    <!-- Sección Restaurante -->
-    <section id="restaurante" class="py-16 bg-gray-50 mt-20">
-        <div class="max-w-6xl mx-auto px-6 md:flex md:items-center md:gap-10">
-            <!-- Columna de texto -->
-            <div class="md:w-1/2">
-                <h2 class="text-4xl font-kestrel text-[#5a3d37] mb-4">Descubre nuestro restaurante</h2>
-                <p class="text-lg text-gray-700 merriweather mb-6">
-                    En <strong>Bris Hotel</strong>, no solo ofrecemos un lugar cómodo para alojarse, sino también una experiencia gastronómica única. Nuestro restaurante ofrece una variedad de platos locales e internacionales, todos preparados con ingredientes frescos y de calidad.
-                </p>
-
-                <p class="text-lg text-gray-700 merriweather mb-6">
-                    Ya sea para un desayuno relajado, un almuerzo con vista panorámica o una cena romántica, nuestro restaurante tiene algo para todos los gustos. Disfruta de un ambiente acogedor y servicio de primera.
-                </p>
-
-                <a href="#reserva" class="inline-block mt-6 px-6 py-3 bg-[#759120] text-white font-semibold tracking-wide hover:bg-[#5a3d37] merriweather transition">
-                    Haz tu reserva ahora
-                </a>
-            </div>
-
-            <!-- Columna de imagen -->
-            <div class="md:w-1/2 mt-8 md:mt-0">
-                <img src="/images/restaurante.jpg" alt="Restaurante Bris Hotel" class="w-full h-full object-cover rounded-lg shadow-lg" loading="lazy" />
-            </div>
-        </div>
-    </section>
+    <RestaurantSection />
+    <DescripcionHotel />
+    <InstagramFeed />
+    <CallToAction />
+    <Footer />
 </Layout>
