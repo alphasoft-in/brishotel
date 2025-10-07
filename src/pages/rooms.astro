@@ -6,7 +6,6 @@ import RoomPure from "../components/RoomPure.astro";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 import CallToAction from "../components/CallToAction.astro";
-import NewsletterSection from "../components/NewsletterSection.astro";
 ---
 <Layout>
     <Navbar />
@@ -25,6 +24,12 @@ import NewsletterSection from "../components/NewsletterSection.astro";
             "/rooms/matrimonial.png",
             "/rooms/matrimonial-1.png",
             "/rooms/matrimonial-2.png",
+            "/rooms/matrimonial-3.png",
+            "/rooms/matrimonial-4.png",
+            "/rooms/matrimonial-5.png",
+            "/rooms/matrimonial-6.png",
+            "/rooms/matrimonial-7.png",
+            "/rooms/matrimonial-8.png"
         ]}/>
 
     <RoomPure reverse subtitle="Queen" title="HABITACIÓN"
@@ -36,9 +41,8 @@ import NewsletterSection from "../components/NewsletterSection.astro";
         ]}
         images={[
             "/rooms/queen.png",
-            "/rooms/lavender2.jpg",
-            "/rooms/lavender3.jpg",
-            "/rooms/lavender4.jpg",
+            "/rooms/queen-1.png",
+            "/rooms/queen-2.png"
         ]}/>
 
     <RoomPure subtitle="Simple" title="HABITACIÓN"
@@ -52,8 +56,10 @@ import NewsletterSection from "../components/NewsletterSection.astro";
         ]}
         images={[
             "/rooms/simple.png",
-            "/rooms/matrimonial-1.png",
-            "/rooms/matrimonial-2.png",
+            "/rooms/simple-1.png",
+            "/rooms/simple-2.png",
+            "/rooms/simple-3.png",
+            "/rooms/simple-4.png"
         ]}/>
 
     <RoomPure reverse subtitle="Triple" title="HABITACIÓN"
@@ -65,10 +71,24 @@ import NewsletterSection from "../components/NewsletterSection.astro";
         ]}
         images={[
             "/rooms/triple.png",
-            "/rooms/lavender2.jpg",
-            "/rooms/lavender3.jpg",
-            "/rooms/lavender4.jpg",
+            "/rooms/triple-1.png",
+            "/rooms/triple-2.png"
         ]}/>
+
+    <RoomPure subtitle="King Size" title="HABITACIÓN"
+        features={[
+            "Habitación doble de 40 m² para 2 personas.",
+            "Baño privado con bañera",
+            "Apple TV & Netflix",
+            "Desayuno incluido",
+            "Se admiten mascotas",
+            "Cuna disponible bajo petición.",
+        ]}
+        images={[
+            "/rooms/king-size.png",
+            "/rooms/king-size-1.png"
+        ]}/>
+
     <CallToAction />
     <Footer />
 </Layout>
