@@ -3,18 +3,18 @@
 @import "@fortawesome/fontawesome-free/css/all.min.css";
 
 @font-face {
-  font-family: 'Kestrel Script';
-  src: url('/fonts/FontsFree-Net-Kestrel-W00-Script.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+    font-family: 'Kestrel Script';
+  	src: url('/fonts/FontsFree-Net-Kestrel-W00-Script.ttf') format('truetype');
+  	font-weight: normal;
+  	font-style: normal;
 }
 
 .merriweather {
-  font-family: "Merriweather", serif;
-  font-optical-sizing: auto;
-  font-style: normal;
+  	font-family: "Merriweather", serif;
+  	font-optical-sizing: auto;
+  	font-style: normal;
 }
 
 .font-kestrel {
-  font-family: 'Kestrel Script';
+  	font-family: 'Kestrel Script';
 }

@@ -1,30 +1,20 @@
 ---
 const items = [
-  { title: "ABOUT", image: "/about.png", link: "/about" },
-  { title: "DINE", image: "/dine.png", link: "/dine", highlight: true },
-  { title: "BLOG", image: "/blog.png", link: "/blog" },
-  { title: "REST", image: "/rest.png", link: "/rest" },
-  { title: "CONTACT", image: "/contact.png", link: "/contact", highlight: true },
-  { title: "DISCOVER", image: "/discover.png", link: "/discover" },
+  	{ title: "ACERCA DE", image: "/about.png", link: "/about" },
+  	{ title: "CENAR", image: "/discover.png", link: "/dine", highlight: true },
+  	{ title: "REDES", image: "/blog.png", link: "/blog" },
+  	{ title: "DESCANSAR", image: "/rest.png", link: "/rest" },
+  	{ title: "CONTACTO", image: "/contact.png", link: "/contact", highlight: true },
+  	{ title: "DESCUBRIR", image: "/dine.png", link: "/discover" },
 ];
 ---
-
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-6xl mt-32 mx-auto p-6">
-  {items.map((item) => (
-    <a
-      href={item.link}
-      class={`relative h-64 rounded-2xl overflow-hidden shadow-lg group cursor-pointer ${
-        item.highlight ? "md:-translate-y-10" : ""
-      }`}
-    >
-      <img
-        src={item.image}
-        alt={item.title}
-        class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500 ease-in-out"
-      />
-      <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
-        <h2 class="text-white text-2xl font-bold tracking-wide">{item.title}</h2>
-      </div>
-    </a>
-  ))}
+  	{items.map((item) => (
+    	<a href={item.link} class={`relative h-64 rounded-2xl overflow-hidden shadow-lg group cursor-pointer ${item.highlight ? "md:-translate-y-10" : ""}`}>
+      		<img src={item.image} alt={item.title} class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500 ease-in-out" />
+      		<div class="absolute inset-0 bg-[#5a3d37]/70 flex items-center justify-center">
+        		<h2 class="text-white text-2xl merriweather tracking-wide">{item.title}</h2>
+      		</div>
+    	</a>
+  	))}
 </div>
