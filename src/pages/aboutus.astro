@@ -1,0 +1,83 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+---
+
+<Layout>
+  <Navbar />
+
+  <!-- Sección Contáctanos -->
+  <section id="contactanos" class="py-16 bg-[#f9f9f9] mt-20">
+    <div class="max-w-7xl mx-auto px-6">
+      <!-- Título -->
+      <h2 class="text-4xl font-bold text-center text-[#5a3d37] mb-6">Contáctanos</h2>
+      <p class="text-lg text-center text-gray-600 mb-10 max-w-2xl mx-auto">
+        ¿Tienes alguna pregunta o deseas reservar? Envíanos un mensaje y nuestro equipo se pondrá en contacto contigo lo antes posible.
+      </p>
+
+      <!-- Card para el Formulario -->
+      <div class="bg-white p-8 rounded-3xl shadow-2xl mx-auto max-w-3xl">
+        <!-- Formulario -->
+        <form onsubmit="sendToWhatsApp(event)" class="space-y-6">
+          <!-- Nombre y Correo -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="flex flex-col">
+              <label for="name" class="text-[#5a3d37] text-sm font-semibold mb-2">Nombre Completo</label>
+              <input
+                type="text"
+                id="name"
+                placeholder="Tu nombre"
+                class="border border-[#759120] rounded-xl px-4 py-3 text-[#5a3d37] focus:outline-none focus:ring-2 focus:ring-[#759120] transition-all"
+                required
+              />
+            </div>
+
+            <div class="flex flex-col">
+              <label for="email" class="text-[#5a3d37] text-sm font-semibold mb-2">Correo Electrónico</label>
+              <input
+                type="email"
+                id="email"
+                placeholder="Tu correo electrónico"
+                class="border border-[#759120] rounded-xl px-4 py-3 text-[#5a3d37] focus:outline-none focus:ring-2 focus:ring-[#759120] transition-all"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Mensaje -->
+          <div class="flex flex-col">
+            <label for="message" class="text-[#5a3d37] text-sm font-semibold mb-2">Tu Mensaje</label>
+            <textarea
+              id="message"
+              placeholder="Escribe tu mensaje aquí"
+              class="border border-[#759120] rounded-xl px-4 py-3 text-[#5a3d37] focus:outline-none focus:ring-2 focus:ring-[#759120] resize-none h-32 transition-all"
+              required
+            ></textarea>
+          </div>
+
+          <!-- Botón Enviar -->
+          <button
+            type="submit"
+            class="w-full py-3 bg-[#759120] text-white rounded-xl font-semibold text-lg tracking-wide hover:bg-[#5a3d37] transition-all transform hover:scale-105"
+          >
+            Enviar Mensaje
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    function sendToWhatsApp(event) {
+      event.preventDefault();
+      const phone = "51940948536"; // tu número de WhatsApp
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const message = document.getElementById("message").value;
+
+      const text = `Hola, soy ${name}.%0ACorreo: ${email}%0AMensaje: ${message}`;
+      const url = `https://wa.me/${phone}?text=${text}`;
+      window.open(url, "_blank");
+    }
+  </script>
+</Layout>

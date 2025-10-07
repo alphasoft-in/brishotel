@@ -1,36 +1,42 @@
 ---
 const image = "/room.png";
 ---
-
 <section class="relative bg-[#f4ecec] py-12">
-  <div class="max-w-7xl mx-auto grid md:grid-cols-2 items-center gap-10 px-6">
+  	<div class="max-w-7xl mx-auto grid md:grid-cols-2 items-center gap-10 px-6">
     
-    <!-- Imagen con efecto "salida" -->
-    <div class="relative">
-      <div class="bg-white p-4 shadow-lg">
-        <img src={image} alt="Rooms" class="w-full object-cover" />
-      </div>
-    </div>
+		<div class="relative">
+			<div class="bg-white p-4 shadow-lg">
+				<img src={image} alt="Rooms" class="w-full object-cover" />
+			</div>
+		</div>
 
-    <!-- Texto -->
-    <div class="text-gray-800 mt-20">
-      <h2 class="text-4xl font-bold tracking-wide">ROOMS</h2>
-      <h3 class="text-5xl parisienne-regular text-[#b76e79] mt-2">Comfort in Every Detail</h3>
-      <p class="mt-4 text-sm leading-relaxed">
-        Discover Amadoka's 7 beautiful, spacious double rooms in the heart of San Diego, 
-        each uniquely named after kitchen herbs and spices. Your stay includes a delicious 
-        in-room breakfast.
-      </p>
+		<div class="text-[#5a3d37] mt-20">
+			<h2 class="text-5xl font-kestrel">Alojamiento</h2>
+			<h3 class="text-5xl merriweather text-[#759120] mt-2">Comodidad en cada detalle</h3>
+			<p class="mt-4 text-sm merriweather leading-relaxed">
+				Descubra las 7 hermosas y espaciosas habitaciones de Bris Hotel en el corazón de Nasca, cada una con un nombre único. Su estancia incluye un delicioso desayuno en la habitación.
+			</p>
 
-      <div class="mt-6 space-y-3 text-sm">
-        <p><span class="font-bold tracking-widest">CHECK-IN</span> from 16 PM</p>
-        <p><span class="font-bold tracking-widest">CHECK-OUT</span> to 11 AM</p>
-        <p><span class="font-bold tracking-widest">RECEPTION</span> from 9 AM to 10 PM</p>
-      </div>
+			<div class="mt-6 space-y-3 merriweather text-sm">
+				<p><span class="font-bold tracking-widest">CHECK-IN:</span> 02:00 PM</p>
+				<p><span class="font-bold tracking-widest">CHECK-OUT:</span> 12:00 M</p>
+				<p><span class="font-bold tracking-widest">ATENCIÓN:</span> 24 HORAS</p>
+			</div>
 
-      <button class="mt-6 border border-[#7a4a4a] text-[#7a4a4a] px-6 py-3 font-semibold hover:bg-[#7a4a4a] hover:text-white transition">
-        BOOK A ROOM
-      </button>
-    </div>
-  </div>
+			<button class="mt-6 border border-[#5a3d37] text-[#5a3d37] px-6 py-3 font-semibold hover:bg-[#5a3d37] hover:text-white transition cursor-pointer" onclick="enviarConsultaWhatsApp()">
+  				RESERVA AHORA
+			</button>
+		</div>
+  	</div>
 </section>
+<script is:inline>
+  	function enviarConsultaWhatsApp() {
+    	const phone = "51940948536";
+
+    	const message = `Hola, quiero realizar una reserva en Bris Hotel.%0APor favor, ¿me pueden dar más información sobre las habitaciones y disponibilidad?`;
+
+    	const url = `https://wa.me/${phone}?text=${message}`;
+
+    	window.open(url, "_blank");
+  	}
+</script>

@@ -3,5 +3,29 @@ import Navbar from "../components/Navbar.astro"
 import Layout from "../layouts/Layout.astro"
 ---
 <Layout>
-	<Navbar /> 
+	<Navbar />
+	<section id="nosotros" class="py-16 bg-gray-50 mt-20"> <!-- Ajustamos mt-20 -->
+        <div class="max-w-6xl mx-auto px-6 md:flex md:items-center md:gap-10">
+            <!-- Columna de texto -->
+            <div class="md:w-1/2">
+                <h2 class="text-4xl font-kestrel text-[#5a3d37] mb-4">Conoce más sobre nosotros</h2>
+                <p class="text-lg text-gray-700 merriweather mb-6">
+                    En <strong>Bris Hotel</strong>, nuestro objetivo es ofrecer una experiencia única para cada huésped. Ubicados en el corazón de la ciudad, contamos con habitaciones cómodas y servicios excepcionales para hacer de tu estancia una experiencia inolvidable.
+                </p>
+
+                <p class="text-lg text-gray-700 merriweather mb-6">
+                    Nuestra misión es proporcionar un ambiente acogedor, donde el confort y la atención personalizada sean nuestra máxima prioridad. Contamos con un equipo altamente capacitado dispuesto a hacer de tu visita un momento especial.
+                </p>
+
+                <a href="#contacto" class="inline-block mt-6 px-6 py-3 bg-[#759120] text-white font-semibold tracking-wide hover:bg-[#5a3d37] merriweather transition">
+                    Contáctanos
+                </a>
+            </div>
+
+            <!-- Columna de imagen -->
+            <div class="md:w-1/2 mt-8 md:mt-0">
+                <img src="/images/nosotros.jpg" alt="Sobre nosotros" class="w-full h-full object-cover rounded-lg shadow-lg" loading="lazy" />
+            </div>
+        </div>
+    </section>
 </Layout>

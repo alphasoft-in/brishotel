@@ -1,14 +1,14 @@
 ---
 const features = [
-  	"BREAKFAST INCLUDED",
-  	"ULTRA FAST WIFI",
+	"DESAYUNO INCLUIDO",
+  	"WIFI ULTRA RÁPIDO",
   	"NETFLIX & APPLE TV",
-  	"IN ROOM DINING",
-  	"SOUND ISOLATION WINDOWS & DOORS",
-  	"ONLINE CHECK-IN & CHECK-OUT",
-  	"CLIMATE CONTROL",
-  	"PET FRIENDLY",
-  	"EARLY CHECK-IN & LATE CHECK-OUT",
+  	"COMIDA EN LA HABITACIÓN",
+  	"VENTANAS Y PUERTAS CON AISLAMIENTO ACÚSTICO",
+  	"CHECK-IN Y CHECK-OUT EN LÍNEA",
+  	"CONTROL DEL CLIMA",
+  	"SE ADMITEN MASCOTAS",
+  	"CHECK-IN TEMPRANO Y CHECK-OUT TARDÍO",
 ];
 
 const rooms = [
@@ -19,34 +19,26 @@ const rooms = [
 ];
 ---
 <section class="py-8 bg-white text-center">
-  {/* Menú de habitaciones */}
-  <div class="flex flex-wrap justify-center gap-6 text-gray-700 text-lg mb-12">
-    {rooms.map((room) => (
-      <a href={`#room-${room.toLowerCase()}`}
-         class="hover:text-[#7a4a4a] transition-colors">
-        {room}
-      </a>
-    ))}
-  </div>
+  	<div class="flex flex-wrap justify-center gap-6 text-lg mb-12">
+    	{rooms.map((room) => (
+      		<a href={`#room-${room.toLowerCase()}`} class="text-[#759120] merriweather hover:text-[#5a3d37] transition-colors">
+        		{room}
+      		</a>
+    	))}
+  	</div>
 
-  {/* Bloque de features */}
-  <h2 class="text-2xl md:text-3xl font-bold tracking-wide mb-12">
-    THINGS YOU'LL LOVE
-  </h2>
+  	<h2 class="text-2xl md:text-3xl font-bold merriweather text-[#5a3d37] tracking-wide mb-12">
+    	COSAS QUE TE ENCANTARÁN
+  	</h2>
 
-  <div class="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-    {features.map((item, i) => (
-      <div
-        class={`flex flex-col items-center justify-center px-6 py-8
-          ${i % 3 !== 2 && 'md:border-r'}  
-          ${i < features.length - 3 && 'md:border-b'} 
-          border-[#cfa7a7]`}
-      >
-        <span class="text-2xl font-semibold text-[#7a4a4a]">{i + 1}</span>
-        <p class="mt-2 text-sm font-medium text-gray-700 uppercase tracking-wide">
-          {item}
-        </p>
-      </div>
-    ))}
-  </div>
+  	<div class="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+    	{features.map((item, i) => (
+      		<div class={`flex flex-col items-center justify-center px-6 py-8 ${i % 3 !== 2 && 'md:border-r'} ${i < features.length - 3 && 'md:border-b'} border-[#5a3d37]`}>
+        		<span class="text-2xl merriweather font-semibold text-[#759120]">{i + 1}</span>
+        		<p class="mt-2 text-sm font-medium text-[#5a3d37] uppercase merriweather tracking-wide">
+          			{item}
+        		</p>
+      		</div>
+    	))}
+  	</div>
 </section>
