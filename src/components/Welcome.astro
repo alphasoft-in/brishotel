@@ -118,13 +118,27 @@ const images = [
   	showSlide(0);
 
   	function sendToWhatsApp(event) {
-    	event.preventDefault();
-    	const phone = "51940948536";
-    	const checkin = document.getElementById("checkin").value;
-    	const checkout = document.getElementById("checkout").value;
+		event.preventDefault();
+		const phone = "51940948536";
+		
+		const checkin = document.getElementById("checkin").value;
+		const checkout = document.getElementById("checkout").value;
 
-    	const message = `Hola, quiero reservar una habitación en BrisHotel.%0A📅 Check-in: ${checkin}%0A📅 Check-out: ${checkout}`;
-    	const url = `https://wa.me/${phone}?text=${message}`;
-    	window.open(url, "_blank");
-  	}
+		function formatDate(date) {
+			const d = new Date(date);
+			const day = String(d.getDate()).padStart(2, '0');
+			const month = String(d.getMonth() + 1).padStart(2, '0');
+			const year = d.getFullYear();
+			return `${day}/${month}/${year}`;
+		}
+
+		const formattedCheckin = formatDate(checkin);
+		const formattedCheckout = formatDate(checkout);
+
+		const message = `Hola, quiero reservar una habitación en BrisHotel.%0A📅 Check-in: ${formattedCheckin}%0A📅 Check-out: ${formattedCheckout}`;
+
+		const url = `https://wa.me/${phone}?text=${message}`;
+		
+		window.open(url, "_blank");
+	}
 </script>
