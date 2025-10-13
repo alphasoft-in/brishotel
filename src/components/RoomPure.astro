@@ -8,7 +8,13 @@ const {
 	ctaLabel = "CONSULTAR DISPONIBILIDAD" 
 } = Astro.props;
 
-const id = `room-${subtitle.toLowerCase().replace(/\s+/g, '-')}`;
+const id = `room-${subtitle
+  .toLowerCase()
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/[^a-z0-9\s-]/g, '')
+  .trim()
+  .replace(/\s+/g, '-')}`;
 ---
 <section id={id} class="py-16" data-room-id={id}>
   	<div class={`max-w-6xl mx-auto px-6 md:flex md:items-center md:gap-10 ${reverse ? "md:flex-row-reverse" : ""}`}>

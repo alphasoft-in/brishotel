@@ -18,3 +18,7 @@
 .font-kestrel {
   	font-family: 'Kestrel Script';
 }
+
+html {
+  scroll-behavior: smooth;
+}
