@@ -1,0 +1,72 @@
+---
+import CallToAction from "../components/CallToAction.astro"
+import Footer from "../components/Footer.astro"
+import InstagramFeed from "../components/InstagramFeed.astro"
+import Navbar from "../components/Navbar.astro"
+import Layout from "../layouts/Layout.astro"
+---
+<Layout>
+    <Navbar />
+    <section id="gallery" class="bg-[#f7efef] pt-32 pb-16 scroll-mt-32">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <!-- Título -->
+            <h2 class="font-kestrel text-4xl md:text-5xl tracking-wide text-[#3e2f2a]">
+                Galería
+            </h2>
+            <p class="merriweather text-[#8b6f68] text-lg md:text-xl mt-1">
+                Rooms, Restaurant & Ambiance. See It All
+            </p>
+
+            <!-- Tabs -->
+            <div class="flex justify-center gap-6 mt-8 text-sm font-semibold text-[#3e2f2a]">
+                <button class="border-b-2 border-[#3e2f2a] pb-1">Habitaciones</button>
+            </div>
+
+            <!-- Galería -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-10">
+                <img src="/rooms/simple.png" alt="simple" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
+                <img src="/rooms/simple-1.png" alt="simple" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
+                <img src="/rooms/simple-2.png" alt="simple" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
+                <img src="/rooms/simple-3.png" alt="simple" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
+                <img src="/rooms/simple-4.png" alt="simple" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+
+                <img src="/rooms/doble.png" alt="Doble" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/doble-1.png" alt="Doble" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/doble-2.png" alt="Doble" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/doble-3.png" alt="Doble" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+
+                <img src="/rooms/matrimonial.png" alt="Matrimonial" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/matrimonial-1.png" alt="Matrimonial" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/matrimonial-2.png" alt="Matrimonial" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/matrimonial-3.png" alt="Matrimonial" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/matrimonial-4.png" alt="Matrimonial" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/matrimonial-5.png" alt="Matrimonial" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/matrimonial-6.png" alt="Matrimonial" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/matrimonial-7.png" alt="Matrimonial" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/matrimonial-8.png" alt="Matrimonial" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+
+                <img src="/rooms/queen.png" alt="Queen" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/queen-1.png" alt="Queen" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/queen-2.png" alt="Queen" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+
+                <img src="/rooms/king-size.png" alt="King Size" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/king-size-1.png" alt="King Size" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+
+                <img src="/rooms/triple.png" alt="Triple" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/triple-1.png" alt="Triple" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/triple-2.png" alt="Triple" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/triple-3.png" alt="Triple" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+
+                <img src="/rooms/cuadruple.png" alt="Cuádruple" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/cuadruple-1.png" alt="Cuádruple" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/cuadruple-2.png" alt="Cuádruple" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/cuadruple-3.png" alt="Cuádruple" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+                <img src="/rooms/cuadruple-4.png" alt="Cuádruple" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px] sm:col-span-2 md:col-span-1 md:mx-auto" />
+
+            </div>
+        </div>
+    </section>
+    <InstagramFeed />
+    <CallToAction />
+    <Footer />
+</Layout>
