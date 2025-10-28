@@ -4,7 +4,18 @@ import Footer from "../components/Footer.astro"
 import InstagramFeed from "../components/InstagramFeed.astro"
 import Navbar from "../components/Navbar.astro"
 import Layout from "../layouts/Layout.astro"
+
+// Cargar todas las imágenes de la carpeta restaurant
+const images = import.meta.glob('../assets/images/restaurant/*.{png,jpg,jpeg}', { eager: true, import: 'default' });
+
+// Convertir a array y ordenar
+const restaurantImages = Object.entries(images).map(([path, image]: [string, any]) => ({
+  src: image.src,
+  alt: 'Restaurant',
+  filename: path.split('/').pop() || ''
+})).sort((a, b) => a.filename.localeCompare(b.filename));
 ---
+
 <Layout>
     <Navbar />
     <section id="gallery" class="bg-[#f7efef] pt-32 pb-16 scroll-mt-32">
@@ -24,10 +35,13 @@ import Layout from "../layouts/Layout.astro"
 
             <!-- Galería -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-10">
-                <img src="/restaurant/rest.png" alt="Restaurant" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/restaurant/rest-1.png" alt="Restaurant" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/restaurant/rest-2.png" alt="Restaurant" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/restaurant/rest-3.png" alt="Restaurant" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
+                {restaurantImages.map(({ src, alt }) => (
+                    <img 
+                        src={src} 
+                        alt={alt} 
+                        class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" 
+                    />
+                ))}
             </div>
         </div>
     </section>

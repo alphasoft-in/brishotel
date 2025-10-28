@@ -1,0 +1,28 @@
+---
+const { amount, description } = Astro.props;
+---
+
+<!-- Botón de pago Izipay -->
+<button
+  id="btn-izipay"
+  class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg shadow-md transition-all duration-200"
+>
+  Reservar con Izipay
+</button>
+
+<!-- SDK Izipay -->
+<script src="https://static.izipay.pe/pay/v2/checkout.js"></script>
+<script>
+  const izipay = new IzipayCheckout({
+    publicKey: "TU_PUBLIC_KEY_AQUI", // ⚠️ Reemplaza con tu clave pública Izipay
+    amount: Number({amount}) * 100, // Monto en centavos (ej: 120.00 => 12000)
+    currency: "PEN",
+    description: {description},
+    orderId: "ORD-" + Date.now(),
+    callbackUrl: "https://tusitio.com/confirmacion", // URL de confirmación
+  });
+
+  document.querySelector("#btn-izipay").addEventListener("click", () => {
+    izipay.open();
+  });
+</script>

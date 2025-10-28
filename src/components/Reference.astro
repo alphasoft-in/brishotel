@@ -1,11 +1,18 @@
 ---
+import about from '../assets/images/about.png';
+import discover from '../assets/images/discover.png';
+import blog from '../assets/images/blog.png';
+import rest from '../assets/images/room-body.png';
+import contact from '../assets/images/contact.png';
+import dine from '../assets/images/dine.png';
+
 const items = [
-  	{ title: "Bris Hotel", image: "/about.png", link: "/about" },
-  	{ title: "Restaurante y sala de conferencias", image: "/discover.png", link: "/restaurant", highlight: true },
-  	{ title: "Relájate y disfruta", image: "/blog.png", link: "/gallery-activities" },
-  	{ title: "Descanso", image: "/rest.png", link: "/rooms" },
-  	{ title: "Contactos", image: "/contact.png", link: "/aboutus", highlight: true },
-  	{ title: "Experiencias", image: "/dine.png", link: "/gallery-restaurant" },
+  { title: "Bris Hotel", image: about.src, link: "/about" },
+  { title: "Restaurante y sala de conferencias", image: discover.src, link: "/restaurant", highlight: true },
+  { title: "Relájate y disfruta", image: blog.src, link: "/gallery-activities" },
+  { title: "Descanso", image: rest.src, link: "/rooms" },
+  { title: "Contactos", image: contact.src, link: "/aboutus", highlight: true },
+  { title: "Experiencias", image: dine.src, link: "/gallery-restaurant" },
 ];
 ---
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-6xl mt-32 mx-auto p-6">

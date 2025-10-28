@@ -4,7 +4,25 @@ import Footer from "../components/Footer.astro"
 import InstagramFeed from "../components/InstagramFeed.astro"
 import Navbar from "../components/Navbar.astro"
 import Layout from "../layouts/Layout.astro"
+
+// Cargar todas las imágenes de la carpeta activities
+const images = import.meta.glob('../assets/images/activities/*.{png,jpg,jpeg}', { eager: true, import: 'default' });
+
+// Convertir a array y ordenar
+const activitiesImages = Object.entries(images).map(([path, image]: [string, any]) => ({
+  src: image.src,
+  alt: 'Actividades',
+  filename: path.split('/').pop() || ''
+})).sort((a, b) => {
+  // Ordenar numéricamente (activities.png, activities-1.png, activities-2.png, etc.)
+  const getNumber = (filename: string) => {
+    const match = filename.match(/activities-?(\d+)?\.png/);
+    return match?.[1] ? parseInt(match[1]) : -1;
+  };
+  return getNumber(a.filename) - getNumber(b.filename);
+});
 ---
+
 <Layout>
     <Navbar />
     <section id="gallery" class="bg-[#f7efef] pt-32 pb-16 scroll-mt-32">
@@ -24,31 +42,13 @@ import Layout from "../layouts/Layout.astro"
 
             <!-- Galería -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-10">
-                <img src="/activities/activities.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-1.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-2.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-3.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-4.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-5.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-6.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-7.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-8.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-9.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-10.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-11.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-12.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-13.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-14.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-15.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-16.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-17.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-18.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-19.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-20.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-21.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-22.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-23.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
-                <img src="/activities/activities-24.png" alt="Actividades" class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" />
+                {activitiesImages.map(({ src, alt }) => (
+                    <img 
+                        src={src} 
+                        alt={alt} 
+                        class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" 
+                    />
+                ))}
             </div>
         </div>
     </section>

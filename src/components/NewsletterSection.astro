@@ -15,10 +15,29 @@
 
       <!-- Formulario de suscripción -->
       <form class="flex flex-col gap-3 justify-center items-center w-full xl:flex-row xl:gap-5">
-        <input type="text" placeholder="Full Name" required class="bg-white shadow-sm focus:outline-none border merriweather border-[#5a3d37] px-4 py-2 rounded-lg focus:ring-1 focus:ring-[#5a3d37] text-sm w-full sm:w-80" />
-        <input type="email" placeholder="Your Email" required class="bg-white shadow-sm focus:outline-none border merriweather border-[#5a3d37] px-4 py-2 rounded-lg focus:ring-1 focus:ring-[#5a3d37] text-sm w-full sm:w-80" />
-        <button type="submit" class="bg-[#5a3d37] text-white px-5 py-2.5 rounded-lg font-medium shadow-md hover:bg-[#5a3d37] transition text-sm w-full sm:w-80">
-          Subscribe
+        <input 
+          id="newsletter-name"
+          name="name"
+          type="text" 
+          placeholder="Full Name" 
+          autocomplete="name"
+          required 
+          class="bg-white shadow-sm focus:outline-none border merriweather border-[#5a3d37] px-4 py-2 rounded-lg focus:ring-1 focus:ring-[#5a3d37] text-sm w-full sm:w-80" 
+        />
+        <input 
+          id="newsletter-email"
+          name="email"
+          type="email" 
+          placeholder="Your Email" 
+          autocomplete="email"
+          required 
+          class="bg-white shadow-sm focus:outline-none border merriweather border-[#5a3d37] px-4 py-2 rounded-lg focus:ring-1 focus:ring-[#5a3d37] text-sm w-full sm:w-80" 
+        />
+        <button 
+          type="submit" 
+          class="bg-[#5a3d37] text-white px-5 py-2.5 rounded-lg font-medium shadow-md hover:bg-[#5a3d37] transition text-sm w-full sm:w-80"
+        >
+          Suscribirme
         </button>
       </form>
 

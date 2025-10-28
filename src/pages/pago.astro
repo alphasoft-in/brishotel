@@ -1,0 +1,44 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+const token = Astro.url.searchParams.get("token");
+---
+
+<Layout title="Pago seguro - Bris Hotel">
+  <Navbar />
+  <section class="py-20 flex flex-col items-center justify-center">
+    <h1 class="text-3xl md:text-4xl font-bold text-[#5a3d37] mb-4">
+      Pago seguro con Izipay
+    </h1>
+    <p class="text-lg text-gray-700 mb-10 text-center px-6">
+      Completa tu pago de forma segura (modo <span class="font-semibold text-[#759120]">TEST</span>).
+    </p>
+
+    {token ? (
+      <div class="w-full max-w-md p-6 bg-white shadow-lg rounded-xl border">
+        <!-- Script oficial -->
+        <script src="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js"></script>
+        <script src="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic.js"></script>
+
+        <!-- Configuración -->
+        <script
+          type="text/javascript"
+          kr-public-key="73731983:testpublickey_czFI8X3UHRdDXoVIDZ2Q9kIRdqx8P9NrKjOzbw2HH7wnD"
+          kr-post-url-success="https://tu-dominio.com/pago-exitoso"
+          kr-post-url-refused="https://tu-dominio.com/pago-fallido"
+          kr-language="es-PE"
+          kr-form-token={token}
+        ></script>
+
+        <!-- Contenedor del formulario -->
+        <div class="kr-embedded" kr-form-token={token}></div>
+      </div>
+    ) : (
+      <div class="text-center text-red-600 font-semibold">
+        ⚠️ Token no encontrado. Regresa e intenta nuevamente.
+      </div>
+    )}
+  </section>
+  <Footer />
+</Layout>

@@ -4,7 +4,7 @@
 
 @font-face {
     font-family: 'Kestrel Script';
-  	src: url('/fonts/FontsFree-Net-Kestrel-W00-Script.ttf') format('truetype');
+  	src: url('../assets/fonts/FontsFree-Net-Kestrel-W00-Script.ttf') format('truetype');
   	font-weight: normal;
   	font-style: normal;
 }
