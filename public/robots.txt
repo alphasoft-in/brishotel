@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://brishotelnasca.com/sitemap-index.xml

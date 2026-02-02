@@ -1,0 +1,263 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+import { db } from "../lib/db";
+
+// Forzar SSR
+export const prerender = false;
+
+// Obtener detalles de la URL
+const url = new URL(Astro.request.url);
+const roomName = url.searchParams.get("room") || "Habitación Seleccionada";
+const price = url.searchParams.get("price") || "---";
+const krAnswer = url.searchParams.get("kr-answer");
+let orderId = url.searchParams.get("orderId") || "---";
+let isSuccess = true;
+
+// Si Izipay envía la respuesta en kr-answer, intentamos extraerlo de ahí también
+if (krAnswer) {
+    try {
+        const answer = JSON.parse(krAnswer);
+        const answerOrderId =
+            answer.orderId ||
+            (answer.orderDetails && answer.orderDetails.orderId);
+
+        if (answerOrderId) {
+            orderId = answerOrderId;
+
+            // ✅ Actualizar el estado real en la DB local
+            const orderStatus = answer.orderStatus;
+            let localStatus: "PENDIENTE" | "EXITOSO" | "FALLIDO" | "CANCELADO" =
+                "PENDIENTE";
+
+            if (orderStatus === "PAID") {
+                localStatus = "EXITOSO";
+                isSuccess = true;
+            } else if (
+                orderStatus === "CANCELLED" ||
+                orderStatus === "EXPIRED"
+            ) {
+                localStatus = "CANCELADO";
+                isSuccess = false;
+            } else {
+                localStatus = "FALLIDO";
+                isSuccess = false;
+            }
+
+            db.updateTransactionStatus(orderId, localStatus, answer);
+        }
+    } catch (e) {
+        console.error("Error parsing kr-answer", e);
+    }
+}
+---
+
+<Layout title="¡Reserva Confirmada! - Bris Hotel">
+    <main
+        class="min-h-screen bg-[#fafafa] flex flex-col items-center justify-center p-6 sm:p-12 overflow-hidden"
+    >
+        <!-- Animación de Éxito / Icono -->
+        <div class="relative mb-8 animate-bounce-slow">
+            <div
+                class={`absolute inset-0 ${isSuccess ? "bg-[#00a19b]" : "bg-red-500"} opacity-20 blur-3xl rounded-full scale-150`}
+            >
+            </div>
+            <div
+                class={`relative w-24 h-24 ${isSuccess ? "bg-[#00a19b]" : "bg-red-500"} text-white rounded-full flex items-center justify-center shadow-xl shadow-current/20`}
+            >
+                {
+                    isSuccess ? (
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-12 w-12"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2.5"
+                                d="M5 13l4 4L19 7"
+                            />
+                        </svg>
+                    ) : (
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-12 w-12"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2.5"
+                                d="M6 18L18 6M6 6l12 12"
+                            />
+                        </svg>
+                    )
+                }
+            </div>
+        </div>
+
+        <!-- Título Principal -->
+        <div class="text-center mb-12">
+            <h1
+                class="text-4xl sm:text-5xl font-bold text-[#1a1a1a] merriweather mb-4 tracking-tight"
+            >
+                {isSuccess ? "¡Reserva Confirmada!" : "Pago no Procesado"}
+            </h1>
+            <p class="text-gray-500 montserrat text-lg max-w-md mx-auto">
+                {
+                    isSuccess
+                        ? "Gracias por elegir Bris Hotel. Tu estancia ha sido asegurada con éxito."
+                        : "Lo sentimos, no pudimos completar el pago. La reserva sigue pendiente o ha sido cancelada."
+                }
+            </p>
+        </div>
+
+        <!-- Tarjeta de Detalles Premium -->
+        <div
+            class="w-full max-w-md bg-white border border-gray-100 rounded-[2.5rem] p-10 shadow-xl shadow-gray-200/50 relative overflow-hidden"
+        >
+            <!-- Decoración -->
+            <div
+                class="absolute top-0 right-0 w-32 h-32 bg-[#00a19b]/5 rounded-bl-[100px]"
+            >
+            </div>
+
+            <div class="space-y-8 relative">
+                <div class="flex flex-col gap-1">
+                    <span
+                        class="text-[10px] uppercase tracking-[0.2em] text-[#00a19b] font-bold"
+                        >Detalle de Habitación</span
+                    >
+                    <h3 class="text-2xl font-bold text-gray-900 merriweather">
+                        Habitación {roomName}
+                    </h3>
+                </div>
+
+                <div class="grid grid-cols-2 gap-8">
+                    <div class="flex flex-col gap-1">
+                        <span
+                            class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold"
+                            >{isSuccess ? "Total Pagado" : "Monto"}</span
+                        >
+                        <p
+                            class={`text-xl font-bold ${isSuccess ? "text-gray-900" : "text-red-600"} merriweather`}
+                        >
+                            S/ {price}
+                        </p>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span
+                            class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold"
+                            >N° de Orden</span
+                        >
+                        <p class="text-sm font-medium text-gray-600 montserrat">
+                            {orderId}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="pt-8 border-t border-gray-100 space-y-4">
+                    <div class="flex items-center gap-3 text-gray-600">
+                        <div
+                            class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-[#00a19b]"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                ></path>
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-xs font-medium montserrat">
+                            Jr. Los Pinos 123, Tarapoto
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-3 text-gray-600">
+                        <div
+                            class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-[#00a19b]"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                ></path>
+                            </svg>
+                        </div>
+                        <p class="text-xs font-medium montserrat">
+                            Check-in: 2:00 PM
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="mt-12 flex flex-col sm:flex-row gap-4 w-full max-w-md">
+            <a
+                href="/"
+                class="flex-1 px-8 py-5 bg-[#1a1a1a] text-white rounded-2xl font-bold hover:bg-black transition-all text-center shadow-lg shadow-black/10 transform hover:-translate-y-1 active:scale-95"
+            >
+                Volver al Inicio
+            </a>
+            <a
+                href="https://maps.google.com"
+                target="_blank"
+                class="flex-1 px-8 py-5 bg-white text-gray-900 border border-gray-200 rounded-2xl font-bold hover:bg-gray-50 transition-all text-center transform hover:-translate-y-1 active:scale-95"
+            >
+                Ver Ubicación
+            </a>
+        </div>
+
+        <p class="mt-12 text-sm text-gray-400 montserrat italic">
+            Se ha enviado un correo con los detalles de tu reserva.
+        </p>
+    </main>
+</Layout>
+
+<style>
+    .merriweather {
+        font-family: "Merriweather", serif;
+    }
+    .montserrat {
+        font-family: "Montserrat", sans-serif;
+    }
+
+    @keyframes bounce-slow {
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+    .animate-bounce-slow {
+        animation: bounce-slow 4s infinite ease-in-out;
+    }
+</style>

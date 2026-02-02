@@ -1,13 +1,17 @@
 ---
-import Layout from "../layouts/Layout.astro"
-import Navbar from "../components/Navbar.astro"
-import RestaurantSection from "../components/RestaurantSection.astro"
-import DescripcionHotel from "../components/DescripcionHotel.astro"
-import InstagramFeed from "../components/InstagramFeed.astro"
-import CallToAction from "../components/CallToAction.astro"
-import Footer from "../components/Footer.astro"
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/ui/Navbar.astro";
+import RestaurantSection from "../components/restaurant/HeroRestaurant.astro";
+import DescripcionHotel from "../components/restaurant/RestaurantContent.astro";
+import InstagramFeed from "../components/shared/InstagramGallery.astro";
+import CallToAction from "../components/shared/CTA.astro";
+import Footer from "../components/ui/Footer.astro";
 ---
-<Layout>
+
+<Layout
+    title="Restaurante y Bar - Bris Hotel Nasca"
+    description="Deleita tu paladar con nuestra gastronomía local e internacional. Desayunos buffet, almuerzos y cenas en un ambiente exclusivo."
+>
     <Navbar />
     <RestaurantSection />
     <DescripcionHotel />

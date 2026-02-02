@@ -1,0 +1,260 @@
+---
+interface Props {
+  title: string;
+  subtitle: string;
+  features: string[];
+  images: string[];
+  reverse?: boolean;
+  price: number;
+  status?: "libre" | "reservado" | "ocupado" | "limpieza" | "mantenimiento";
+  ctaLabel?: string;
+}
+
+const {
+  title,
+  subtitle,
+  features,
+  images,
+  reverse,
+  price,
+  status,
+  ctaLabel = "CONSULTAR DISPONIBILIDAD",
+} = Astro.props as Props;
+
+const statusMap = {
+  libre: {
+    label: "Libre",
+    styles: "bg-green-50 text-green-600 border-green-200",
+  },
+  reservado: {
+    label: "Reservado",
+    styles: "bg-blue-50 text-blue-600 border-blue-200",
+  },
+  ocupado: {
+    label: "Ocupado",
+    styles: "bg-red-50 text-red-600 border-red-200",
+  },
+  limpieza: {
+    label: "En Limpieza",
+    styles: "bg-amber-50 text-amber-600 border-amber-200",
+  },
+  mantenimiento: {
+    label: "Mantenimiento",
+    styles: "bg-gray-50 text-gray-600 border-gray-200",
+  },
+};
+
+const isBookable = status === "libre" || status === "reservado" || !status;
+
+const id = `room-${subtitle
+  .toLowerCase()
+  .normalize("NFD")
+  .replace(/[\u0300-\u036f]/g, "")
+  .replace(/[^a-z0-9\s-]/g, "")
+  .trim()
+  .replace(/\s+/g, "-")}`;
+---
+
+<section id={id} class="py-10 md:py-16" data-room-id={id}>
+  <div
+    class={`max-w-6xl mx-auto px-6 md:flex md:items-center md:gap-10 ${reverse ? "md:flex-row-reverse" : ""}`}
+  >
+    <div class="md:w-1/2">
+      <div class="flex items-center flex-wrap gap-4 mb-2">
+        <h3
+          class="text-3xl sm:text-4xl md:text-5xl text-[#5a3d37] font-kestrel"
+        >
+          {subtitle}
+        </h3>
+        {
+          status && statusMap[status] && (
+            <span
+              class={`px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase border ${statusMap[status].styles}`}
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-current mr-2 inline-block animate-pulse" />
+              {statusMap[status].label}
+            </span>
+          )
+        }
+      </div>
+      <h4
+        class="text-lg sm:text-xl md:text-3xl tracking-[0.2em] md:tracking-[0.35em] uppercase font-semibold merriweather text-[#759120]"
+      >
+        {title}
+      </h4>
+
+      <ul class="mt-6 text-[#5a3d37] merriweather space-y-2">
+        {features.map((f: any) => <li class="list-disc list-inside">{f}</li>)}
+      </ul>
+
+      <p class="mt-6 text-lg font-semibold text-[#5a3d37] merriweather">
+        💰 Precio por noche: <span class="text-[#759120]">S/ {price}</span>
+      </p>
+
+      <!-- Botones -->
+      <div class="flex flex-wrap gap-4 mt-8">
+        {
+          isBookable ? (
+            <>
+              <a
+                href="javascript:void(0);"
+                onclick={`sendToWhatsApp('${title}', '${subtitle}')`}
+                class="px-5 sm:px-8 py-2.5 sm:py-3.5 bg-[#759120] text-white font-bold tracking-[0.15em] uppercase text-[10px] sm:text-xs hover:bg-[#5a3d37] merriweather transition rounded shadow-sm hover:shadow-md active:scale-95"
+              >
+                {ctaLabel}
+              </a>
+
+              <button
+                onclick={`openReservation('${subtitle}', ${price})`}
+                class="px-5 sm:px-8 py-2.5 sm:py-3.5 bg-[#5a3d37] text-white font-bold tracking-[0.15em] uppercase text-[10px] sm:text-xs hover:bg-[#759120] merriweather transition rounded shadow-sm hover:shadow-md active:scale-95 cursor-pointer"
+              >
+                RESERVAR AHORA
+              </button>
+            </>
+          ) : (
+            <div class="px-6 py-2.5 bg-gray-100 text-gray-400 font-bold tracking-[0.15em] uppercase text-[10px] merriweather rounded border border-gray-200 cursor-not-allowed flex items-center gap-2">
+              <i class="fas fa-lock text-[8px]" />
+              No Disponible Temporalmente
+            </div>
+          )
+        }
+      </div>
+    </div>
+
+    <div class="md:w-1/2 mt-8 md:mt-0">
+      <div class="relative overflow-hidden rounded-sm shadow-sm bg-black/5">
+        <div
+          class="viewport h-[280px] sm:h-[350px] md:h-[420px] overflow-hidden rounded-lg"
+        >
+          <div
+            class="track flex h-full transition-transform duration-500 ease-in-out"
+          >
+            {
+              images.map((src: any, i: number) => (
+                <div class="slide min-w-full h-full">
+                  <img
+                    src={src}
+                    alt={subtitle}
+                    class="w-full h-full object-cover rounded-lg"
+                    loading="lazy"
+                  />
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <button
+          class="prev absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white px-2 py-1 rounded shadow"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-5 h-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <button
+          class="next absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white px-2 py-1 rounded shadow"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-5 h-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <div
+          class="dots absolute left-0 right-0 bottom-3 flex justify-center gap-2"
+        >
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  function sendToWhatsApp(title, subtitle) {
+    const phone = "51940948536";
+    const message = `Hola Bris Hotel, quiero consultar la disponibilidad de una %0A📜 ${encodeURIComponent(title)}%0A🏡 ${encodeURIComponent(subtitle)}`;
+    const url = `https://wa.me/${phone}?text=${message}`;
+    window.open(url, "_blank");
+  }
+
+  function openReservation(room, price) {
+    const url = `/reservar?room=${encodeURIComponent(room)}&price=${price}`;
+    window.location.href = url;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const sliders = document.querySelectorAll("[data-room-id]");
+    sliders.forEach((slider) => {
+      const viewport = slider.querySelector(".viewport");
+      const track = slider.querySelector(".track");
+      const slides = slider.querySelectorAll(".slide");
+      const prev = slider.querySelector(".prev");
+      const next = slider.querySelector(".next");
+      const dotsWrap = slider.querySelector(".dots");
+
+      if (!slides.length) return;
+      const dots = [];
+      dotsWrap.innerHTML = "";
+
+      slides.forEach((_, i) => {
+        const b = document.createElement("button");
+        b.className =
+          "w-2.5 h-2.5 rounded-full bg-white/80 ring-1 ring-[#759120]/20";
+        b.setAttribute("aria-label", "Go to slide " + (i + 1));
+        b.addEventListener("click", () => goTo(i));
+        dotsWrap.appendChild(b);
+        dots.push(b);
+      });
+
+      let index = 0;
+      let autoChange = setInterval(onNext, 5000);
+
+      function update() {
+        const w = viewport.clientWidth;
+        track.style.transform = `translateX(-${index * w}px)`;
+        dots.forEach((d, i) => {
+          d.classList.toggle("bg-white", i === index);
+          d.classList.toggle("opacity-50", i !== index);
+        });
+      }
+
+      function goTo(i) {
+        index = (i + slides.length) % slides.length;
+        update();
+      }
+
+      function onPrev() {
+        clearInterval(autoChange);
+        goTo(index - 1);
+      }
+
+      function onNext() {
+        clearInterval(autoChange);
+        goTo(index + 1);
+      }
+
+      prev.addEventListener("click", onPrev);
+      next.addEventListener("click", onNext);
+      window.addEventListener("resize", update, { passive: true });
+      update();
+    });
+  });
+</script>

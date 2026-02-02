@@ -3,92 +3,213 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Políticas & Cookies">
-  <section class="py-20 bg-white text-[#5a3d37]">
-    <div class="max-w-5xl mx-auto px-6">
-      <h1 class="text-4xl sm:text-5xl font-kestrel text-center mb-6">Políticas & Cookies</h1>
-      <p class="text-lg merriweather text-center text-[#759120] tracking-wide mb-12">
-        Transparencia, seguridad y confianza para nuestros visitantes.
-      </p>
+  <section
+    class="pt-24 md:pt-32 pb-12 md:pb-24 bg-white text-[#5a3d37] relative overflow-hidden"
+  >
+    <!-- Boutique Background Blurs -->
+    <div
+      class="absolute -top-24 -right-24 w-96 h-96 bg-[#759120]/5 rounded-full blur-3xl opacity-50"
+    >
+    </div>
+    <div
+      class="absolute top-1/2 -left-24 w-72 h-72 bg-[#5a3d37]/5 rounded-full blur-3xl opacity-50"
+    >
+    </div>
 
-      <article class="space-y-10 merriweather leading-relaxed text-justify">
-        <div>
-          <h2 class="text-2xl font-semibold text-[#759120] mb-3">1. Política de Privacidad</h2>
-          <p>
-            En <strong>Bris Hotel</strong> respetamos y protegemos la privacidad de todos nuestros visitantes. 
-            La información personal que recopilemos (como nombre, correo electrónico o teléfono) será utilizada 
-            únicamente para gestionar reservas, responder consultas o enviar información relacionada con nuestros servicios.
-          </p>
-          <p class="mt-3">
-            No compartimos ni vendemos datos personales a terceros. Toda la información es tratada de acuerdo con la Ley N° 29733 – 
-            Ley de Protección de Datos Personales del Perú.
-          </p>
+    <div class="max-w-4xl mx-auto px-6 relative z-10">
+      <header class="text-center mb-20 reveal">
+        <h1 class="text-5xl md:text-6xl font-kestrel mb-6">
+          Políticas & Cookies
+        </h1>
+        <div class="w-16 h-0.5 bg-[#759120] mx-auto opacity-30 mb-8"></div>
+        <p
+          class="text-lg md:text-xl merriweather text-gray-400 italic tracking-wide max-w-2xl mx-auto"
+        >
+          "Transparencia, seguridad y confianza para asegurar la mejor estancia
+          de nuestros visitantes."
+        </p>
+      </header>
+
+      <div class="grid grid-cols-1 gap-16 md:gap-20">
+        <!-- Section 1 -->
+        <article class="reveal group">
+          <div class="flex items-center gap-4 mb-6">
+            <span
+              class="text-5xl font-kestrel text-[#759120]/10 group-hover:text-[#759120]/20 transition-colors"
+              >01</span
+            >
+            <h2 class="text-3xl font-kestrel">Política de Privacidad</h2>
+          </div>
+          <div
+            class="pl-0 md:pl-12 space-y-4 merriweather text-gray-400 leading-relaxed text-sm md:text-base"
+          >
+            <p>
+              En <strong class="text-[#5a3d37]">Bris Hotel</strong> respetamos y protegemos
+              la privacidad de todos nuestros visitantes. La información personal
+              que recopilemos (como nombre, correo electrónico o teléfono) será utilizada
+              únicamente para gestionar reservas, responder consultas o enviar información
+              relacionada con nuestros servicios.
+            </p>
+            <p>
+              No compartimos ni vendemos datos personales a terceros. Toda la
+              información es tratada de acuerdo con la <span class="italic"
+                >Ley N° 29733 – Ley de Protección de Datos Personales del Perú</span
+              >.
+            </p>
+          </div>
+        </article>
+
+        <!-- Section 2 -->
+        <article class="reveal group">
+          <div class="flex items-center gap-4 mb-6">
+            <span
+              class="text-5xl font-kestrel text-[#759120]/10 group-hover:text-[#759120]/20 transition-colors"
+              >02</span
+            >
+            <h2 class="text-3xl font-kestrel">Uso de Cookies</h2>
+          </div>
+          <div
+            class="pl-0 md:pl-12 space-y-6 merriweather text-gray-400 leading-relaxed text-sm md:text-base"
+          >
+            <p>
+              Nuestro sitio web utiliza cookies para mejorar la experiencia de
+              navegación y ofrecer contenidos relevantes. Las cookies son
+              pequeños archivos de texto que se almacenan en su dispositivo al
+              visitar nuestro sitio.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div
+                class="bg-[#fcf8f8] p-6 rounded-2xl border border-gray-100 shadow-sm"
+              >
+                <h4
+                  class="font-bold text-[#5a3d37] mb-2 text-xs uppercase tracking-widest leading-loose"
+                >
+                  Esenciales
+                </h4>
+                <p class="text-xs opacity-80 leading-relaxed">
+                  Necesarias para el funcionamiento básico del sitio.
+                </p>
+              </div>
+              <div
+                class="bg-[#fcf8f8] p-6 rounded-2xl border border-gray-100 shadow-sm"
+              >
+                <h4
+                  class="font-bold text-[#5a3d37] mb-2 text-xs uppercase tracking-widest leading-loose"
+                >
+                  Analíticas
+                </h4>
+                <p class="text-xs opacity-80 leading-relaxed">
+                  Nos permiten comprender el uso de nuestra web.
+                </p>
+              </div>
+              <div
+                class="bg-[#fcf8f8] p-6 rounded-2xl border border-gray-100 shadow-sm"
+              >
+                <h4
+                  class="font-bold text-[#5a3d37] mb-2 text-xs uppercase tracking-widest leading-loose"
+                >
+                  Personalización
+                </h4>
+                <p class="text-xs opacity-80 leading-relaxed">
+                  Guardan sus preferencias (idioma o ubicación).
+                </p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 3 & 4 Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
+          <article class="reveal group">
+            <div class="flex items-center gap-4 mb-6">
+              <span
+                class="text-5xl font-kestrel text-[#759120]/10 group-hover:text-[#759120]/20 transition-colors"
+                >03</span
+              >
+              <h2 class="text-2xl font-kestrel">Protección de Datos</h2>
+            </div>
+            <p
+              class="pl-0 md:pl-12 merriweather text-gray-400 leading-relaxed text-sm md:text-base"
+            >
+              Implementamos medidas técnicas y organizativas adecuadas para
+              proteger el acceso no autorizado, alteración o pérdida de sus
+              datos.
+            </p>
+          </article>
+
+          <article class="reveal group">
+            <div class="flex items-center gap-4 mb-6">
+              <span
+                class="text-5xl font-kestrel text-[#759120]/10 group-hover:text-[#759120]/20 transition-colors"
+                >04</span
+              >
+              <h2 class="text-2xl font-kestrel">Enlaces externos</h2>
+            </div>
+            <p
+              class="pl-0 md:pl-12 merriweather text-gray-400 leading-relaxed text-sm md:text-base"
+            >
+              No somos responsables del contenido ni de las políticas de
+              privacidad de los sitios externos enlazados.
+            </p>
+          </article>
         </div>
 
-        <div>
-          <h2 class="text-2xl font-semibold text-[#759120] mb-3">2. Uso de Cookies</h2>
-          <p>
-            Nuestro sitio web utiliza cookies para mejorar la experiencia de navegación y ofrecer contenidos relevantes.
-            Las cookies son pequeños archivos de texto que se almacenan en su dispositivo al visitar nuestro sitio.
-          </p>
-          <ul class="list-disc list-inside mt-3 space-y-2">
-            <li><strong>Cookies esenciales:</strong> necesarias para el funcionamiento básico del sitio.</li>
-            <li><strong>Cookies analíticas:</strong> nos permiten comprender cómo los visitantes usan la web.</li>
-            <li><strong>Cookies de personalización:</strong> guardan preferencias como idioma o ubicación.</li>
-          </ul>
-          <p class="mt-3">
-            Puede aceptar, rechazar o eliminar cookies desde la configuración de su navegador. 
-            Sin embargo, deshabilitar algunas podría afectar la funcionalidad del sitio.
-          </p>
-        </div>
+        <!-- Section 5 -->
+        <article class="reveal group">
+          <div class="flex items-center gap-4 mb-6">
+            <span
+              class="text-5xl font-kestrel text-[#759120]/10 group-hover:text-[#759120]/20 transition-colors"
+              >05</span
+            >
+            <h2 class="text-3xl font-kestrel">Contacto & Derechos</h2>
+          </div>
+          <div
+            class="pl-0 md:pl-12 merriweather text-gray-400 leading-relaxed text-sm md:text-base space-y-6"
+          >
+            <p>
+              Si tiene dudas sobre el tratamiento de sus datos o desea ejercer
+              sus derechos ARCO, escríbanos:
+            </p>
+            <div class="flex flex-wrap gap-6">
+              <a
+                href="mailto:reservas@brishotel.com"
+                class="group flex items-center gap-2 hover:text-[#759120] transition-colors"
+              >
+                <span
+                  class="w-8 h-8 rounded-full bg-[#fcf8f8] flex items-center justify-center text-[#759120] group-hover:bg-[#759120] group-hover:text-white transition-all shadow-sm"
+                >
+                  <i class="fas fa-envelope text-[10px]"></i>
+                </span>
+                <span
+                  class="text-[10px] font-bold tracking-[0.15em] leading-loose"
+                  >RESERVAS@BRISHOTEL.COM</span
+                >
+              </a>
+              <div class="flex items-center gap-2">
+                <span
+                  class="w-8 h-8 rounded-full bg-[#fcf8f8] flex items-center justify-center text-[#759120] shadow-sm"
+                >
+                  <i class="fas fa-phone text-[10px]"></i>
+                </span>
+                <span
+                  class="text-[10px] font-bold tracking-[0.15em] leading-loose"
+                  >+51 940 948 536</span
+                >
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
 
-        <div>
-          <h2 class="text-2xl font-semibold text-[#759120] mb-3">3. Protección de Datos</h2>
-          <p>
-            Implementamos medidas técnicas y organizativas adecuadas para proteger la información personal 
-            contra el acceso no autorizado, alteración, pérdida o destrucción.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="text-2xl font-semibold text-[#759120] mb-3">4. Enlaces a Terceros</h2>
-          <p>
-            Nuestro sitio puede contener enlaces a páginas externas. No somos responsables del contenido ni 
-            de las políticas de privacidad de dichos sitios, por lo que recomendamos revisarlas antes de proporcionar cualquier dato.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="text-2xl font-semibold text-[#759120] mb-3">5. Consentimiento</h2>
-          <p>
-            Al navegar por nuestro sitio web, usted acepta el uso de cookies y el tratamiento de sus datos 
-            personales conforme a las políticas descritas en esta página.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="text-2xl font-semibold text-[#759120] mb-3">6. Actualizaciones</h2>
-          <p>
-            Nos reservamos el derecho de modificar esta política en cualquier momento para adaptarla a cambios 
-            legales o técnicos. Cualquier actualización será publicada en esta misma página.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="text-2xl font-semibold text-[#759120] mb-3">7. Contacto</h2>
-          <p>
-            Si tiene dudas o desea ejercer sus derechos sobre el tratamiento de sus datos personales, 
-            puede comunicarse con nosotros a través de:
-          </p>
-          <ul class="list-disc list-inside mt-3 space-y-1">
-            <li>📧 <a href="mailto:reservas@brishotel.com" class="text-[#759120] hover:underline">reservas@brishotel.com</a></li>
-            <li>📞 +51 940 948 536</li>
-          </ul>
-        </div>
-      </article>
-
-      <div class="text-center mt-16">
-        <a href="/" class="inline-block px-6 py-3 bg-[#759120] text-white font-semibold tracking-wide hover:bg-[#5a3d37] merriweather transition rounded-lg">
-          Volver al inicio
+      <div class="pt-12 text-center reveal">
+        <a
+          href="/"
+          class="group inline-flex items-center gap-4 bg-[#5a3d37] hover:bg-[#4a322d] text-white px-10 py-5 rounded-full font-bold tracking-[0.2em] uppercase text-[10px] transition-all duration-500 shadow-xl shadow-[#5a3d37]/20 hover:shadow-[#5a3d37]/40 hover:-translate-y-1 active:scale-95"
+        >
+          <i
+            class="fas fa-arrow-left text-[8px] group-hover:-translate-x-1 transition-transform"
+          ></i>
+          Volver al Inicio
         </a>
       </div>
     </div>

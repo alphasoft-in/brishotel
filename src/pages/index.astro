@@ -1,15 +1,18 @@
 ---
-import Footer from '../components/Footer.astro';
-import InstagramFeed from '../components/InstagramFeed.astro';
-import Navbar from '../components/Navbar.astro';
-import NewsletterSection from '../components/NewsletterSection.astro';
-import Reference from '../components/Reference.astro';
-import Testimonial from '../components/Testimonial.astro';
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Footer from "../components/ui/Footer.astro";
+import InstagramFeed from "../components/shared/InstagramGallery.astro";
+import Navbar from "../components/ui/Navbar.astro";
+import NewsletterSection from "../components/shared/Newsletter.astro";
+import Reference from "../components/home/FeatureGrid.astro";
+import Testimonial from "../components/home/Testimonials.astro";
+import Welcome from "../components/home/HeroHome.astro";
+import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout>
+<Layout
+	title="Bris Hotel Nasca - Tu Mejor Experiencia en Ica"
+	description="Disfruta de la mejor estadía en Nasca con habitaciones modernas, piscina y gimnasio. Reserva ahora al mejor precio."
+>
 	<Navbar />
 	<Welcome />
 	<Reference />

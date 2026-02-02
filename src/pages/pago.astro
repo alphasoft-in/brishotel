@@ -1,44 +1,101 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Navbar from "../components/Navbar.astro";
-import Footer from "../components/Footer.astro";
-const token = Astro.url.searchParams.get("token");
+
+// Forzar SSR
+export const prerender = false;
+
+// Obtener parámetros de la URL
+const url = new URL(Astro.request.url);
+const token = url.searchParams.get("token");
+const orderId = url.searchParams.get("orderId");
+const roomName = url.searchParams.get("room") || "Habitación";
+const price = url.searchParams.get("price") || "0";
+
+// Claves de configuración
+const publicKey = import.meta.env.PUBLIC_IZIPAY_PUBLIC_KEY || "24058106:testpublickey_h3tQty2wtw4bjhpOAbPfZTNxhgfKuoHV5fQoMOp0f9ysn";
 ---
 
-<Layout title="Pago seguro - Bris Hotel">
-  <Navbar />
-  <section class="py-20 flex flex-col items-center justify-center">
-    <h1 class="text-3xl md:text-4xl font-bold text-[#5a3d37] mb-4">
-      Pago seguro con Izipay
-    </h1>
-    <p class="text-lg text-gray-700 mb-10 text-center px-6">
-      Completa tu pago de forma segura (modo <span class="font-semibold text-[#759120]">TEST</span>).
-    </p>
+<Layout title="Pago Seguro - Bris Hotel">
+  <main class="min-h-screen bg-[#fafafa] flex flex-col items-center justify-center p-6 sm:p-12">
+    
+    <!-- Encabezado de Marca -->
+    <div class="mb-8 text-center">
+      <h1 class="text-4xl sm:text-5xl font-bold text-[#1a1a1a] merriweather mb-3 tracking-tight">Finalizar Reserva</h1>
+      <div class="h-1 w-20 bg-[#00a19b] mx-auto rounded-full"></div>
+    </div>
 
     {token ? (
-      <div class="w-full max-w-md p-6 bg-white shadow-lg rounded-xl border">
-        <!-- Script oficial -->
-        <script src="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js"></script>
-        <script src="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic.js"></script>
+      <div class="w-full max-w-[450px] flex flex-col items-center">
+        
+        <!-- Resumen de Compra -->
+        <div class="w-full bg-white border border-gray-100 rounded-3xl p-6 mb-8 shadow-sm">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <p class="text-[10px] uppercase tracking-widest text-[#00a19b] font-bold mb-1">Detalle de Reserva</p>
+              <h2 class="text-xl font-bold text-gray-900 merriweather">Habitación {roomName}</h2>
+            </div>
+            <div class="text-right">
+              <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1">Total a Pagar</p>
+              <p class="text-xl font-bold text-[#1a1a1a] merriweather">S/ {price}</p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-dashed border-gray-200 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-xs text-gray-500 montserrat">Confirmación inmediata tras el pago</p>
+          </div>
+        </div>
 
-        <!-- Configuración -->
-        <script
-          type="text/javascript"
-          kr-public-key="73731983:testpublickey_czFI8X3UHRdDXoVIDZ2Q9kIRdqx8P9NrKjOzbw2HH7wnD"
-          kr-post-url-success="https://tu-dominio.com/pago-exitoso"
-          kr-post-url-refused="https://tu-dominio.com/pago-fallido"
-          kr-language="es-PE"
-          kr-form-token={token}
-        ></script>
+        <!-- Izipay Smart Form v4 (Native Modal) -->
+        <div class="w-full flex justify-center min-h-[300px]">
+          <script is:inline
+            src="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js"
+            kr-public-key={publicKey}
+            kr-post-url-success={`/confirmacion?room=${encodeURIComponent(roomName)}&price=${price}&orderId=${orderId}`}
+            kr-language="es-PE">
+          </script>
 
-        <!-- Contenedor del formulario -->
-        <div class="kr-embedded" kr-form-token={token}></div>
+          <link rel="stylesheet" href="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic-reset.min.css" />
+          <script is:inline src="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic.js"></script>
+
+          <!-- Elemento donde Izipay inyecta el modal -->
+          <div class="kr-smart-form" kr-popin kr-form-token={token}></div>
+        </div>
+
+        <div class="text-center mt-12 opacity-50">
+           <p class="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-4">Pago 100% Seguro por Izipay</p>
+           <div class="flex justify-center gap-6 grayscale">
+              <img src="https://static.micuentaweb.pe/static/img/krypton/visa-logo.svg" class="h-4" alt="Visa" />
+              <img src="https://static.micuentaweb.pe/static/img/krypton/mastercard-logo.svg" class="h-4" alt="Mastercard" />
+              <img src="https://static.micuentaweb.pe/static/img/krypton/amex-logo.svg" class="h-4" alt="Amex" />
+           </div>
+        </div>
       </div>
     ) : (
-      <div class="text-center text-red-600 font-semibold">
-        ⚠️ Token no encontrado. Regresa e intenta nuevamente.
+      <div class="max-w-md w-full text-center bg-white p-12 rounded-[2rem] shadow-sm border border-gray-100 mx-auto">
+        <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <h2 class="text-xl font-bold text-gray-900 mb-2 merriweather">Sesión no encontrada</h2>
+        <p class="text-gray-500 mb-8 montserrat leading-relaxed">No hemos detectado una sesión de pago activa. Por favor, selecciona una habitación nuevamente.</p>
+        <a href="/#habitaciones" class="inline-block px-8 py-4 bg-[#1a1a1a] text-white rounded-xl font-bold hover:bg-black transition-all transform hover:scale-[1.02] active:scale-[0.98]">
+          Ver Habitaciones
+        </a>
       </div>
     )}
-  </section>
-  <Footer />
+
+  </main>
 </Layout>
+
+<style>
+  .merriweather { font-family: 'Merriweather', serif; }
+  .montserrat { font-family: 'Montserrat', sans-serif; }
+  
+  /* Mantener el diseño del modal limpio */
+  :global(.kr-popin-modal) {
+    font-family: 'Montserrat', sans-serif !important;
+  }
+</style>

@@ -1,0 +1,148 @@
+[
+    {
+        "id": "simple",
+        "subtitle": "Simple",
+        "title": "HABITACIÓN",
+        "price": 180,
+        "status": "libre",
+        "features": [
+            "Baño privado (agua caliente).",
+            "TV Cable.",
+            "Free wifi.",
+            "Room service.",
+            "Intercomunicador."
+        ],
+        "images": [
+            "/src/assets/images/rooms/simple.png",
+            "/src/assets/images/rooms/simple-1.png",
+            "/src/assets/images/rooms/simple-2.png",
+            "/src/assets/images/rooms/simple-3.png",
+            "/src/assets/images/rooms/simple-4.png"
+        ]
+    },
+    {
+        "id": "doble",
+        "subtitle": "Doble",
+        "title": "HABITACIÓN",
+        "price": 220,
+        "status": "ocupado",
+        "reverse": true,
+        "features": [
+            "Baño privado (agua caliente).",
+            "TV Cable.",
+            "Free wifi.",
+            "Room service.",
+            "Intercomunicador."
+        ],
+        "images": [
+            "/src/assets/images/rooms/doble.png",
+            "/src/assets/images/rooms/doble-1.png",
+            "/src/assets/images/rooms/doble-2.png",
+            "/src/assets/images/rooms/doble-3.png"
+        ]
+    },
+    {
+        "id": "matrimonial",
+        "subtitle": "Matrimonial",
+        "title": "HABITACIÓN",
+        "price": 220,
+        "status": "libre",
+        "features": [
+            "Baño privado (agua caliente).",
+            "TV Cable.",
+            "Free wifi.",
+            "Room service.",
+            "Intercomunicador."
+        ],
+        "images": [
+            "/src/assets/images/rooms/matrimonial.png",
+            "/src/assets/images/rooms/matrimonial-1.png",
+            "/src/assets/images/rooms/matrimonial-2.png",
+            "/src/assets/images/rooms/matrimonial-3.png",
+            "/src/assets/images/rooms/matrimonial-4.png",
+            "/src/assets/images/rooms/matrimonial-5.png",
+            "/src/assets/images/rooms/matrimonial-6.png",
+            "/src/assets/images/rooms/matrimonial-7.png",
+            "/src/assets/images/rooms/matrimonial-8.png"
+        ]
+    },
+    {
+        "id": "queen",
+        "subtitle": "Queen",
+        "title": "HABITACIÓN",
+        "price": 300,
+        "status": "limpieza",
+        "reverse": true,
+        "features": [
+            "Baño privado (agua caliente).",
+            "TV Cable.",
+            "Free wifi.",
+            "Room service.",
+            "Intercomunicador."
+        ],
+        "images": [
+            "/src/assets/images/rooms/queen.png",
+            "/src/assets/images/rooms/queen-1.png",
+            "/src/assets/images/rooms/queen-2.png"
+        ]
+    },
+    {
+        "id": "king-size",
+        "subtitle": "King Size",
+        "title": "HABITACIÓN",
+        "price": 320,
+        "status": "reservado",
+        "features": [
+            "Baño privado (agua caliente).",
+            "TV Cable.",
+            "Free wifi.",
+            "Room service.",
+            "Intercomunicador."
+        ],
+        "images": [
+            "/src/assets/images/rooms/king-size.png",
+            "/src/assets/images/rooms/king-size-1.png"
+        ]
+    },
+    {
+        "id": "triple",
+        "subtitle": "Triple",
+        "title": "HABITACIÓN",
+        "price": 280,
+        "status": "libre",
+        "reverse": true,
+        "features": [
+            "Baño privado (agua caliente).",
+            "TV Cable.",
+            "Free wifi.",
+            "Room service.",
+            "Intercomunicador."
+        ],
+        "images": [
+            "/src/assets/images/rooms/triple.png",
+            "/src/assets/images/rooms/triple-1.png",
+            "/src/assets/images/rooms/triple-2.png"
+        ]
+    },
+    {
+        "id": "cuadruple",
+        "subtitle": "Cuádruple",
+        "title": "HABITACIÓN",
+        "price": 320,
+        "status": "mantenimiento",
+        "features": [
+            "Baño privado (agua caliente).",
+            "TV Cable.",
+            "Free wifi.",
+            "Room service.",
+            "Intercomunicador."
+        ],
+        "images": [
+            "/src/assets/images/rooms/cuadruple.png",
+            "/src/assets/images/rooms/cuadruple-1.png",
+            "/src/assets/images/rooms/cuadruple-2.png",
+            "/src/assets/images/rooms/cuadruple-3.png",
+            "/src/assets/images/rooms/cuadruple-4.png"
+        ]
+    }
+]

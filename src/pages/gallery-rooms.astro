@@ -1,26 +1,43 @@
 ---
-import CallToAction from "../components/CallToAction.astro"
-import Footer from "../components/Footer.astro"
-import InstagramFeed from "../components/InstagramFeed.astro"
-import Navbar from "../components/Navbar.astro"
-import Layout from "../layouts/Layout.astro"
+import CallToAction from "../components/shared/CTA.astro";
+import Footer from "../components/ui/Footer.astro";
+import InstagramFeed from "../components/shared/InstagramGallery.astro";
+import Navbar from "../components/ui/Navbar.astro";
+import Layout from "../layouts/Layout.astro";
 
 // Cargar todas las imágenes de la carpeta rooms
-const images = import.meta.glob('../assets/images/rooms/*.{png,jpg,jpeg}', { eager: true, import: 'default' });
+const images = import.meta.glob("../assets/images/rooms/*.{png,jpg,jpeg}", {
+    eager: true,
+    import: "default",
+});
 
 // Convertir a array y ordenar
-const roomImages = Object.entries(images).map(([path, image]: [string, any]) => ({
-  src: image.src,
-  alt: path.split('/').pop()?.replace(/\.(png|jpg|jpeg)$/, '') || '',
-  filename: path.split('/').pop() || ''
-})).sort((a, b) => {
-  // Ordenar por nombre de archivo
-  const order = ['simple', 'doble', 'matrimonial', 'queen', 'king-size', 'triple', 'cuadruple'];
-  const aRoom = order.findIndex(room => a.filename.startsWith(room));
-  const bRoom = order.findIndex(room => b.filename.startsWith(room));
-  if (aRoom !== bRoom) return aRoom - bRoom;
-  return a.filename.localeCompare(b.filename);
-});
+const roomImages = Object.entries(images)
+    .map(([path, image]: [string, any]) => ({
+        src: image.src,
+        alt:
+            path
+                .split("/")
+                .pop()
+                ?.replace(/\.(png|jpg|jpeg)$/, "") || "",
+        filename: path.split("/").pop() || "",
+    }))
+    .sort((a, b) => {
+        // Ordenar por nombre de archivo
+        const order = [
+            "simple",
+            "doble",
+            "matrimonial",
+            "queen",
+            "king-size",
+            "triple",
+            "cuadruple",
+        ];
+        const aRoom = order.findIndex((room) => a.filename.startsWith(room));
+        const bRoom = order.findIndex((room) => b.filename.startsWith(room));
+        if (aRoom !== bRoom) return aRoom - bRoom;
+        return a.filename.localeCompare(b.filename);
+    });
 ---
 
 <Layout>
@@ -28,7 +45,9 @@ const roomImages = Object.entries(images).map(([path, image]: [string, any]) => 
     <section id="gallery" class="bg-[#f7efef] pt-32 pb-16 scroll-mt-32">
         <div class="max-w-6xl mx-auto px-4 text-center">
             <!-- Título -->
-            <h2 class="font-kestrel text-4xl md:text-5xl tracking-wide text-[#3e2f2a]">
+            <h2
+                class="font-kestrel text-4xl md:text-5xl tracking-wide text-[#3e2f2a]"
+            >
                 Galería
             </h2>
             <p class="merriweather text-[#8b6f68] text-lg md:text-xl mt-1">
@@ -36,19 +55,25 @@ const roomImages = Object.entries(images).map(([path, image]: [string, any]) => 
             </p>
 
             <!-- Tabs -->
-            <div class="flex justify-center gap-6 mt-8 text-sm font-semibold text-[#3e2f2a]">
-                <button class="border-b-2 border-[#3e2f2a] pb-1">Habitaciones</button>
+            <div
+                class="flex justify-center gap-6 mt-8 text-sm font-semibold text-[#3e2f2a]"
+            >
+                <button class="border-b-2 border-[#3e2f2a] pb-1"
+                    >Habitaciones</button
+                >
             </div>
 
             <!-- Galería -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-10">
-                {roomImages.map(({ src, alt }) => (
-                    <img 
-                        src={src} 
-                        alt={alt} 
-                        class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]" 
-                    />
-                ))}
+                {
+                    roomImages.map(({ src, alt }) => (
+                        <img
+                            src={src}
+                            alt={alt}
+                            class="rounded-lg shadow-md object-cover w-full h-[300px] sm:h-[350px]"
+                        />
+                    ))
+                }
             </div>
         </div>
     </section>

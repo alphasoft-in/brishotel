@@ -1,0 +1,65 @@
+---
+import image from "../../assets/images/room.png";
+---
+
+<section class="relative bg-[#f4ecec] py-10 md:py-16">
+	<div
+		class="max-w-7xl mx-auto grid md:grid-cols-2 items-center gap-6 md:gap-10 px-6"
+	>
+		<div class="relative">
+			<div class="bg-white p-4 shadow-lg">
+				<img src={image.src} alt="Rooms" class="w-full object-cover" />
+			</div>
+		</div>
+
+		<div class="text-[#5a3d37] mt-10 md:mt-0">
+			<h2 class="text-3xl sm:text-4xl md:text-6xl font-kestrel">
+				Alojamiento
+			</h2>
+			<h3
+				class="text-2xl sm:text-3xl md:text-5xl merriweather text-[#759120] mt-1"
+			>
+				Comodidad en cada detalle
+			</h3>
+			<p
+				class="mt-4 text-xs sm:text-sm md:text-base merriweather leading-relaxed opacity-80"
+			>
+				Descubra nuestras hermosas y espaciosas habitaciones de Bris
+				Hotel en el corazón de Nasca, cada una con un nombre único. Su
+				estancia incluye un delicioso desayuno en la habitación.
+			</p>
+
+			<div class="mt-6 space-y-3 merriweather text-sm">
+				<p>
+					<span class="font-bold tracking-widest">CHECK-IN:</span> 01:00
+					PM
+				</p>
+				<p>
+					<span class="font-bold tracking-widest">CHECK-OUT:</span> 12:00
+					M
+				</p>
+				<p>
+					<span class="font-bold tracking-widest">ATENCIÓN:</span> 24 HORAS
+				</p>
+			</div>
+
+			<button
+				class="merriweather mt-8 bg-[#5a3d37] text-white px-5 sm:px-8 py-2.5 sm:py-3.5 text-[10px] sm:text-xs font-bold tracking-[0.15em] uppercase hover:bg-[#759120] transition rounded shadow-sm hover:shadow-md active:scale-95 cursor-pointer"
+				onclick="enviarConsultaWhatsApp()"
+			>
+				RESERVA AHORA
+			</button>
+		</div>
+	</div>
+</section>
+<script is:inline>
+	function enviarConsultaWhatsApp() {
+		const phone = "51940948536";
+
+		const message = `Hola, quiero realizar una reserva en Bris Hotel.%0APor favor, ¿me pueden dar más información sobre las habitaciones y disponibilidad?`;
+
+		const url = `https://wa.me/${phone}?text=${message}`;
+
+		window.open(url, "_blank");
+	}
+</script>

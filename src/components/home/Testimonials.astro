@@ -1,0 +1,205 @@
+---
+const reviews = [
+	{
+		name: "PatriGCC",
+		text: "Este hotel te ofrece una buena estadia si por ejemplo llegas por trabajo, como en mi caso; o si llegas con la familia de vacaciones. Si se animan a dar un chapuzon en la piscina, pues en agosto se siente algo de frio...seguro lo pasaran muy bien. Lo único malo del lugar es que no ofrece servicio de cafeteria y que la habitacion no incluye el desayuno. Pero cuenta con agua caliente y wifi gratis.",
+	},
+	{
+		name: "Ivonne L",
+		text: "Como no hicimos reservación ,estuvo bien ,el costo era bueno,las camas y el baño, pero no sabíamos que no incluye desayuno,aunque no era problema al menos para nosotros , no se ubica en la vía principal ,pero está a poquisimos metros de la plaza de armas,pero la noche que estuvimos hubo el terremoto en Arequipa el cual se sintió en Nazca muy pero muy fuerte,felizmente todo estuvo seguro en el lugar. También tiene estacionamiento en el interior lo cual fue importante para quedarnos aquí.",
+	},
+	{
+		name: "AAI74",
+		text: "Dueños muy agradables y pendiente de que estés agosto en el hotel, hotel limpio y muy cómodo,se preocupan bastante delos clientes los dueños y de que la estancia sea, lo mas agradable posible.Precio y calidad muy bienes un hotel que recomiendo.",
+	},
+	{
+		name: "Fernando V",
+		text: "El Hotel se encuentra a una cuadra de la plaza de armas, donde hay restaurantes, y comercios en general. La habitación que solicité era indivudual, era pequeña, muy limpia, con agua caliente, tv y lo necesario. El hotel cuenta con piscina y puede uno solicitar el desayuno y pagarlo por separado",
+	},
+	{
+		name: "EstherArana",
+		text: "Nos alojamos solo una noche, no teníamos reserva, pero encontramos cupo, eramos mi esposo y yo, nos dieron dos habitaciones a escoger, escogimos en el segundo piso, frente a la piscina, la habitación amplia, muy limpia, la cama muy cómoda, aire acondicionado, el baño impecable y amplio, muy amables las personas que atienden, cuenta con dos piscinas, para adultos y niños, muy bellas plantas, lo malo, no sirven desayuno, pero se soluciona, el lugar, a pesar que esta cerca al mercado, no es ningún inconveniente, un sitio muy seguro, a una cuadra de la Plaza de Armas, y del bulevar, lleno de restaurantes y negocios. Muy bueno y nada que envidiar a otros hoteles, sobre todo tienen buen precio, si dudarlo regreso a este hotel.",
+	},
+	{
+		name: "Oscardog16",
+		text: "Parecía básico, pero estaba limpio, espacioso y seguro. El hotel obviamente está invirtiendo dinero para mejorar su propiedad. La instalación del ascensor estaba casi completa. El minibar en la habitación era una ventaja inesperada. Intentamos reservar una propiedad más cara, pero no tenía vacante, así que reservamos una habitación doble de lujo en el Bris Hotel. Durante nuestra estancia visitamos la propiedad más cara. Nos alegró que reservamos el hotel Bris, ya que estaba en una zona mucho más tranquila y mejor relación calidad-precio a aproximadamente la mitad del precio de la propiedad más cara",
+	},
+	{
+		name: "Alfonso C.",
+		text: "El hotel bastante aceptable en todos los sentidos, el personal muy amable, no hay queja en absoluto por esa parte, el cuarto tiene su ropero y también tiene aire acondicionado, en la noche es muy tranquilo y se puede descansar muy bien. Ubicado a media cuadra de la plaza de armas, tiene parking incluido. El personal fue muy amable.",
+	},
+	{
+		name: "E Cordova",
+		text: "Estuve en verano por la ciudad de Nasca, me hospedé y constaté la excelente ubicación del hotel, atención cordial, amable y atento del pesonal; muy buena piscina y la cochera ámplia y espaciosa para maniobras, sobre todo segura. De hecho, al regresar a Nasca, volveré a hospedarme en el mismo hotel porque me ofrece lo que necesito: ubicación céntrica, seguridad, confort. Lo recomiendo.",
+	},
+	{
+		name: "Alan Wurman",
+		text: "Hola, soy Alan de los Cyberlocos. Nos quedamos en el Hotel Bris y realmente fue de las mejores experiencias del viaje, el desayuno delicioso, las piezas limpias, la cama super cómoda y las personas que trabajan ahi son un amor, nos ayudaron muchísimo!. 100% recomendado",
+	},
+	{
+		name: "Cecilia Caldera",
+		text: "Hotel muy bonito, además de la atención q dan en todo momento...desayuno sabroso...y las chicas q nos atendieron super amables Karla, Merry y María ...lo recomiendo ampliamente, exelente servicio",
+	},
+	{
+		name: "Manueal Llaguno",
+		text: "Buen hotel y muy cerca a la plaza. No todas las habitaciones tienen aire acondicionado, pero si hay disponibles te la cambian.",
+	},
+	{
+		name: "Alma Liliana",
+		text: "Tiene buena ubicación por el centro de nasca, de la estación de autobuses llegas caminando Las habitaciones muy cómodas y limpias,el lugar es muy agradable por su decoración. No hay ruidos,puedes descansar cómodamente,lo recomiendo ampliamente, además el personal muy atento y educado nos guardaron nuestro equipaje para ir a un tour y nos dejaron pasar allí la tarde en el área del jardín ya que nuestro autobús salía de noche. Gracias x todo",
+	},
+];
+---
+
+<section class="bg-[#fcf8f8] py-12 md:py-24 reveal">
+	<div class="max-w-6xl mx-auto text-center px-4 md:px-6">
+		<h2
+			class="text-3xl sm:text-4xl font-kestrel text-[#5a3d37] md:text-5xl mb-4"
+		>
+			Comentarios de huéspedes
+		</h2>
+		<div
+			class="w-20 md:w-24 h-0.5 bg-[#759120] mx-auto mb-8 md:mb-16 opacity-30"
+		>
+		</div>
+		<div class="relative overflow-hidden">
+			<div
+				id="testimonial-track"
+				class="flex transition-transform duration-700 ease-in-out"
+				data-length={reviews.length}
+			>
+				{
+					reviews.map((r) => (
+						<div class="w-full md:w-1/3 flex-shrink-0 px-4 md:px-6">
+							<div class="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col h-full hover:shadow-md transition-shadow duration-300">
+								<div class="text-[#759120] text-3xl mb-3 md:mb-4 text-left font-serif">
+									“
+								</div>
+								<p class="text-gray-600 merriweather leading-relaxed mb-6 md:mb-8 text-sm italic flex-1 text-left">
+									{r.text.length > 200
+										? r.text.substring(0, 200) + "..."
+										: r.text}
+								</p>
+								<div class="flex items-center gap-3">
+									<div class="w-8 h-px bg-[#759120] opacity-50" />
+									<span class="text-xs font-bold merriweather text-[#5a3d37] tracking-widest uppercase">
+										{r.name}
+									</span>
+								</div>
+							</div>
+						</div>
+					))
+				}
+			</div>
+
+			<div
+				id="testimonial-dots"
+				class="flex justify-center mt-6 md:mt-12 space-x-3"
+			>
+				<!-- Dots generated dynamically by script -->
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	document.addEventListener("DOMContentLoaded", () => {
+		const track = document.getElementById("testimonial-track");
+		const dotsContainer = document.getElementById("testimonial-dots");
+
+		if (!track || !dotsContainer) return;
+
+		const trackEl = track as HTMLElement;
+		const totalReviews = trackEl.children.length;
+		let index = 0;
+		let timer: ReturnType<typeof setInterval> | null = null;
+
+		function getItemsPerView(): number {
+			return window.innerWidth >= 768 ? 3 : 1;
+		}
+
+		function getTotalGroups(): number {
+			return Math.ceil(totalReviews / getItemsPerView());
+		}
+
+		function createDots() {
+			dotsContainer!.innerHTML = "";
+			const totalGroups = getTotalGroups();
+
+			for (let i = 0; i < totalGroups; i++) {
+				const dot = document.createElement("button");
+				dot.className =
+					"w-6 h-1.5 rounded-full transition-all duration-500 cursor-pointer";
+				dot.dataset.index = i.toString();
+				dot.addEventListener("click", () => {
+					showSlide(i);
+					startAuto();
+				});
+				dotsContainer!.appendChild(dot);
+			}
+			updateDots();
+		}
+
+		function applyTransform() {
+			const containerWidth = trackEl.parentElement
+				? trackEl.parentElement.clientWidth
+				: 0;
+			trackEl.style.transform = `translateX(-${index * containerWidth}px)`;
+		}
+
+		function updateDots() {
+			const dots = dotsContainer!.querySelectorAll("button");
+			dots.forEach((dot, idx) => {
+				const isActive = idx === index;
+				if (isActive) {
+					dot.classList.add("bg-[#759120]", "w-10");
+					dot.classList.remove("bg-gray-200", "w-6");
+				} else {
+					dot.classList.add("bg-gray-200", "w-6");
+					dot.classList.remove("bg-[#759120]", "w-10");
+				}
+			});
+		}
+
+		function showSlide(i: number) {
+			const totalGroups = getTotalGroups();
+			// Reset index if totalGroups changed (resize) and index is out of bounds
+			if (index >= totalGroups) index = 0;
+
+			index = ((i % totalGroups) + totalGroups) % totalGroups;
+			trackEl.style.transition =
+				"transform 0.7s cubic-bezier(0.4, 0, 0.2, 1)";
+			applyTransform();
+			updateDots();
+		}
+
+		function startAuto() {
+			stopAuto();
+			timer = setInterval(() => showSlide(index + 1), 5000);
+		}
+
+		function stopAuto() {
+			if (timer) clearInterval(timer);
+		}
+
+		// Initial creation
+		createDots();
+
+		window.addEventListener("resize", () => {
+			const prevGroups = getTotalGroups();
+			// We handle the resize logic here
+			setTimeout(() => {
+				const newGroups = getTotalGroups();
+				if (prevGroups !== newGroups) {
+					createDots();
+					showSlide(0);
+				} else {
+					applyTransform();
+				}
+			}, 100);
+		});
+
+		showSlide(0);
+		startAuto();
+	});
+</script>

@@ -1,66 +1,119 @@
 import type { APIRoute } from "astro";
+import { db } from "../../lib/db";
 
-export const POST: APIRoute = async ({ request }) => {
+export const prerender = false;
+
+export const ALL: APIRoute = async ({ request }) => {
+  const jsonHeaders = { "Content-Type": "application/json" };
+
   try {
-    // 🔹 Leer datos enviados desde el front
-    const { room, price } = await request.json();
-    if (!room || !price) {
-      return new Response(JSON.stringify({ success: false, error: "Faltan datos (room o price)" }), { status: 400 });
+    const requestUrl = new URL(request.url);
+    const room = requestUrl.searchParams.get("room") || "Reserva";
+    const price = requestUrl.searchParams.get("price") || "0";
+    const email = requestUrl.searchParams.get("email") || "cliente@brishotel.com";
+    const firstName = requestUrl.searchParams.get("firstName") || "Huésped";
+    const lastName = requestUrl.searchParams.get("lastName") || "Bris Hotel";
+    const dni = requestUrl.searchParams.get("dni") || "";
+    const phone = requestUrl.searchParams.get("phone") || "";
+
+    if (!price || price === "0") {
+      return new Response(JSON.stringify({ success: false, error: "Precio no válido" }), { status: 400, headers: jsonHeaders });
     }
 
-    // 🔐 Credenciales de TEST
-    const USER = "73731983";
-    const PASSWORD = "testpassword_r6UvwcwsOAbnv2KplTdpDcCgvJVU1pdC7QytfmfYQ52g6";
-    const AUTH = Buffer.from(`${USER}:${PASSWORD}`).toString("base64");
+    // 🔐 Credenciales v4 Estándar
+    const USER = import.meta.env.IZIPAY_USER;
+    const PASSWORD = import.meta.env.IZIPAY_PASSWORD;
+    const MODE = import.meta.env.IZIPAY_MODE || "TEST";
 
-    // 🔹 Crear el pago en modo test
-    const response = await fetch("https://api.micuentaweb.pe/api-payment/V4/Charge/CreatePayment", {
+    const auth = Buffer.from(`${USER}:${PASSWORD}`).toString("base64");
+    const orderId = `RES-${Date.now()}`;
+    const amountCents = Math.round(Number(price) * 100);
+
+
+
+    const izipayResponse = await fetch("https://api.micuentaweb.pe/api-payment/V4/Charge/CreatePayment", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Basic ${AUTH}`,
+        "Authorization": `Basic ${auth}`,
       },
       body: JSON.stringify({
-        amount: price * 100, // Izipay usa centavos
+        amount: amountCents,
         currency: "PEN",
-        orderId: `reserva_${Date.now()}`,
+        orderId: orderId,
         customer: {
-          email: "cliente@prueba.com",
+          email: email,
+          billingDetails: {
+            firstName: firstName,
+            lastName: lastName,
+            phoneNumber: phone,
+            identityCode: dni
+          }
         },
+        // Mantenemos esto simple para evitar error 400 "Charge/CreatePayment"
+        // Izipay v4 REST no acepta ipnUrl o transactionOptions en la raíz de esta forma
         formAction: "PAYMENT",
         paymentConfig: "SINGLE",
         captureMode: "AUTOMATIC",
-        mode: "TEST", // 👈 aseguramos modo test
+        mode: MODE,
       }),
     });
 
-    const text = await response.text();
+    const responseText = await izipayResponse.text();
+
+
     let data;
     try {
-      data = JSON.parse(text);
-    } catch {
-      console.error("Respuesta no JSON de Izipay:", text);
-      return new Response(JSON.stringify({ success: false, error: "Respuesta no JSON de Izipay", raw: text }), {
-        status: 500,
-      });
+      data = JSON.parse(responseText);
+    } catch (e) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: "Error en formato de respuesta",
+        detail: responseText.substring(0, 100)
+      }), { status: 502, headers: jsonHeaders });
     }
 
-    if (data?.answer?.formToken && data?.answer?.shopUrl) {
-      return new Response(
-        JSON.stringify({
-          success: true,
-          formToken: data.answer.formToken,
-          paymentUrl: data.answer.shopUrl,
-        }),
-        { status: 200 }
-      );
+    if (izipayResponse.ok && data?.status === "SUCCESS" && data?.answer?.formToken) {
+      // 📝 Registrar en la DB local
+      try {
+        // Guardamos datos estructurados del cliente
+        const clientData = JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          dni,
+          phone
+        });
+
+        db.addTransaction({
+          id: `tx-${Date.now()}`,
+          orderId: orderId,
+          roomName: room,
+          amount: Number(price),
+          customer: clientData,
+          status: 'INICIADO', // Cambiado de PENDIENTE para no generar alerta prematura
+          timestamp: new Date().toISOString()
+        });
+
+      } catch (dbErr) {
+        console.error("❌ DB Error:", dbErr);
+      }
+
+      return new Response(JSON.stringify({
+        success: true,
+        formToken: data.answer.formToken,
+        orderId: orderId
+      }), { status: 200, headers: jsonHeaders });
     }
 
-    return new Response(JSON.stringify({ success: false, error: "Error en respuesta de Izipay", raw: data }), {
-      status: 400,
-    });
-  } catch (error) {
-    console.error("❌ Error general en /api/payment:", error);
-    return new Response(JSON.stringify({ success: false, error: "Error en el servidor" }), { status: 500 });
+    return new Response(JSON.stringify({
+      success: false,
+      error: data?.webService || "Error de Izipay",
+      detail: data
+    }), { status: 400, headers: jsonHeaders });
+
+  } catch (err: any) {
+    console.error("❌ API Error:", err);
+    return new Response(JSON.stringify({ success: false, error: err.message }), { status: 500, headers: jsonHeaders });
   }
 };

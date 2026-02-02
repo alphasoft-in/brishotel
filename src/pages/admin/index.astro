@@ -1,0 +1,772 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { db } from "../../lib/db";
+import { getRoomImages } from "../../lib/images";
+import { verifySession } from "../../lib/auth";
+
+export const prerender = false;
+
+// Protección de Ruta
+const session = Astro.cookies.get("admin_session")?.value;
+if (!verifySession(session)) {
+    return Astro.redirect("/login");
+}
+
+// Obtener datos iniciales
+const rooms = db.getRooms();
+const transactions = db.getTransactions();
+
+// Cálculo de KPIs
+const successfulTx = transactions.filter((tx) => tx.status === "EXITOSO");
+const totalRevenue = successfulTx.reduce((acc, curr) => acc + curr.amount, 0);
+
+const pendingTxList = transactions.filter((tx) => tx.status === "PENDIENTE");
+const pendingRevenue = pendingTxList.reduce(
+    (acc, curr) => acc + curr.amount,
+    0,
+);
+const pendingTxCount = pendingTxList.length;
+
+const occupancyCount = rooms.filter((r) => r.status === "ocupado" || r.status === "reservado").length;
+
+// Configuración de Estados (System Precision)
+const statusConfig = {
+    libre: {
+        label: "Disponible",
+        color: "text-emerald-600",
+        bg: "bg-emerald-50",
+        border: "border-emerald-100/50",
+    },
+    ocupado: {
+        label: "En Uso",
+        color: "text-rose-600",
+        bg: "bg-rose-50",
+        border: "border-rose-100/50",
+    },
+    limpieza: {
+        label: "Limpieza",
+        color: "text-blue-600",
+        bg: "bg-blue-50",
+        border: "border-blue-100/50",
+    },
+    reservado: {
+        label: "Reservado",
+        color: "text-indigo-600",
+        bg: "bg-indigo-50",
+        border: "border-indigo-100/50",
+    },
+    mantenimiento: {
+        label: "Servicio",
+        color: "text-amber-600",
+        bg: "bg-amber-50",
+        border: "border-amber-100/50",
+    },
+};
+---
+
+<Layout title="Bris Admin | Optimized Management">
+    <div
+        class="min-h-screen bg-[#FDFBF9] font-inter selection:bg-[#00a19b]/10 text-slate-900 antialiased"
+    >
+        <!-- Navbar Superior Compacta -->
+        <!-- Navbar Superior Premium -->
+        <nav
+            class="fixed top-0 inset-x-0 h-16 bg-white/80 backdrop-blur-md border-b border-slate-200/50 z-[100] px-6 flex items-center justify-between transition-all duration-300"
+        >
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-black text-xs shadow-lg shadow-slate-900/20"
+                    >
+                        B
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <h1 class="font-bold text-sm tracking-tight text-slate-900 leading-none">
+                            Bris Management
+                        </h1>
+                        <span class="text-[10px] font-medium text-slate-400 tracking-wide uppercase mt-0.5">Admin Panel</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-slate-100/50 rounded-full border border-slate-200/50">
+                    <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <span class="text-[11px] font-semibold text-slate-600">Sistema Activo</span>
+                </div>
+
+                <div class="h-6 w-px bg-slate-200 mx-2"></div>
+
+                <button
+                    id="logout-btn"
+                    class="group flex items-center gap-2 px-3 py-2 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all duration-200"
+                    title="Cerrar Sesión"
+                >
+                    <span class="text-xs font-semibold hidden md:block group-hover:translate-x-0.5 transition-transform">Salir</span>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="w-4 h-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        ><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg
+                    >
+                </button>
+            </div>
+        </nav>
+
+        <main class="pt-24 pb-16 px-6 max-w-[1400px] mx-auto">
+            <!-- Dashboard KPIs -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div
+                    class="bg-white border border-slate-200 p-5 rounded-lg shadow-sm"
+                >
+                    <p
+                        class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1.5"
+                    >
+                        Ingresos Totales (S/)
+                    </p>
+                    <h3
+                        class="text-3xl font-bold text-slate-900 tracking-tight"
+                    >
+                        {totalRevenue.toFixed(2)}
+                    </h3>
+                    <p class="text-[11px] font-bold text-[#00a19b] mt-2">
+                        + {pendingRevenue.toFixed(2)} por confirmar
+                    </p>
+                </div>
+                <div
+                    class="bg-white border border-slate-200 p-5 rounded-lg shadow-sm"
+                >
+                    <p
+                        class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1.5"
+                    >
+                        Ocupación Actual
+                    </p>
+                    <h3
+                        class="text-3xl font-bold text-slate-900 tracking-tight"
+                    >
+                        {occupancyCount} / {rooms.length}
+                    </h3>
+                </div>
+                <div
+                    class="bg-white border border-slate-200 p-5 rounded-lg shadow-sm"
+                >
+                    <p
+                        class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1.5"
+                    >
+                        Disponibles
+                    </p>
+                    <h3
+                        class="text-3xl font-bold text-emerald-600 tracking-tight"
+                    >
+                        {rooms.filter((r) => r.status === "libre").length}
+                    </h3>
+                </div>
+                <div
+                    class="bg-white border border-slate-200 p-5 rounded-lg shadow-sm border-rose-100"
+                >
+                    <p
+                        class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1.5"
+                    >
+                        Alertas Pendientes
+                    </p>
+                    <h3 class="text-3xl font-bold text-rose-500 tracking-tight">
+                        {pendingTxCount}
+                    </h3>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-12">
+                <!-- Gestión de Habitaciones (Ahora en 2 Columnas) -->
+                <section>
+                    <div class="flex items-center justify-between mb-5 px-1">
+                        <h4
+                            class="text-xs font-bold text-slate-500 uppercase tracking-[0.2em]"
+                        >
+                            Gestión de Estados
+                        </h4>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
+                        {
+                            rooms.map((room) => {
+                                const config =
+                                    statusConfig[
+                                        room.status as keyof typeof statusConfig
+                                    ];
+                                const images = getRoomImages(room.images);
+                                return (
+                                    <div class="bg-white border border-slate-200 p-6 rounded-2xl flex items-center justify-between gap-6 group hover:border-[#00a19b]/30 hover:shadow-xl hover:shadow-slate-200/20 transition-all duration-300">
+                                        <div class="flex items-center gap-6 min-w-0">
+                                            <div class="w-20 h-20 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-100 shadow-inner">
+                                                <img
+                                                    src={images[0]}
+                                                    alt={room.subtitle}
+                                                    class="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500"
+                                                />
+                                            </div>
+                                            <div class="min-w-0">
+                                                <div class="flex items-center gap-3 mb-1">
+                                                    <h5 class="text-lg font-bold text-slate-900 truncate tracking-tight">
+                                                        {room.subtitle}
+                                                    </h5>
+                                                </div>
+                                                <p class="text-xs text-slate-400 font-medium truncate uppercase tracking-[0.1em]">
+                                                    {room.title}
+                                                </p>
+                                                <div class="price-container flex items-center gap-3 mt-2" data-room-id={room.id}>
+                                                    <!-- Vista Lectura -->
+                                                    <div class="price-view flex items-center gap-2">
+                                                        <span class="text-lg font-bold text-[#00a19b]">S/ {room.price}</span>
+                                                        <button class="edit-price-btn p-1.5 text-slate-400 hover:text-[#00a19b] transition-colors" title="Editar precio">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                    
+                                                    <!-- Vista Edición (Oculta por defecto) -->
+                                                    <div class="price-edit hidden flex items-center gap-2">
+                                                        <input 
+                                                            type="number" 
+                                                            value={room.price} 
+                                                            step="0.1"
+                                                            class="w-24 bg-slate-50 border border-[#00a19b]/30 rounded-lg py-1 px-2 text-sm font-bold text-[#00a19b] focus:ring-2 focus:ring-[#00a19b]/20 focus:outline-none transition-all room-price-input" 
+                                                        />
+                                                        <div class="flex gap-1">
+                                                            <button class="save-price-btn p-1.5 bg-[#00a19b] text-white rounded-md hover:bg-[#008c87] transition-colors" title="Guardar">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                                                </svg>
+                                                            </button>
+                                                            <button class="cancel-price-btn p-1.5 bg-slate-100 text-slate-500 rounded-md hover:bg-slate-200 transition-colors" title="Cancelar">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center gap-4">
+                                            <div class="relative w-44">
+                                                <select
+                                                    class="w-full h-11 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold text-slate-700 pl-4 pr-10 appearance-none focus:ring-2 focus:ring-[#00a19b]/20 cursor-pointer room-status-select uppercase tracking-widest transition-all hover:bg-slate-100/50"
+                                                    data-room-id={room.id}
+                                                >
+                                                    {Object.entries(
+                                                        statusConfig,
+                                                    ).map(([key, cfg]) => (
+                                                        <option
+                                                            value={key}
+                                                            selected={
+                                                                room.status ===
+                                                                key
+                                                            }
+                                                        >
+                                                            {cfg.label.toUpperCase()}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <div class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300">
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        class="w-3 h-3"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        stroke="currentColor"
+                                                        stroke-width="3"
+                                                    >
+                                                        <path d="M19 9l-7 7-7-7" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        }
+                    </div>
+                </section>
+
+                <!-- Historial de Transacciones (Ahora Tabla de Ancho Completo) -->
+                <section>
+                    <div class="flex items-center justify-between mb-5 px-1">
+                        <h4
+                            class="text-xs font-bold text-slate-500 uppercase tracking-[0.2em]"
+                        >
+                            Registro Completo de Transacciones
+                        </h4>
+                    <div class="flex items-center gap-3">
+                        <button 
+                            id="sync-all-btn"
+                            class="text-[10px] font-bold text-[#00a19b] hover:bg-[#00a19b] hover:text-white border border-[#00a19b] px-3 py-1.5 rounded-lg transition-all flex items-center gap-2 uppercase tracking-widest bg-white shadow-sm"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Sincronizar
+                        </button>
+
+                        <div class="h-6 w-px bg-slate-200"></div>
+
+                        <div class="flex items-center gap-2">
+                             <button 
+                                id="export-excel-btn"
+                                class="text-[10px] font-bold text-emerald-600 hover:bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg transition-all flex items-center gap-2 uppercase tracking-widest bg-white shadow-sm"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Excel
+                            </button>
+                             <button 
+                                id="export-pdf-btn"
+                                class="text-[10px] font-bold text-rose-600 hover:bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-lg transition-all flex items-center gap-2 uppercase tracking-widest bg-white shadow-sm"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                                PDF
+                            </button>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div
+                        class="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm"
+                    >
+                        <table class="w-full text-left border-collapse">
+                            <thead
+                                class="bg-slate-50 border-b border-slate-200"
+                            >
+                                <tr>
+                                    <th
+                                        class="py-3 px-6 text-[11px] font-bold text-slate-500 uppercase tracking-widest"
+                                        >Fecha y Hora</th
+                                    >
+                                    <th
+                                        class="py-3 px-6 text-[11px] font-bold text-slate-500 uppercase tracking-widest"
+                                        >Orden ID</th
+                                    >
+                                    <th
+                                        class="py-3 px-6 text-[11px] font-bold text-slate-500 uppercase tracking-widest"
+                                        >Cliente</th
+                                    >
+                                    <th
+                                        class="py-3 px-6 text-[11px] font-bold text-slate-500 uppercase tracking-widest"
+                                        >Alojamiento</th
+                                    >
+                                    <th
+                                        class="py-3 px-6 text-[11px] font-bold text-slate-500 uppercase tracking-widest text-right"
+                                        >Monto</th
+                                    >
+                                    <th
+                                        class="py-3 px-6 text-[11px] font-bold text-slate-500 uppercase tracking-widest text-center"
+                                        >Estado</th
+                                    >
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                {
+                                    transactions.length === 0 ? (
+                                        <tr>
+                                            <td
+                                                colspan="5"
+                                                class="py-20 text-center text-[10px] font-bold text-slate-300 uppercase tracking-widest"
+                                            >
+                                                No se encontraron transacciones
+                                                registradas
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        transactions.map((tx) => (
+                                            <tr class="hover:bg-slate-50/50 transition-colors">
+                                                <td class="py-4 px-6 text-xs text-slate-400 font-medium">
+                                                    {new Date(
+                                                        tx.timestamp,
+                                                    ).toLocaleString("es-PE", {
+                                                        day: "2-digit",
+                                                        month: "short",
+                                                        year: "numeric",
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                    })}
+                                                </td>
+                                                <td class="py-4 px-6 text-xs font-mono text-slate-300">
+                                                    {tx.orderId}
+                                                </td>
+                                                <td class="py-4 px-6">
+                                                    {(() => {
+                                                        try {
+                                                            const client = JSON.parse(tx.customer);
+                                                            return (
+                                                                <div class="flex flex-col">
+                                                                    <span class="text-xs font-bold text-slate-900">
+                                                                        {client.firstName} {client.lastName}
+                                                                    </span>
+                                                                    <span class="text-[10px] text-slate-500 font-medium">
+                                                                        {client.email}
+                                                                    </span>
+                                                                    {client.dni && (
+                                                                        <span class="text-[10px] text-slate-400">
+                                                                            DNI: {client.dni}
+                                                                        </span>
+                                                                    )}
+                                                                    {client.phone && (
+                                                                        <span class="text-[10px] text-slate-400">
+                                                                            Telf: {client.phone}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                            );
+                                                        } catch (e) {
+                                                            return (
+                                                                <span class="text-xs font-medium text-slate-600">
+                                                                    {tx.customer}
+                                                                </span>
+                                                            );
+                                                        }
+                                                    })()}
+                                                </td>
+                                                <td class="py-4 px-6">
+                                                    <p class="text-sm font-bold text-slate-900 leading-none">
+                                                        {tx.roomName}
+                                                    </p>
+                                                </td>
+                                                <td class="py-4 px-6 text-right">
+                                                    <p class="text-sm font-bold text-slate-900 tracking-tight">
+                                                        S/{" "}
+                                                        {tx.amount.toFixed(2)}
+                                                    </p>
+                                                </td>
+                                                <td class="py-4 px-6 text-center">
+                                                    <span
+                                                        class={`text-[10px] font-medium uppercase inline-block px-2 py-1 rounded-md border ${
+                                                            tx.status === "EXITOSO"
+                                                                ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                                                                : tx.status === "PENDIENTE"
+                                                                    ? "bg-amber-50 text-amber-600 border-amber-100"
+                                                                    : tx.status === "CANCELADO"
+                                                                        ? "bg-slate-50 text-slate-500 border-slate-200"
+                                                                        : tx.status === "INICIADO"
+                                                                            ? "bg-slate-50 text-slate-400 border-slate-200" 
+                                                                            : "bg-rose-50 text-rose-600 border-rose-100"
+                                                        }`}
+                                                    >
+                                                         {tx.status === "CANCELADO" ? "ANULADO" : tx.status === "INICIADO" ? "EN PROCESO" : tx.status}
+                                                     </span>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        import * as XLSX from 'xlsx';
+        import jsPDF from 'jspdf';
+        import autoTable from 'jspdf-autotable';
+
+        // --- EXPORT LOGIC ---
+        const getTableData = () => {
+             const rows = Array.from(document.querySelectorAll('table tbody tr'));
+             return rows.map(row => {
+                 const cols = row.querySelectorAll('td');
+                 if (cols.length < 5) return null; // Skip empty/loading rows
+                 
+                 // Extract clean text
+                 const date = cols[0].innerText.trim();
+                 const orderId = cols[1].innerText.trim();
+                 
+                 // Client extraction (handle complex structure)
+                 const clientCell = cols[2];
+                 const clientName = (clientCell.querySelector('.text-slate-900') as HTMLElement)?.innerText || '';
+                 const clientEmail = (clientCell.querySelector('.text-slate-500') as HTMLElement)?.innerText || clientCell.innerText.trim();
+                 const clientDni = (clientCell.querySelector('span.text-slate-400') as HTMLElement)?.innerText.replace('DNI: ', '') || '';
+                 const client = `${clientName}\n${clientEmail}\n${clientDni}`; // For Excel/PDF
+
+                 const room = cols[3].innerText.trim();
+                 const amount = cols[4].innerText.trim();
+                 const status = cols[5].innerText.trim();
+
+                 return [date, orderId, client, room, amount, status];
+             }).filter(r => r !== null);
+        };
+
+        document.getElementById('export-excel-btn')?.addEventListener('click', () => {
+            const data = getTableData();
+            // Headers
+            data.unshift(['Fecha', 'ID Orden', 'Cliente', 'Habitación', 'Monto', 'Estado']);
+            
+            const ws = XLSX.utils.aoa_to_sheet(data);
+
+            // Auto-width columns
+            const wscols = [
+                { wch: 20 }, // Fecha
+                { wch: 15 }, // ID
+                { wch: 40 }, // Cliente
+                { wch: 15 }, // Habitación
+                { wch: 12 }, // Monto
+                { wch: 12 }  // Estado
+            ];
+            ws['!cols'] = wscols;
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Transacciones");
+            XLSX.writeFile(wb, `BrisHotel_Reporte_${new Date().toISOString().slice(0,10)}.xlsx`);
+        });
+
+        document.getElementById('export-pdf-btn')?.addEventListener('click', () => {
+             const doc = new jsPDF();
+             const pageWidth = doc.internal.pageSize.width;
+
+             // --- Header Profesional ---
+             doc.setFillColor(0, 161, 155); // #00a19b
+             doc.rect(0, 0, pageWidth, 40, 'F');
+             
+             doc.setTextColor(255, 255, 255);
+             doc.setFontSize(22);
+             doc.setFont("helvetica", "bold");
+             doc.text("Bris Hotel", 14, 20);
+             
+             doc.setFontSize(10);
+             doc.setFont("helvetica", "normal");
+             doc.text("Reporte de Transacciones y Reservas", 14, 28);
+             
+             doc.setFontSize(8);
+             doc.text(`Generado: ${new Date().toLocaleString()}`, 14, 34);
+
+             // --- Tabla Profesional ---
+             const data = getTableData();
+             
+             autoTable(doc, {
+                 startY: 50,
+                 head: [['Fecha', 'ID Orden', 'Cliente', 'Hab.', 'Monto', 'Estado']],
+                 body: data,
+                 theme: 'grid', // 'striped' | 'grid' | 'plain'
+                 headStyles: { 
+                    fillColor: [248, 250, 252], // slate-50
+                    textColor: [71, 85, 105],   // slate-600
+                    fontStyle: 'bold',
+                    lineWidth: 0.1,
+                    lineColor: [226, 232, 240] // slate-200
+                 },
+                 bodyStyles: {
+                    textColor: [51, 65, 85], // slate-700
+                    fontSize: 8,
+                    lineWidth: 0.1,
+                    lineColor: [226, 232, 240]
+                 },
+                 alternateRowStyles: {
+                    fillColor: [255, 255, 255]
+                 },
+                 columnStyles: {
+                     0: { cellWidth: 35 },
+                     1: { cellWidth: 25, fontStyle: 'bold' },
+                     2: { cellWidth: 60 },
+                     4: { halign: 'right' }, // Monto a la derecha
+                     5: { halign: 'center' } // Estado al centro
+                 },
+                 didDrawPage: function (data) {
+                    // Footer
+                    const str = 'Página ' + doc.getNumberOfPages();
+                    doc.setFontSize(8);
+                    doc.setTextColor(150);
+                    doc.text(str, pageWidth - 30, doc.internal.pageSize.height - 10);
+                }
+             });
+
+             doc.save(`BrisHotel_Reporte_${new Date().toISOString().slice(0,10)}.pdf`);
+        });
+
+    </script>
+
+    <script is:inline>
+        const selects = document.querySelectorAll(".room-status-select");
+        selects.forEach((select) => {
+            select.addEventListener("change", async (e) => {
+                const id = e.target.dataset.roomId;
+                const status = e.target.value;
+                const card = e.target.closest("div.group");
+
+                e.target.disabled = true;
+                card.style.opacity = "0.3";
+
+                try {
+                    const response = await fetch("/api/admin/rooms", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ id, status }),
+                    });
+                    if (response.ok) window.location.reload();
+                    else throw new Error();
+                } catch (err) {
+                    alert("Error servidor");
+                    window.location.reload();
+                }
+            });
+        });
+
+        // Gestión de Precios con Botones
+        const priceContainers = document.querySelectorAll(".price-container");
+        priceContainers.forEach((container) => {
+            const roomId = container.dataset.roomId;
+            const viewMode = container.querySelector(".price-view");
+            const editMode = container.querySelector(".price-edit");
+            const input = container.querySelector(".room-price-input");
+            const editBtn = container.querySelector(".edit-price-btn");
+            const saveBtn = container.querySelector(".save-price-btn");
+            const cancelBtn = container.querySelector(".cancel-price-btn");
+            const card = container.closest("div.group");
+
+            // Entrar en modo edición
+            editBtn.addEventListener("click", () => {
+                viewMode.classList.add("hidden");
+                editMode.classList.remove("hidden");
+                input.focus();
+            });
+
+            // Cancelar edición
+            cancelBtn.addEventListener("click", () => {
+                editMode.classList.add("hidden");
+                viewMode.classList.remove("hidden");
+                input.value = input.defaultValue; // Revertir al valor original
+            });
+
+            // Guardar cambios
+            saveBtn.addEventListener("click", async () => {
+                const newPrice = input.value;
+
+                saveBtn.disabled = true;
+                cancelBtn.disabled = true;
+                input.disabled = true;
+                card.style.opacity = "0.5";
+
+                try {
+                    const response = await fetch("/api/admin/rooms", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ id: roomId, price: newPrice }),
+                    });
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        throw new Error();
+                    }
+                } catch (err) {
+                    alert("Error al actualizar el precio");
+                    saveBtn.disabled = false;
+                    cancelBtn.disabled = false;
+                    input.disabled = false;
+                    card.style.opacity = "1";
+                }
+            });
+        });
+
+        // Sincronización Global de Pagos Pendientes
+        const syncAllBtn = document.getElementById("sync-all-btn");
+        if (syncAllBtn) {
+            syncAllBtn.addEventListener("click", async () => {
+                // Seleccionar todas las órdenes presentes en la tabla
+                const allOrders = Array.from(document.querySelectorAll('tr'))
+                    .map(tr => tr.querySelector('td:nth-child(2)')?.textContent.trim())
+                    .filter(id => id && id.startsWith('RES-'));
+
+                if (allOrders.length === 0) {
+                    alert("No hay transacciones para sincronizar.");
+                    return;
+                }
+
+                syncAllBtn.disabled = true;
+                const originalText = syncAllBtn.innerHTML;
+                syncAllBtn.innerHTML = '<svg class="animate-spin w-3 h-3" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Sincronizando...';
+
+                const statusSummary = [];
+                let processedCount = 0;
+                let updatedCount = 0;
+
+                for (const orderId of allOrders) {
+                    try {
+                        const res = await fetch("/api/admin/sync-status", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ orderId }),
+                        });
+                        const data = await res.json();
+                        processedCount++;
+                        
+                        if (data.success) {
+                            updatedCount++;
+                            statusSummary.push(`${orderId}: ${data.newStatus} (Izi: ${data.iziStatus})`);
+                        }
+                    } catch (e) {
+                        console.error("Error syncing", orderId, e);
+                    }
+                }
+
+                if (updatedCount > 0) {
+                    alert(`Sincronización completa. Se actualizaron ${updatedCount} registros correctamente.`);
+                    window.location.reload();
+                } else {
+                    alert("Sincronización completa. No se detectaron nuevos cambios de estado confirmados en la pasarela.");
+                    window.location.reload();
+                }
+
+                syncAllBtn.disabled = false;
+                syncAllBtn.innerHTML = originalText;
+            });
+        }
+
+        document
+            .getElementById("logout-btn")
+            .addEventListener("click", async () => {
+                await fetch("/api/logout", { method: "POST" });
+                window.location.href = "/login";
+            });
+    </script>
+</Layout>
+
+<style is:global>
+    @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+    html,
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: "Inter", sans-serif !important;
+    }
+
+    body {
+        -webkit-font-smoothing: antialiased;
+        background: #fdfbf9;
+    }
+
+    ::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #e2e8f0;
+        border-radius: 10px;
+    }
+
+    select {
+        background-image: none !important;
+    }
+</style>

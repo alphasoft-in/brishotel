@@ -1,68 +1,39 @@
 ---
-import RoomsSection from "../components/RoomsSection.astro";
-import ThingsYouLove from "../components/ThingsYouLove.astro";
+import RoomsSection from "../components/rooms/HeroRooms.astro";
+import ThingsYouLove from "../components/rooms/FeaturesRooms.astro";
 import Layout from "../layouts/Layout.astro";
-import RoomPure from "../components/RoomPure.astro";
-import Navbar from "../components/Navbar.astro";
-import Footer from "../components/Footer.astro";
-import CallToAction from "../components/CallToAction.astro";
+import RoomPure from "../components/rooms/RoomCard.astro";
+import Navbar from "../components/ui/Navbar.astro";
+import Footer from "../components/ui/Footer.astro";
+import CallToAction from "../components/shared/CTA.astro";
 
-import simple from "../assets/images/rooms/simple.png";
-import simple1 from "../assets/images/rooms/simple-1.png";
-import simple2 from "../assets/images/rooms/simple-2.png";
-import simple3 from "../assets/images/rooms/simple-3.png";
-import simple4 from "../assets/images/rooms/simple-4.png";
+import { db } from "../lib/db";
+import { getRoomImages } from "../lib/images";
 
-import doble from "../assets/images/rooms/doble.png";
-import doble1 from "../assets/images/rooms/doble-1.png";
-import doble2 from "../assets/images/rooms/doble-2.png";
-import doble3 from "../assets/images/rooms/doble-3.png";
-
-import matrimonial from "../assets/images/rooms/matrimonial.png";
-import matrimonial1 from "../assets/images/rooms/matrimonial-1.png";
-import matrimonial2 from "../assets/images/rooms/matrimonial-2.png";
-import matrimonial3 from "../assets/images/rooms/matrimonial-3.png";
-import matrimonial4 from "../assets/images/rooms/matrimonial-4.png";
-import matrimonial5 from "../assets/images/rooms/matrimonial-5.png";
-import matrimonial6 from "../assets/images/rooms/matrimonial-6.png";
-import matrimonial7 from "../assets/images/rooms/matrimonial-7.png";
-import matrimonial8 from "../assets/images/rooms/matrimonial-8.png";
-
-import queen from "../assets/images/rooms/queen.png";
-import queen1 from "../assets/images/rooms/queen-1.png";
-import queen2 from "../assets/images/rooms/queen-2.png";
-
-import kingSize from "../assets/images/rooms/king-size.png";
-import KingSize1 from "../assets/images/rooms/king-size-1.png";
-
-import triple from "../assets/images/rooms/triple.png";
-import triple1 from "../assets/images/rooms/triple-1.png";
-import triple2 from "../assets/images/rooms/triple-2.png";
-
-import cuadruple from "../assets/images/rooms/cuadruple.png";
-import cuadruple1 from "../assets/images/rooms/cuadruple-1.png";
-import cuadruple2 from "../assets/images/rooms/cuadruple-2.png";
-import cuadruple3 from "../assets/images/rooms/cuadruple-3.png";
-import cuadruple4 from "../assets/images//rooms/cuadruple-4.png";
+const rooms = db.getRooms();
 ---
-<Layout>
+
+<Layout
+    title="Habitaciones y Tarifas - Bris Hotel Nasca"
+    description="Explora nuestras habitaciones: Matrimoniales, Dobles, Triples y Suites. Confort y elegancia para tu descanso en Nasca."
+>
     <Navbar />
     <RoomsSection />
     <ThingsYouLove />
 
-    <RoomPure subtitle="Simple" title="HABITACIÓN" price={180} features={["Baño privado (agua caliente).", "TV Cable.", "Free wifi.", "Room service.", "Intercomunicador."]} images={[simple.src, simple1.src, simple2.src, simple3.src, simple4.src]} />
-
-    <RoomPure reverse subtitle="Doble" title="HABITACIÓN" price={220} features={["Baño privado (agua caliente).", "TV Cable.", "Free wifi.", "Room service.", "Intercomunicador."]} images={[doble.src, doble1.src, doble2.src, doble3.src]} />
-
-    <RoomPure subtitle="Matrimonial" title="HABITACIÓN" price={220} features={["Baño privado (agua caliente).", "TV Cable.", "Free wifi.", "Room service.", "Intercomunicador."]} images={[matrimonial.src, matrimonial1.src, matrimonial2.src, matrimonial3.src, matrimonial4.src, matrimonial5.src, matrimonial6.src, matrimonial7.src, matrimonial8.src]} />
-
-    <RoomPure reverse subtitle="Queen" title="HABITACIÓN" price={300} features={["Baño privado (agua caliente).", "TV Cable.", "Free wifi.", "Room service.", "Intercomunicador."]} images={[queen.src, queen1.src, queen2.src]} />
-
-    <RoomPure subtitle="King Size" title="HABITACIÓN" price={320} features={["Baño privado (agua caliente).", "TV Cable.", "Free wifi.", "Room service.", "Intercomunicador."]} images={[kingSize.src, KingSize1.src]} />
-
-    <RoomPure reverse subtitle="Triple" title="HABITACIÓN" price={280} features={["Baño privado (agua caliente).", "TV Cable.", "Free wifi.", "Room service.", "Intercomunicador."]} images={[triple.src, triple1.src, triple2.src]} />
-
-    <RoomPure subtitle="Cuádruple" title="HABITACIÓN" price={320} features={["Baño privado (agua caliente).", "TV Cable.", "Free wifi.", "Room service.", "Intercomunicador."]} images={[cuadruple.src, cuadruple1.src, cuadruple2.src, cuadruple3.src, cuadruple4.src]} />
+    {
+        rooms.map((room) => (
+            <RoomPure
+                status={room.status}
+                reverse={room.reverse}
+                subtitle={room.subtitle}
+                title={room.title}
+                price={room.price}
+                features={room.features}
+                images={getRoomImages(room.images)}
+            />
+        ))
+    }
 
     <CallToAction />
     <Footer />

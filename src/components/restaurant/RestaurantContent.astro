@@ -1,0 +1,39 @@
+---
+import image from "../../assets/images/rest-2.png";
+---
+
+<section id="restaurante" class="py-10 md:py-16">
+    <div class="max-w-6xl mx-auto px-6 md:flex md:items-center md:gap-10">
+        <div class="md:w-1/2">
+            <h2
+                class="text-2xl sm:text-3xl md:text-5xl font-kestrel text-[#5a3d37] mb-4"
+            >
+                Nuestro restaurante
+            </h2>
+
+            <p
+                class="text-xs sm:text-sm md:text-base text-[#5a3d37] merriweather mb-6 opacity-80"
+            >
+                El restaurante del Bris Hotel ha sido diseñado como un espacio
+                versátil que complementa la experiencia de nuestros huéspedes.
+                Más allá de ofrecer desayunos frescos cada mañana, este ambiente
+                se adapta para cenas corporativas, reuniones privadas y coffee
+                time a pedido, brindando un servicio flexible y personalizado.
+                Con una atención cálida y profesional, nuestro restaurante
+                combina comodidad, practicidad y un entorno acogedor, ideal
+                tanto para viajeros que buscan un momento de tranquilidad como
+                para empresas que requieren un espacio funcional para sus
+                actividades.
+            </p>
+        </div>
+
+        <div class="md:w-1/2 mt-8 md:mt-0">
+            <img
+                src={image.src}
+                alt="Restaurante Bris Hotel"
+                class="w-full h-full object-cover rounded-lg shadow-xl transition-all duration-500 transform hover:scale-102"
+                loading="lazy"
+            />
+        </div>
+    </div>
+</section>

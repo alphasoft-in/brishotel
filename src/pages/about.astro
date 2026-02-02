@@ -1,16 +1,20 @@
 ---
-import AboutSection from "../components/AboutSection.astro"
-import CallToAction from "../components/CallToAction.astro"
-import DescripcionNosotros from "../components/DescripcionNosotros.astro"
-import Footer from "../components/Footer.astro"
-import InstagramFeed from "../components/InstagramFeed.astro"
-import Navbar from "../components/Navbar.astro"
-import Layout from "../layouts/Layout.astro"
+import AboutSection from "../components/home/AboutHome.astro";
+import CallToAction from "../components/shared/CTA.astro";
+import DescripcionNosotros from "../components/about/AboutContent.astro";
+import Footer from "../components/ui/Footer.astro";
+import InstagramFeed from "../components/shared/InstagramGallery.astro";
+import Navbar from "../components/ui/Navbar.astro";
+import Layout from "../layouts/Layout.astro";
 ---
-<Layout>
-	<Navbar />
+
+<Layout
+    title="Nosotros - Bris Hotel Nasca"
+    description="Conoce más sobre Bris Hotel Nasca, nuestra historia, misión y el equipo dedicado a hacer de tu estadía una experiencia inolvidable."
+>
+    <Navbar />
     <AboutSection />
-	<DescripcionNosotros />
+    <DescripcionNosotros />
     <InstagramFeed />
     <CallToAction />
     <Footer />

@@ -1,0 +1,542 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+// Forzar SSR
+export const prerender = false;
+
+// Obtener parámetros de la URL
+const url = new URL(Astro.request.url);
+const roomName = url.searchParams.get("room") || "Habitación";
+const price = url.searchParams.get("price") || "0";
+const orderIdProp = url.searchParams.get("orderId"); // Optional fallback
+
+// Claves de configuración
+const publicKey =
+    import.meta.env.PUBLIC_IZIPAY_PUBLIC_KEY ||
+    "24058106:testpublickey_h3tQty2wtw4bjhpOAbPfZTNxhgfKuoHV5fQoMOp0f9ysn";
+---
+
+<Layout
+    title={`Reservar ${roomName} - Bris Hotel`}
+    description={`Reserva la habitación ${roomName} en Bris Hotel Nasca. Disfruta de una estadía confortable con nosotros.`}
+>
+    <main
+        class="min-h-screen bg-[#FDFBF9] flex flex-col items-center justify-center p-6 md:p-12"
+    >
+        <!-- Encabezado -->
+        <div class="mb-10 text-center">
+            <span
+                class="text-xs font-bold tracking-[0.2em] text-[#00a19b] uppercase"
+                >Completa tus datos</span
+            >
+            <h1
+                class="text-xl md:text-3xl font-bold text-[#1a1a1a] merriweather mt-2 mb-4"
+            >
+                Reserva tu Estancia
+            </h1>
+            <div class="h-1 w-16 bg-[#00a19b] mx-auto rounded-full"></div>
+        </div>
+
+        <div
+            class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12"
+        >
+            <!-- Formulario -->
+            <div
+                class="order-2 lg:order-1 lg:col-span-8 bg-white p-6 md:p-8 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col h-full relative overflow-hidden"
+            >
+                <!-- Loading Overlay -->
+                <div
+                    id="loading-overlay"
+                    class="hidden absolute inset-0 bg-white/90 z-50 flex flex-col items-center justify-center backdrop-blur-sm"
+                >
+                    <svg
+                        class="animate-spin h-10 w-10 text-[#00a19b] mb-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <circle
+                            class="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"></circle>
+                        <path
+                            class="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                    </svg>
+                    <p
+                        class="text-sm font-bold text-slate-500 uppercase tracking-widest animate-pulse"
+                    >
+                        Procesando...
+                    </p>
+                </div>
+
+                <form id="reservation-form" class="space-y-6 flex-grow">
+                    <input type="hidden" name="room" value={roomName} />
+                    <input type="hidden" name="price" value={price} />
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label
+                                for="firstName"
+                                class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1"
+                                >Nombres</label
+                            >
+                            <input
+                                type="text"
+                                id="firstName"
+                                name="firstName"
+                                required
+                                class="w-full p-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-[#00a19b] transition-all montserrat text-sm font-medium text-slate-700 placeholder-slate-300"
+                                placeholder="Ej. Juan"
+                            />
+                        </div>
+                        <div class="space-y-2">
+                            <label
+                                for="lastName"
+                                class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1"
+                                >Apellidos</label
+                            >
+                            <input
+                                type="text"
+                                id="lastName"
+                                name="lastName"
+                                required
+                                class="w-full p-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-[#00a19b] transition-all montserrat text-sm font-medium text-slate-700 placeholder-slate-300"
+                                placeholder="Ej. Pérez"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label
+                            for="email"
+                            class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1"
+                            >Correo Electrónico</label
+                        >
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            required
+                            class="w-full p-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-[#00a19b] transition-all montserrat text-sm font-medium text-slate-700 placeholder-slate-300"
+                            placeholder="juan.perez@email.com"
+                        />
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label
+                                for="dni"
+                                class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1"
+                                >DNI / Pasaporte</label
+                            >
+                            <input
+                                type="text"
+                                id="dni"
+                                name="dni"
+                                required
+                                class="w-full p-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-[#00a19b] transition-all montserrat text-sm font-medium text-slate-700 placeholder-slate-300"
+                                placeholder="Documento de Identidad"
+                            />
+                        </div>
+                        <div class="space-y-2">
+                            <label
+                                for="phone"
+                                class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1"
+                                >Teléfono</label
+                            >
+                            <input
+                                type="tel"
+                                id="phone"
+                                name="phone"
+                                required
+                                class="w-full p-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-[#00a19b] transition-all montserrat text-sm font-medium text-slate-700 placeholder-slate-300"
+                                placeholder="+51 999 999 999"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <button
+                            type="submit"
+                            id="submit-btn"
+                            class="w-full py-3 bg-[#1a1a1a] text-white rounded-xl font-bold hover:bg-black transition-all transform hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-black/10 flex items-center justify-center gap-2"
+                        >
+                            <span>Ir a Pagar</span>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </button>
+                        <p
+                            class="text-center text-xs text-slate-400 mt-4 font-medium"
+                        >
+                            Pago seguro procesado por Izipay
+                        </p>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Resumen -->
+            <div class="order-1 lg:order-2 lg:col-span-4 h-full">
+                <div
+                    class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm relative overflow-hidden h-full flex flex-col"
+                >
+                    <div
+                        class="absolute top-0 right-0 w-24 h-24 bg-[#00a19b]/10 rounded-bl-full"
+                    >
+                    </div>
+
+                    <h3
+                        class="text-lg font-bold text-slate-900 merriweather mb-6 relative z-10"
+                    >
+                        Resumen de Reserva
+                    </h3>
+
+                    <div class="space-y-4 flex-grow">
+                        <div
+                            class="flex justify-between items-center py-4 border-b border-dashed border-slate-200"
+                        >
+                            <span
+                                class="text-xs font-bold text-slate-500 uppercase tracking-wide"
+                                >Habitación</span
+                            >
+                            <span
+                                class="text-base font-bold text-slate-900 text-right"
+                                >{roomName}</span
+                            >
+                        </div>
+                        <div class="flex justify-between items-center py-4">
+                            <span
+                                class="text-xs font-bold text-slate-900 uppercase tracking-wide"
+                                >Total a Pagar</span
+                            >
+                            <span class="text-2xl font-bold text-[#00a19b]"
+                                >S/ {price}</span
+                            >
+                        </div>
+                    </div>
+
+                    <div
+                        class="mt-6 bg-slate-50 p-4 rounded-xl flex items-start gap-3"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 text-slate-400 mt-0.5 flex-shrink-0"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                            ></path>
+                        </svg>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Tus datos están protegidos. La transacción se
+                            realiza en un entorno seguro encriptado.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Modal for Payment -->
+        <div id="payment-modal" class="fixed inset-0 z-[100] hidden">
+            <!-- Backdrop -->
+            <div
+                class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity opacity-0"
+                id="modal-backdrop"
+            >
+            </div>
+
+            <!-- Modal Content -->
+            <div class="absolute inset-0 flex items-center justify-center p-4">
+                <div
+                    class="bg-white w-full max-w-md rounded-[2rem] shadow-2xl transform scale-95 opacity-0 transition-all duration-300 relative overflow-hidden"
+                    id="modal-content"
+                >
+                    <!-- Modal Header -->
+                    <div
+                        class="bg-[#FDFBF9] px-6 py-4 border-b border-slate-100 flex justify-between items-center"
+                    >
+                        <div>
+                            <h3
+                                class="text-lg font-bold text-slate-900 merriweather"
+                            >
+                                Pago Seguro
+                            </h3>
+                            <p
+                                class="text-[10px] text-slate-500 font-bold uppercase tracking-wider"
+                            >
+                                Izipay
+                            </p>
+                        </div>
+                        <button
+                            id="close-modal-btn"
+                            class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-200 text-slate-500 hover:bg-slate-300 transition-colors"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="p-6 bg-white">
+                        <!-- Izipay Injection Point -->
+                        <div
+                            id="izipay-embed"
+                            class="w-full flex justify-center min-h-[300px]"
+                        >
+                        </div>
+                    </div>
+
+                    <!-- Security Note -->
+                    <div
+                        class="px-6 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-center gap-2"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-4 w-4 text-[#00a19b]"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                            ></path>
+                        </svg>
+                        <span class="text-[10px] text-slate-500 font-medium"
+                            >Transacción encriptada de extremo a extremo</span
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+<script is:inline define:vars={{ publicKey, roomName, price }}>
+    const form = document.getElementById("reservation-form");
+    const submitBtn = document.getElementById("submit-btn");
+    const loadingOverlay = document.getElementById("loading-overlay");
+
+    // Modal elements
+    const paymentModal = document.getElementById("payment-modal");
+    const modalBackdrop = document.getElementById("modal-backdrop");
+    const modalContent = document.getElementById("modal-content");
+    const izipayEmbed = document.getElementById("izipay-embed");
+    const closeModalBtn = document.getElementById("close-modal-btn");
+
+    let isIzipayLoaded = false;
+
+    // UI Helpers
+    const openModal = () => {
+        paymentModal.classList.remove("hidden");
+        // Small delay for CSS transitions
+        setTimeout(() => {
+            modalBackdrop.classList.remove("opacity-0");
+            modalContent.classList.remove("scale-95", "opacity-0");
+            modalContent.classList.add("scale-100", "opacity-100");
+        }, 10);
+    };
+
+    const closeModal = () => {
+        modalBackdrop.classList.add("opacity-0");
+        modalContent.classList.remove("scale-100", "opacity-100");
+        modalContent.classList.add("scale-95", "opacity-0");
+
+        setTimeout(() => {
+            paymentModal.classList.add("hidden");
+        }, 300);
+
+        // Reset button state
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Ir a Pagar</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>`;
+        submitBtn.classList.remove("opacity-75", "cursor-not-allowed");
+    };
+
+    closeModalBtn.addEventListener("click", closeModal);
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // UI Loading State
+        loadingOverlay.classList.remove("hidden");
+
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            // 1. Obtener Token
+            const queryParams = new URLSearchParams({
+                room: data.room,
+                price: data.price,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                dni: data.dni,
+                phone: data.phone,
+            }).toString();
+
+            const response = await fetch(`/api/payment?${queryParams}`, {
+                method: "GET",
+                headers: { Accept: "application/json" },
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success && result.formToken) {
+                // 2. Ocultar Loading y Mostrar Modal
+                loadingOverlay.classList.add("hidden");
+                openModal();
+
+                // 3. Inicializar Izipay
+                // Siempre reinicializamos para evitar estados sucios
+                izipayEmbed.innerHTML = "";
+                await loadIzipay(result.formToken, result.orderId);
+                isIzipayLoaded = true;
+            } else {
+                throw new Error(result.error || "Error al iniciar el pago");
+            }
+        } catch (error) {
+            alert(
+                "Ocurrió un error al procesar la solicitud. Por favor intenta nuevamente.",
+            );
+            loadingOverlay.classList.add("hidden");
+
+            // Reset button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<span>Ir a Pagar</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>`;
+            submitBtn.classList.remove("opacity-75", "cursor-not-allowed");
+        }
+    });
+
+    function loadIzipay(formToken, orderId) {
+        return new Promise((resolve, reject) => {
+            // Limpiar embed previo
+            // QUITAMOS kr-popin para que sea embedded puro
+            izipayEmbed.innerHTML = `<div class="kr-smart-form" kr-form-token="${formToken}"></div>`;
+
+            // Cargar Script
+            const script = document.createElement("script");
+            script.src =
+                "https://static.micuentaweb.pe/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js";
+            script.setAttribute("kr-public-key", publicKey);
+            script.setAttribute(
+                "kr-post-url-success",
+                `/confirmacion?room=${encodeURIComponent(roomName)}&price=${price}&orderId=${orderId}`,
+            );
+            script.setAttribute("kr-language", "es-PE");
+
+            // Estilos y complementos
+            const theme = document.createElement("script");
+            theme.src =
+                "https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic.js";
+
+            const style = document.createElement("link");
+            style.rel = "stylesheet";
+            style.href =
+                "https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic-reset.min.css";
+
+            script.onload = () => {
+                resolve();
+            };
+            script.onerror = () =>
+                reject(new Error("Error loading Izipay script"));
+
+            document.body.appendChild(script);
+            document.body.appendChild(theme);
+            document.head.appendChild(style);
+        });
+    }
+</script>
+
+<style>
+    .merriweather {
+        font-family: "Merriweather", serif;
+    }
+    .montserrat {
+        font-family: "Montserrat", sans-serif;
+    }
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .animate-fade-in {
+        animation: fade-in 0.3s ease-out forwards;
+    }
+
+    /* Izipay Overrides for clean look */
+    :global(.kr-embedded) {
+        width: 100% !important;
+    }
+    :global(.kr-smart-form) {
+        width: 100% !important;
+        background: transparent !important;
+    }
+
+    /* Ocultar header por defecto de Izipay si molesta */
+    :global(.kr-smart-form .kr-header) {
+        display: none !important;
+    }
+
+    /* Ajustar botones */
+    :global(.kr-payment-button) {
+        background-color: #1a1a1a !important;
+        color: white !important;
+        border-radius: 0.75rem !important;
+        font-family: "Montserrat", sans-serif !important;
+        font-weight: bold !important;
+    }
+
+    :global(.kr-payment-button:hover) {
+        background-color: #000000 !important;
+    }
+
+    :global(.kr-field) {
+        border-radius: 0.75rem !important;
+    }
+</style>

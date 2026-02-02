@@ -1,0 +1,130 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { verifySession } from "../lib/auth";
+
+export const prerender = false;
+
+// Si ya tiene sesión válida, redirigir al dashboard
+const sessionCookie = Astro.cookies.get("admin_session");
+if (sessionCookie) {
+    if (verifySession(sessionCookie.value)) {
+        return Astro.redirect("/admin");
+    } else {
+        // Cookie inválida o expirada, limpiar
+        Astro.cookies.delete("admin_session", { path: "/" });
+    }
+}
+---
+
+<Layout title="Login Admin - Bris Hotel">
+    <main
+        class="min-h-screen bg-[#fafafa] flex items-center justify-center p-6"
+    >
+        <div
+            class="w-full max-w-md bg-white p-10 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100"
+        >
+            <div class="text-center mb-10">
+                <h1 class="text-3xl font-bold text-gray-900 merriweather mb-2">
+                    Administración
+                </h1>
+                <p
+                    class="text-gray-400 montserrat text-sm uppercase tracking-widest font-bold"
+                >
+                    Inicia sesión para continuar
+                </p>
+            </div>
+
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label
+                        class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1"
+                        >Usuario</label
+                    >
+                    <input
+                        type="text"
+                        name="user"
+                        required
+                        class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#00a19b] transition-all montserrat text-sm"
+                        placeholder="Introduce tu usuario"
+                    />
+                </div>
+                <div>
+                    <label
+                        class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1"
+                        >Contraseña</label
+                    >
+                    <input
+                        type="password"
+                        name="password"
+                        required
+                        class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#00a19b] transition-all montserrat text-sm"
+                        placeholder="••••••••"
+                    />
+                </div>
+
+                <div
+                    id="error-msg"
+                    class="hidden p-4 bg-red-50 text-red-500 text-xs font-medium rounded-xl text-center"
+                >
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full py-4 bg-[#1a1a1a] text-white rounded-2xl font-bold hover:bg-black transition-all transform active:scale-95 shadow-lg shadow-black/10"
+                >
+                    Entrar al Panel
+                </button>
+            </form>
+
+            <div class="mt-8 text-center">
+                <a
+                    href="/"
+                    class="text-xs text-gray-400 hover:text-[#00a19b] transition-colors montserrat font-bold uppercase tracking-widest"
+                >
+                    ← Volver a la web
+                </a>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+<script is:inline>
+    const form = document.getElementById("login-form");
+    const errorEl = document.getElementById("error-msg");
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        errorEl.classList.add("hidden");
+
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
+
+        try {
+            const response = await fetch("/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            });
+
+            const resData = await response.json();
+            if (resData.success) {
+                window.location.href = "/admin";
+            } else {
+                errorEl.innerText = resData.error || "Credenciales incorrectas";
+                errorEl.classList.remove("hidden");
+            }
+        } catch (err) {
+            errorEl.innerText = "Error de conexión";
+            errorEl.classList.remove("hidden");
+        }
+    });
+</script>
+
+<style>
+    .merriweather {
+        font-family: "Merriweather", serif;
+    }
+    .montserrat {
+        font-family: "Montserrat", sans-serif;
+    }
+</style>

@@ -2,101 +2,214 @@
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="ESSNA">
-  <section class="py-20 bg-white text-[#5a3d37]">
-    <div class="max-w-5xl mx-auto px-6">
-      <h1 class="text-4xl sm:text-5xl font-kestrel text-center mb-6">Essna</h1>
-      <p class="text-lg merriweather text-center text-[#759120] tracking-wide mb-12">
-        Estándares de Seguridad y Sostenibilidad del Negocio Alojamiento
-      </p>
+<Layout
+  title="Seguridad y Sostenibilidad (ESNNA) - Bris Hotel Nasca"
+  description="Nuestro compromiso con la seguridad, la sostenibilidad y el bienestar. Conoce nuestros estándares ESNNA."
+>
+  <section
+    class="pt-24 md:pt-32 pb-12 md:pb-24 bg-white text-[#5a3d37] relative overflow-hidden"
+  >
+    <!-- Boutique Background Blurs -->
+    <div
+      class="absolute -top-24 -right-24 w-96 h-96 bg-[#759120]/5 rounded-full blur-3xl opacity-50"
+    >
+    </div>
+    <div
+      class="absolute top-1/2 -left-24 w-72 h-72 bg-[#5a3d37]/5 rounded-full blur-3xl opacity-50"
+    >
+    </div>
 
-      <article class="space-y-10 merriweather leading-relaxed text-justify">
-        <div>
-          <h2 class="text-2xl font-semibold text-[#759120] mb-3">1. Compromiso con la Seguridad</h2>
-          <p>
-            En <strong>Bris Hotel</strong> nos comprometemos a garantizar la seguridad de todos nuestros huéspedes, 
-            colaboradores y visitantes. Implementamos protocolos basados en las normativas ESSNA para asegurar un 
-            entorno confiable y saludable.
-          </p>
-          <p class="mt-3">
-            Contamos con equipos capacitados en primeros auxilios, extintores en todas las áreas comunes y señalización 
-            de rutas de evacuación visibles y accesibles.
-          </p>
+    <div class="max-w-4xl mx-auto px-6 relative z-10">
+      <header class="text-center mb-20 reveal">
+        <h1 class="text-5xl md:text-6xl font-kestrel mb-6">Esnna</h1>
+        <div class="w-16 h-0.5 bg-[#759120] mx-auto opacity-30 mb-8"></div>
+        <p
+          class="text-lg md:text-xl merriweather text-gray-400 italic tracking-wide max-w-2xl mx-auto"
+        >
+          "Estándares de Seguridad y Sostenibilidad para garantizar un entorno
+          confiable y responsable en nuestro hotel."
+        </p>
+      </header>
+
+      <div class="grid grid-cols-1 gap-16 md:gap-20">
+        <!-- Section 1 -->
+        <article class="reveal group">
+          <div class="flex items-center gap-4 mb-6">
+            <span
+              class="text-5xl font-kestrel text-[#759120]/10 group-hover:text-[#759120]/20 transition-colors"
+              >01</span
+            >
+            <h2 class="text-3xl font-kestrel">Compromiso con la Seguridad</h2>
+          </div>
+          <div
+            class="pl-0 md:pl-12 space-y-4 merriweather text-gray-400 leading-relaxed text-sm md:text-base"
+          >
+            <p>
+              En <strong class="text-[#5a3d37]">Bris Hotel</strong> nos comprometemos
+              a garantizar la seguridad de todos nuestros huéspedes, colaboradores
+              y visitantes. Implementamos protocolos basados en las normativas Esnna
+              para asegurar un entorno confiable y saludable.
+            </p>
+            <p>
+              Contamos con equipos capacitados en primeros auxilios, extintores
+              en todas las áreas comunes y señalización de rutas de evacuación
+              visibles y accesibles.
+            </p>
+          </div>
+        </article>
+
+        <!-- Section 2 -->
+        <article class="reveal group">
+          <div class="flex items-center gap-4 mb-6">
+            <span
+              class="text-5xl font-kestrel text-[#759120]/10 group-hover:text-[#759120]/20 transition-colors"
+              >02</span
+            >
+            <h2 class="text-3xl font-kestrel">Sostenibilidad Ambiental</h2>
+          </div>
+          <div
+            class="pl-0 md:pl-12 space-y-6 merriweather text-gray-400 leading-relaxed text-sm md:text-base"
+          >
+            <p>
+              Adoptamos prácticas responsables para minimizar nuestro impacto
+              ambiental. Promovemos el uso eficiente del agua y la energía, la
+              reducción de plásticos de un solo uso y la gestión adecuada de
+              residuos.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div
+                class="bg-[#fcf8f8] p-6 rounded-2xl border border-gray-100 shadow-sm"
+              >
+                <h4
+                  class="font-bold text-[#5a3d37] mb-2 text-xs uppercase tracking-widest leading-loose"
+                >
+                  Energía LED
+                </h4>
+                <p class="text-xs opacity-80 leading-relaxed">
+                  Iluminación eficiente en todas las instalaciones.
+                </p>
+              </div>
+              <div
+                class="bg-[#fcf8f8] p-6 rounded-2xl border border-gray-100 shadow-sm"
+              >
+                <h4
+                  class="font-bold text-[#5a3d37] mb-2 text-xs uppercase tracking-widest leading-loose"
+                >
+                  Reciclaje
+                </h4>
+                <p class="text-xs opacity-80 leading-relaxed">
+                  Separación de residuos orgánicos e inorgánicos.
+                </p>
+              </div>
+              <div
+                class="bg-[#fcf8f8] p-6 rounded-2xl border border-gray-100 shadow-sm"
+              >
+                <h4
+                  class="font-bold text-[#5a3d37] mb-2 text-xs uppercase tracking-widest leading-loose"
+                >
+                  Eco-Conciencia
+                </h4>
+                <p class="text-xs opacity-80 leading-relaxed">
+                  Uso de botellas reutilizables y dispensadores.
+                </p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Section 3 & 4 Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
+          <article class="reveal group">
+            <div class="flex items-center gap-4 mb-6">
+              <span
+                class="text-5xl font-kestrel text-[#759120]/10 group-hover:text-[#759120]/20 transition-colors"
+                >03</span
+              >
+              <h2 class="text-2xl font-kestrel">Bienestar y Comunidad</h2>
+            </div>
+            <p
+              class="pl-0 md:pl-12 merriweather text-gray-400 leading-relaxed text-sm md:text-base"
+            >
+              Apoyamos a productores locales y promovemos la cultura de la
+              región, fomentando experiencias que beneficien a todos.
+            </p>
+          </article>
+
+          <article class="reveal group">
+            <div class="flex items-center gap-4 mb-6">
+              <span
+                class="text-5xl font-kestrel text-[#759120]/10 group-hover:text-[#759120]/20 transition-colors"
+                >04</span
+              >
+              <h2 class="text-2xl font-kestrel">Salud e Higiene</h2>
+            </div>
+            <p
+              class="pl-0 md:pl-12 merriweather text-gray-400 leading-relaxed text-sm md:text-base"
+            >
+              Nuestras instalaciones cumplen con los más altos estándares de
+              limpieza y desinfección certificados.
+            </p>
+          </article>
         </div>
 
-        <div>
-          <h2 class="text-2xl font-semibold text-[#759120] mb-3">2. Sostenibilidad Ambiental</h2>
-          <p>
-            Adoptamos prácticas responsables para minimizar nuestro impacto ambiental. Promovemos el uso eficiente del 
-            agua y la energía, la reducción de plásticos de un solo uso y la gestión adecuada de residuos.
-          </p>
-          <ul class="list-disc list-inside mt-3 space-y-2">
-            <li>Uso de iluminación LED en todas las instalaciones.</li>
-            <li>Separación de residuos reciclables y orgánicos.</li>
-            <li>Promoción del uso de botellas reutilizables y dispensadores de agua.</li>
-          </ul>
-        </div>
+        <!-- Section 5 -->
+        <article class="reveal group">
+          <div class="flex items-center gap-4 mb-6">
+            <span
+              class="text-5xl font-kestrel text-[#759120]/10 group-hover:text-[#759120]/20 transition-colors"
+              >05</span
+            >
+            <h2 class="text-3xl font-kestrel">Capacitación y Mejora</h2>
+          </div>
+          <div
+            class="pl-0 md:pl-12 merriweather text-gray-400 leading-relaxed text-sm md:text-base space-y-6"
+          >
+            <p>
+              Todo nuestro personal recibe capacitación continua en seguridad y
+              atención conforme a los lineamientos Esnna. Si tiene alguna
+              sugerencia, contáctenos:
+            </p>
 
-        <div>
-          <h2 class="text-2xl font-semibold text-[#759120] mb-3">3. Bienestar y Comunidad</h2>
-          <p>
-            Creemos en el turismo sostenible y en la contribución activa con nuestra comunidad. 
-            Apoyamos a productores locales, promovemos la cultura cusqueña y fomentamos experiencias 
-            auténticas que beneficien tanto al visitante como a la región.
-          </p>
-        </div>
+            <div class="flex flex-wrap gap-6">
+              <a
+                href="mailto:reservas@brishotel.com"
+                class="group flex items-center gap-2 hover:text-[#759120] transition-colors"
+              >
+                <span
+                  class="w-8 h-8 rounded-full bg-[#fcf8f8] flex items-center justify-center text-[#759120] group-hover:bg-[#759120] group-hover:text-white transition-all shadow-sm"
+                >
+                  <i class="fas fa-envelope text-[10px]"></i>
+                </span>
+                <span
+                  class="text-[10px] font-bold tracking-[0.15em] leading-loose"
+                  >RESERVAS@BRISHOTEL.COM</span
+                >
+              </a>
+              <div class="flex items-center gap-2">
+                <span
+                  class="w-8 h-8 rounded-full bg-[#fcf8f8] flex items-center justify-center text-[#759120] shadow-sm"
+                >
+                  <i class="fas fa-phone text-[10px]"></i>
+                </span>
+                <span
+                  class="text-[10px] font-bold tracking-[0.15em] leading-loose"
+                  >+51 940 948 536</span
+                >
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
 
-        <div>
-          <h2 class="text-2xl font-semibold text-[#759120] mb-3">4. Salud e Higiene</h2>
-          <p>
-            Nuestras instalaciones cumplen con altos estándares de limpieza y desinfección. 
-            Seguimos protocolos certificados que garantizan la seguridad sanitaria de cada huésped, 
-            tanto en habitaciones como en áreas comunes.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="text-2xl font-semibold text-[#759120] mb-3">5. Capacitación Continua</h2>
-          <p>
-            Todo nuestro personal participa en programas regulares de capacitación en seguridad, 
-            atención al cliente y sostenibilidad, asegurando la mejora constante de nuestros servicios 
-            conforme a los lineamientos ESSNA.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="text-2xl font-semibold text-[#759120] mb-3">6. Emergencias y Protocolos</h2>
-          <p>
-            Contamos con planes de contingencia ante incendios, sismos y emergencias médicas. 
-            Nuestro personal está preparado para actuar de manera rápida y eficiente ante cualquier eventualidad.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="text-2xl font-semibold text-[#759120] mb-3">7. Revisión y Mejora Continua</h2>
-          <p>
-            Los procedimientos ESSNA son revisados periódicamente para adaptarse a nuevas normativas, 
-            avances tecnológicos y buenas prácticas del sector hotelero.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="text-2xl font-semibold text-[#759120] mb-3">8. Comunicación y Transparencia</h2>
-          <p>
-            Promovemos la comunicación abierta con nuestros huéspedes y colaboradores. 
-            Cualquier sugerencia o reporte relacionado con la seguridad o sostenibilidad puede ser 
-            enviado directamente a nuestro canal de atención.
-          </p>
-          <ul class="list-disc list-inside mt-3 space-y-1">
-            <li>📧 <a href="mailto:reservas@brishotel.com" class="text-[#759120] hover:underline">reservas@brishotel.com</a></li>
-            <li>📞 +51 940 948 536</li>
-          </ul>
-        </div>
-      </article>
-
-      <div class="text-center mt-16">
-        <a href="/" class="inline-block px-6 py-3 bg-[#759120] text-white font-semibold tracking-wide hover:bg-[#5a3d37] merriweather transition rounded-lg">
-          Volver al inicio
+      <div class="pt-12 text-center reveal">
+        <a
+          href="/"
+          class="group inline-flex items-center gap-4 bg-[#5a3d37] hover:bg-[#4a322d] text-white px-10 py-5 rounded-full font-bold tracking-[0.2em] uppercase text-[10px] transition-all duration-500 shadow-xl shadow-[#5a3d37]/20 hover:shadow-[#5a3d37]/40 hover:-translate-y-1 active:scale-95"
+        >
+          <i
+            class="fas fa-arrow-left text-[8px] group-hover:-translate-x-1 transition-transform"
+          ></i>
+          Volver al Inicio
         </a>
       </div>
     </div>

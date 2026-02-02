@@ -1,0 +1,56 @@
+---
+import about from "../../assets/images/about.png";
+import discover from "../../assets/images/discover.png";
+import blog from "../../assets/images/blog.png";
+import rest from "../../assets/images/room-body.png";
+import contact from "../../assets/images/contact.png";
+import dine from "../../assets/images/dine.png";
+
+const items = [
+	{ title: "Bris Hotel", image: about.src, link: "/about" },
+	{
+		title: "Restaurante y sala de conferencias",
+		image: discover.src,
+		link: "/restaurant",
+		highlight: true,
+	},
+	{
+		title: "Relájate y disfruta",
+		image: blog.src,
+		link: "/gallery-activities",
+	},
+	{ title: "Descanso", image: rest.src, link: "/rooms" },
+	{
+		title: "Contactos",
+		image: contact.src,
+		link: "/contact",
+		highlight: true,
+	},
+	{ title: "Experiencias", image: dine.src, link: "/gallery-restaurant" },
+];
+---
+
+<div
+	class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl mt-4 md:mt-32 mx-auto p-6"
+>
+	{
+		items.map((item) => (
+			<a
+				href={item.link}
+				class={`reveal relative h-64 sm:h-72 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-xl group cursor-pointer ${item.highlight ? "lg:-translate-y-8" : ""}`}
+			>
+				<img
+					src={item.image}
+					alt={item.title}
+					class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700 ease-in-out"
+				/>
+				<div class="absolute inset-0 bg-gradient-to-t from-[#5a3d37]/90 via-[#5a3d37]/40 to-transparent flex items-end p-6 md:p-8">
+					<h2 class="text-white text-lg md:text-xl merriweather text-left leading-tight group-hover:translate-x-2 transition-transform duration-300">
+						{item.title}
+					</h2>
+				</div>
+				<div class="absolute inset-x-0 bottom-0 h-1 bg-[#759120] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+			</a>
+		))
+	}
+</div>
