@@ -928,461 +928,470 @@ const statusConfig = {
         import jsPDF from "jspdf";
         import autoTable from "jspdf-autotable";
 
+        console.log("📊 Export script initialized");
+
         // --- EXPORT LOGIC ---
         const getTableData = () => {
+            console.log("🔍 Extracting table data...");
             const rows = Array.from(
                 document.querySelectorAll("#transactions-body tr.tx-row"),
             );
-            return rows
+
+            console.log(`Found ${rows.length} total transaction rows`);
+
+            const data = rows
                 .map((row) => {
                     const cols = row.querySelectorAll("td");
-                    if (cols.length < 5) return null;
+                    if (cols.length < 6) return null;
 
-                    // Extract text (using textContent to ensure hidden paginated rows are included)
-                    const date = cols[0].textContent.trim();
-                    const orderId = cols[1].textContent.trim();
+                    // Extract data by column index to be more robust
+                    const date = cols[0].innerText.trim();
+                    const orderId = cols[1].innerText.trim();
 
+                    // Cliente column (Complex structure)
                     const clientCell = cols[2];
                     const clientName =
-                        clientCell
-                            .querySelector(".text-xs.font-bold")
-                            ?.textContent.trim() || "";
+                        clientCell.children[0]?.children[0]?.innerText.trim() ||
+                        "";
                     const clientEmail =
-                        clientCell
-                            .querySelector(".text-\[10px\].text-slate-500")
-                            ?.textContent.trim() || "";
+                        clientCell.children[0]?.children[1]?.innerText.trim() ||
+                        "";
                     const clientDni =
-                        clientCell
-                            .querySelector(".text-\[10px\].text-slate-400")
-                            ?.textContent.trim() || "";
+                        clientCell.children[0]?.children[2]?.innerText.trim() ||
+                        "";
                     const client = `${clientName}\n${clientEmail}\n${clientDni}`;
 
-                    const room = cols[3].textContent.trim();
-                    const amount = cols[4].textContent
-                        .trim()
-                        .replace("S/ ", "");
-                    const status = cols[5].textContent.trim();
+                    const room = cols[3].innerText.trim();
+                    const amount = cols[4].innerText.trim().replace("S/ ", "");
+                    const status = cols[5].innerText.trim();
 
                     return [date, orderId, client, room, amount, status];
                 })
                 .filter((r) => r !== null);
+
+            console.log(
+                `Successfully processed ${data.length} rows for export`,
+            );
+            return data;
         };
 
-        document
-            .getElementById("export-excel-btn")
-            ?.addEventListener("click", () => {
-                const data = getTableData();
-                // Headers
-                data.unshift([
-                    "Fecha",
-                    "ID Orden",
-                    "Cliente",
-                    "Habitación",
-                    "Monto",
-                    "Estado",
-                ]);
+        const exportExcelBtn = document.getElementById("export-excel-btn");
+        if (exportExcelBtn) {
+            exportExcelBtn.addEventListener("click", () => {
+                console.log("📥 Excel export triggered");
+                try {
+                    const data = getTableData();
+                    if (data.length === 0) {
+                        alert("No hay datos para exportar");
+                        return;
+                    }
 
-                const ws = XLSX.utils.aoa_to_sheet(data);
+                    // Headers
+                    data.unshift([
+                        "Fecha",
+                        "ID Orden",
+                        "Cliente",
+                        "Habitación",
+                        "Monto",
+                        "Estado",
+                    ]);
 
-                // Auto-width columns
-                const wscols = [
-                    { wch: 20 }, // Fecha
-                    { wch: 15 }, // ID
-                    { wch: 40 }, // Cliente
-                    { wch: 15 }, // Habitación
-                    { wch: 12 }, // Monto
-                    { wch: 12 }, // Estado
-                ];
-                ws["!cols"] = wscols;
+                    const ws = XLSX.utils.aoa_to_sheet(data);
+                    const wscols = [
+                        { wch: 20 },
+                        { wch: 15 },
+                        { wch: 40 },
+                        { wch: 15 },
+                        { wch: 12 },
+                        { wch: 12 },
+                    ];
+                    ws["!cols"] = wscols;
 
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Transacciones");
-                XLSX.writeFile(
-                    wb,
-                    `BrisHotel_Reporte_${new Date().toISOString().slice(0, 10)}.xlsx`,
-                );
+                    const wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, "Transacciones");
+
+                    const fileName = `BrisHotel_Reporte_${new Date().toISOString().slice(0, 10)}.xlsx`;
+                    console.log(`💾 Saving Excel: ${fileName}`);
+                    XLSX.writeFile(wb, fileName);
+                } catch (err) {
+                    console.error("❌ Excel Export Error:", err);
+                    alert("Error al generar el Excel. Revisa la consola.");
+                }
             });
+        }
 
-        document
-            .getElementById("export-pdf-btn")
-            ?.addEventListener("click", () => {
-                const doc = new jsPDF();
-                const pageWidth = doc.internal.pageSize.width;
+        const exportPdfBtn = document.getElementById("export-pdf-btn");
+        if (exportPdfBtn) {
+            exportPdfBtn.addEventListener("click", () => {
+                console.log("📥 PDF export triggered");
+                try {
+                    const data = getTableData();
+                    if (data.length === 0) {
+                        alert("No hay datos para exportar");
+                        return;
+                    }
 
-                // --- Header Profesional ---
-                doc.setFillColor(0, 161, 155); // #00a19b
-                doc.rect(0, 0, pageWidth, 40, "F");
+                    const doc = new jsPDF();
+                    const pageWidth = doc.internal.pageSize.width;
 
-                doc.setTextColor(255, 255, 255);
-                doc.setFontSize(22);
-                doc.setFont("helvetica", "bold");
-                doc.text("Bris Hotel", 14, 20);
+                    // Header
+                    doc.setFillColor(0, 161, 155);
+                    doc.rect(0, 0, pageWidth, 40, "F");
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(22);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("Bris Hotel", 14, 20);
+                    doc.setFontSize(10);
+                    doc.text("Reporte de Transacciones y Reservas", 14, 28);
+                    doc.setFontSize(8);
+                    doc.text(
+                        `Generado: ${new Date().toLocaleString()}`,
+                        14,
+                        34,
+                    );
 
-                doc.setFontSize(10);
-                doc.setFont("helvetica", "normal");
-                doc.text("Reporte de Transacciones y Reservas", 14, 28);
-
-                doc.setFontSize(8);
-                doc.text(`Generado: ${new Date().toLocaleString()}`, 14, 34);
-
-                // --- Tabla Profesional ---
-                const data = getTableData();
-
-                autoTable(doc, {
-                    startY: 50,
-                    head: [
-                        [
-                            "Fecha",
-                            "ID Orden",
-                            "Cliente",
-                            "Hab.",
-                            "Monto",
-                            "Estado",
+                    autoTable(doc, {
+                        startY: 50,
+                        head: [
+                            [
+                                "Fecha",
+                                "ID Orden",
+                                "Cliente",
+                                "Hab.",
+                                "Monto",
+                                "Estado",
+                            ],
                         ],
-                    ],
-                    body: data,
-                    theme: "grid", // 'striped' | 'grid' | 'plain'
-                    headStyles: {
-                        fillColor: [248, 250, 252], // slate-50
-                        textColor: [71, 85, 105], // slate-600
-                        fontStyle: "bold",
-                        lineWidth: 0.1,
-                        lineColor: [226, 232, 240], // slate-200
-                    },
-                    bodyStyles: {
-                        textColor: [51, 65, 85], // slate-700
-                        fontSize: 8,
-                        lineWidth: 0.1,
-                        lineColor: [226, 232, 240],
-                    },
-                    alternateRowStyles: {
-                        fillColor: [255, 255, 255],
-                    },
-                    columnStyles: {
-                        0: { cellWidth: 35 },
-                        1: { cellWidth: 25, fontStyle: "bold" },
-                        2: { cellWidth: 60 },
-                        4: { halign: "right" }, // Monto a la derecha
-                        5: { halign: "center" }, // Estado al centro
-                    },
-                    didDrawPage: function (data) {
-                        // Footer
-                        const str = "Página " + doc.getNumberOfPages();
-                        doc.setFontSize(8);
-                        doc.setTextColor(150);
-                        doc.text(
-                            str,
-                            pageWidth - 30,
-                            doc.internal.pageSize.height - 10,
-                        );
-                    },
-                });
-
-                doc.save(
-                    `BrisHotel_Reporte_${new Date().toISOString().slice(0, 10)}.pdf`,
-                );
-            });
-    </script>
-
-    <script is:inline>
-        // 🔄 Transición de Estados por Categoría
-        const transitionSelects = document.querySelectorAll(
-            ".transition-status-btn",
-        );
-        transitionSelects.forEach((select) => {
-            select.addEventListener("change", async (e) => {
-                const category = e.target.dataset.category;
-                const fromStatus = e.target.dataset.fromStatus;
-                const toStatus = e.target.value;
-                const card = e.target.closest("div.group");
-
-                if (!toStatus) return;
-
-                e.target.disabled = true;
-                if (card) card.style.opacity = "0.3";
-
-                try {
-                    const response = await fetch("/api/admin/rooms", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            category,
-                            fromStatus,
-                            toStatus,
-                        }),
+                        body: data,
+                        theme: "grid",
+                        headStyles: {
+                            fillColor: [248, 250, 252],
+                            textColor: [71, 85, 105],
+                            fontStyle: "bold",
+                        },
+                        columnStyles: {
+                            0: { cellWidth: 35 },
+                            1: { cellWidth: 25 },
+                            2: { cellWidth: 60 },
+                            4: { halign: "right" },
+                        },
+                        didDrawPage: (data) => {
+                            const str = "Página " + doc.getNumberOfPages();
+                            doc.setFontSize(8);
+                            doc.setTextColor(150);
+                            doc.text(
+                                str,
+                                pageWidth - 30,
+                                doc.internal.pageSize.height - 10,
+                            );
+                        },
                     });
-                    if (response.ok) window.location.reload();
-                    else throw new Error();
+
+                    const fileName = `BrisHotel_Reporte_${new Date().toISOString().slice(0, 10)}.pdf`;
+                    console.log(`💾 Saving PDF: ${fileName}`);
+                    doc.save(fileName);
                 } catch (err) {
-                    alert("Error en el servidor al realizar la transición");
-                    window.location.reload();
+                    console.error("❌ PDF Export Error:", err);
+                    alert("Error al generar el PDF. Revisa la consola.");
                 }
-            });
-        });
-
-        // 💰 Gestión de Precios por Categoría
-        const priceContainers = document.querySelectorAll(".price-container");
-        priceContainers.forEach((container) => {
-            const category = container.dataset.category;
-            const viewMode = container.querySelector(".price-view");
-            const editMode = container.querySelector(".price-edit");
-            const input = container.querySelector(".room-price-input");
-            const editBtn = container.querySelector(".edit-price-btn");
-            const saveBtn = container.querySelector(".save-price-btn");
-            const cancelBtn = container.querySelector(".cancel-price-btn");
-            const card = container.closest("div.group");
-
-            editBtn.addEventListener("click", () => {
-                viewMode.classList.add("hidden");
-                editMode.classList.remove("hidden");
-                input.focus();
-            });
-
-            // Cerrar al pulsar X
-            cancelBtn.addEventListener("click", () => {
-                editMode.classList.add("hidden");
-                viewMode.classList.remove("hidden");
-                input.value = input.defaultValue;
-            });
-
-            // Cerrar al perder foco o ESC
-            input.addEventListener("keydown", (e) => {
-                if (e.key === "Escape") {
-                    editMode.classList.add("hidden");
-                    viewMode.classList.remove("hidden");
-                }
-            });
-
-            saveBtn.addEventListener("click", async () => {
-                const newPrice = input.value;
-
-                saveBtn.disabled = true;
-                input.disabled = true;
-                if (card) card.style.opacity = "0.5";
-
-                try {
-                    const response = await fetch("/api/admin/rooms", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ category, price: newPrice }),
-                    });
-                    if (response.ok) {
-                        window.location.reload();
-                    } else {
-                        throw new Error();
-                    }
-                } catch (err) {
-                    alert("Error al actualizar el precio de la categoría");
-                    saveBtn.disabled = false;
-                    input.disabled = false;
-                    if (card) card.style.opacity = "1";
-                }
-            });
-        });
-
-        // 🔢 Paginación de Transacciones
-        let currentTxPage = 1;
-        const txPerPage = 10;
-        const txRows = document.querySelectorAll(".tx-row");
-        const totalTx = txRows.length;
-        const prevBtn = document.getElementById("prev-page");
-        const nextBtn = document.getElementById("next-page");
-        const rangeText = document.getElementById("current-range");
-
-        function updateTxPagination() {
-            if (!txRows.length) return;
-
-            const start = (currentTxPage - 1) * txPerPage;
-            const end = start + txPerPage;
-
-            txRows.forEach((row, index) => {
-                if (index >= start && index < end) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
-                }
-            });
-
-            if (rangeText) {
-                rangeText.textContent = `${start + 1}-${Math.min(end, totalTx)}`;
-            }
-            if (prevBtn) prevBtn.disabled = currentTxPage === 1;
-            if (nextBtn) nextBtn.disabled = end >= totalTx;
-        }
-
-        if (prevBtn && nextBtn) {
-            prevBtn.addEventListener("click", () => {
-                if (currentTxPage > 1) {
-                    currentTxPage--;
-                    updateTxPagination();
-                }
-            });
-            nextBtn.addEventListener("click", () => {
-                if (currentTxPage * txPerPage < totalTx) {
-                    currentTxPage++;
-                    updateTxPagination();
-                }
-            });
-            updateTxPagination(); // Inicializar
-        }
-
-        // 🔢 Paginación de Libro de Reclamaciones
-        let currentComplaintPage = 1;
-        const complaintsPerPage = 10;
-        const complaintRows = document.querySelectorAll(".complaint-row");
-        const totalComplaints = complaintRows.length;
-        const prevComplaintBtn = document.getElementById("prev-complaint-page");
-        const nextComplaintBtn = document.getElementById("next-complaint-page");
-        const complaintRangeText = document.getElementById("complaint-range");
-
-        function updateComplaintPagination() {
-            if (!complaintRows.length) return;
-
-            const start = (currentComplaintPage - 1) * complaintsPerPage;
-            const end = start + complaintsPerPage;
-
-            complaintRows.forEach((row, index) => {
-                if (index >= start && index < end) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
-                }
-            });
-
-            if (complaintRangeText) {
-                complaintRangeText.textContent = `${start + 1}-${Math.min(end, totalComplaints)}`;
-            }
-            if (prevComplaintBtn)
-                prevComplaintBtn.disabled = currentComplaintPage === 1;
-            if (nextComplaintBtn)
-                nextComplaintBtn.disabled = end >= totalComplaints;
-        }
-
-        if (prevComplaintBtn && nextComplaintBtn) {
-            prevComplaintBtn.addEventListener("click", () => {
-                if (currentComplaintPage > 1) {
-                    currentComplaintPage--;
-                    updateComplaintPagination();
-                }
-            });
-            nextComplaintBtn.addEventListener("click", () => {
-                if (
-                    currentComplaintPage * complaintsPerPage <
-                    totalComplaints
-                ) {
-                    currentComplaintPage++;
-                    updateComplaintPagination();
-                }
-            });
-            updateComplaintPagination(); // Inicializar
-        }
-
-        // 🏗️ Gestión de Cantidades (Añadir/Eliminar unidades)
-        const qtyPlusBtns = document.querySelectorAll(".qty-btn-plus");
-        const qtyMinusBtns = document.querySelectorAll(".qty-btn-minus");
-
-        const updateQuantity = async (category, action) => {
-            try {
-                const response = await fetch("/api/admin/rooms", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ category, action }),
-                });
-                if (response.ok) window.location.reload();
-                else throw new Error();
-            } catch (err) {
-                alert("Error al actualizar la cantidad de unidades");
-            }
-        };
-
-        qtyPlusBtns.forEach((btn) => {
-            btn.addEventListener("click", () => {
-                const category = btn.dataset.category;
-                updateQuantity(category, "add_unit");
-            });
-        });
-
-        qtyMinusBtns.forEach((btn) => {
-            btn.addEventListener("click", () => {
-                if (
-                    !confirm(
-                        "¿Seguro que deseas eliminar una unidad de esta categoría? (Solo se eliminarán unidades libres)",
-                    )
-                )
-                    return;
-                const category = btn.dataset.category;
-                updateQuantity(category, "remove_unit");
-            });
-        });
-
-        // Sincronización Global de Pagos Pendientes
-        const syncAllBtn = document.getElementById("sync-all-btn");
-        if (syncAllBtn) {
-            syncAllBtn.addEventListener("click", async () => {
-                // Seleccionar todas las órdenes presentes en la tabla (RES-XXXX)
-                const allOrders = Array.from(document.querySelectorAll("td"))
-                    .map((td) => td.textContent.trim())
-                    .filter((text) => text.startsWith("RES-"));
-
-                if (allOrders.length === 0) {
-                    alert("No hay transacciones para sincronizar.");
-                    return;
-                }
-
-                syncAllBtn.disabled = true;
-                const originalText = syncAllBtn.innerHTML;
-                syncAllBtn.innerHTML = " Sincronizando...";
-
-                for (const orderId of allOrders) {
-                    try {
-                        await fetch("/api/admin/sync-status", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ orderId }),
-                        });
-                    } catch (e) {
-                        console.error("Error syncing", orderId, e);
-                    }
-                }
-
-                window.location.reload();
-            });
-        }
-
-        const logoutBtn = document.getElementById("logout-btn");
-
-        // 📝 Gestión de Reclamaciones
-        const complaintBtns = document.querySelectorAll(
-            ".complaint-status-btn",
-        );
-        complaintBtns.forEach((btn) => {
-            btn.addEventListener("click", async () => {
-                const id = btn.dataset.id;
-                if (!confirm("¿Deseas marcar esta reclamación como ATENDIDA?"))
-                    return;
-
-                try {
-                    const response = await fetch("/api/admin/complaints", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ id, status: "ATENDIDO" }),
-                    });
-                    if (response.ok) window.location.reload();
-                    else throw new Error();
-                } catch (err) {
-                    alert("Error al actualizar el estado de la reclamación");
-                }
-            });
-        });
-
-        if (logoutBtn) {
-            logoutBtn.addEventListener("click", async () => {
-                await fetch("/api/logout", { method: "POST" });
-                window.location.href = "/login";
             });
         }
     </script>
 </Layout>
+
+<script is:inline>
+    // 🔄 Transición de Estados por Categoría
+    const transitionSelects = document.querySelectorAll(
+        ".transition-status-btn",
+    );
+    transitionSelects.forEach((select) => {
+        select.addEventListener("change", async (e) => {
+            const category = e.target.dataset.category;
+            const fromStatus = e.target.dataset.fromStatus;
+            const toStatus = e.target.value;
+            const card = e.target.closest("div.group");
+
+            if (!toStatus) return;
+
+            e.target.disabled = true;
+            if (card) card.style.opacity = "0.3";
+
+            try {
+                const response = await fetch("/api/admin/rooms", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        category,
+                        fromStatus,
+                        toStatus,
+                    }),
+                });
+                if (response.ok) window.location.reload();
+                else throw new Error();
+            } catch (err) {
+                alert("Error en el servidor al realizar la transición");
+                window.location.reload();
+            }
+        });
+    });
+
+    // 💰 Gestión de Precios por Categoría
+    const priceContainers = document.querySelectorAll(".price-container");
+    priceContainers.forEach((container) => {
+        const category = container.dataset.category;
+        const viewMode = container.querySelector(".price-view");
+        const editMode = container.querySelector(".price-edit");
+        const input = container.querySelector(".room-price-input");
+        const editBtn = container.querySelector(".edit-price-btn");
+        const saveBtn = container.querySelector(".save-price-btn");
+        const cancelBtn = container.querySelector(".cancel-price-btn");
+        const card = container.closest("div.group");
+
+        editBtn.addEventListener("click", () => {
+            viewMode.classList.add("hidden");
+            editMode.classList.remove("hidden");
+            input.focus();
+        });
+
+        // Cerrar al pulsar X
+        cancelBtn.addEventListener("click", () => {
+            editMode.classList.add("hidden");
+            viewMode.classList.remove("hidden");
+            input.value = input.defaultValue;
+        });
+
+        // Cerrar al perder foco o ESC
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                editMode.classList.add("hidden");
+                viewMode.classList.remove("hidden");
+            }
+        });
+
+        saveBtn.addEventListener("click", async () => {
+            const newPrice = input.value;
+
+            saveBtn.disabled = true;
+            input.disabled = true;
+            if (card) card.style.opacity = "0.5";
+
+            try {
+                const response = await fetch("/api/admin/rooms", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ category, price: newPrice }),
+                });
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    throw new Error();
+                }
+            } catch (err) {
+                alert("Error al actualizar el precio de la categoría");
+                saveBtn.disabled = false;
+                input.disabled = false;
+                if (card) card.style.opacity = "1";
+            }
+        });
+    });
+
+    // 🔢 Paginación de Transacciones
+    let currentTxPage = 1;
+    const txPerPage = 10;
+    const txRows = document.querySelectorAll(".tx-row");
+    const totalTx = txRows.length;
+    const prevBtn = document.getElementById("prev-page");
+    const nextBtn = document.getElementById("next-page");
+    const rangeText = document.getElementById("current-range");
+
+    function updateTxPagination() {
+        if (!txRows.length) return;
+
+        const start = (currentTxPage - 1) * txPerPage;
+        const end = start + txPerPage;
+
+        txRows.forEach((row, index) => {
+            if (index >= start && index < end) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+
+        if (rangeText) {
+            rangeText.textContent = `${start + 1}-${Math.min(end, totalTx)}`;
+        }
+        if (prevBtn) prevBtn.disabled = currentTxPage === 1;
+        if (nextBtn) nextBtn.disabled = end >= totalTx;
+    }
+
+    if (prevBtn && nextBtn) {
+        prevBtn.addEventListener("click", () => {
+            if (currentTxPage > 1) {
+                currentTxPage--;
+                updateTxPagination();
+            }
+        });
+        nextBtn.addEventListener("click", () => {
+            if (currentTxPage * txPerPage < totalTx) {
+                currentTxPage++;
+                updateTxPagination();
+            }
+        });
+        updateTxPagination(); // Inicializar
+    }
+
+    // 🔢 Paginación de Libro de Reclamaciones
+    let currentComplaintPage = 1;
+    const complaintsPerPage = 10;
+    const complaintRows = document.querySelectorAll(".complaint-row");
+    const totalComplaints = complaintRows.length;
+    const prevComplaintBtn = document.getElementById("prev-complaint-page");
+    const nextComplaintBtn = document.getElementById("next-complaint-page");
+    const complaintRangeText = document.getElementById("complaint-range");
+
+    function updateComplaintPagination() {
+        if (!complaintRows.length) return;
+
+        const start = (currentComplaintPage - 1) * complaintsPerPage;
+        const end = start + complaintsPerPage;
+
+        complaintRows.forEach((row, index) => {
+            if (index >= start && index < end) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+
+        if (complaintRangeText) {
+            complaintRangeText.textContent = `${start + 1}-${Math.min(end, totalComplaints)}`;
+        }
+        if (prevComplaintBtn)
+            prevComplaintBtn.disabled = currentComplaintPage === 1;
+        if (nextComplaintBtn)
+            nextComplaintBtn.disabled = end >= totalComplaints;
+    }
+
+    if (prevComplaintBtn && nextComplaintBtn) {
+        prevComplaintBtn.addEventListener("click", () => {
+            if (currentComplaintPage > 1) {
+                currentComplaintPage--;
+                updateComplaintPagination();
+            }
+        });
+        nextComplaintBtn.addEventListener("click", () => {
+            if (currentComplaintPage * complaintsPerPage < totalComplaints) {
+                currentComplaintPage++;
+                updateComplaintPagination();
+            }
+        });
+        updateComplaintPagination(); // Inicializar
+    }
+
+    // 🏗️ Gestión de Cantidades (Añadir/Eliminar unidades)
+    const qtyPlusBtns = document.querySelectorAll(".qty-btn-plus");
+    const qtyMinusBtns = document.querySelectorAll(".qty-btn-minus");
+
+    const updateQuantity = async (category, action) => {
+        try {
+            const response = await fetch("/api/admin/rooms", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ category, action }),
+            });
+            if (response.ok) window.location.reload();
+            else throw new Error();
+        } catch (err) {
+            alert("Error al actualizar la cantidad de unidades");
+        }
+    };
+
+    qtyPlusBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const category = btn.dataset.category;
+            updateQuantity(category, "add_unit");
+        });
+    });
+
+    qtyMinusBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            if (
+                !confirm(
+                    "¿Seguro que deseas eliminar una unidad de esta categoría? (Solo se eliminarán unidades libres)",
+                )
+            )
+                return;
+            const category = btn.dataset.category;
+            updateQuantity(category, "remove_unit");
+        });
+    });
+
+    // Sincronización Global de Pagos Pendientes
+    const syncAllBtn = document.getElementById("sync-all-btn");
+    if (syncAllBtn) {
+        syncAllBtn.addEventListener("click", async () => {
+            // Seleccionar todas las órdenes presentes en la tabla (RES-XXXX)
+            const allOrders = Array.from(document.querySelectorAll("td"))
+                .map((td) => td.textContent.trim())
+                .filter((text) => text.startsWith("RES-"));
+
+            if (allOrders.length === 0) {
+                alert("No hay transacciones para sincronizar.");
+                return;
+            }
+
+            syncAllBtn.disabled = true;
+            const originalText = syncAllBtn.innerHTML;
+            syncAllBtn.innerHTML = " Sincronizando...";
+
+            for (const orderId of allOrders) {
+                try {
+                    await fetch("/api/admin/sync-status", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ orderId }),
+                    });
+                } catch (e) {
+                    console.error("Error syncing", orderId, e);
+                }
+            }
+
+            window.location.reload();
+        });
+    }
+
+    const logoutBtn = document.getElementById("logout-btn");
+
+    // 📝 Gestión de Reclamaciones
+    const complaintBtns = document.querySelectorAll(".complaint-status-btn");
+    complaintBtns.forEach((btn) => {
+        btn.addEventListener("click", async () => {
+            const id = btn.dataset.id;
+            if (!confirm("¿Deseas marcar esta reclamación como ATENDIDA?"))
+                return;
+
+            try {
+                const response = await fetch("/api/admin/complaints", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id, status: "ATENDIDO" }),
+                });
+                if (response.ok) window.location.reload();
+                else throw new Error();
+            } catch (err) {
+                alert("Error al actualizar el estado de la reclamación");
+            }
+        });
+    });
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", async () => {
+            await fetch("/api/logout", { method: "POST" });
+            window.location.href = "/login";
+        });
+    }
+</script>
 
 <style is:global>
     @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
