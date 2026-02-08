@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { createSession } from "../../lib/auth";
-import { timingSafeEqual } from "node:crypto";
+import { supabase } from "../../lib/db";
 
 export const prerender = false;
 
@@ -10,40 +10,33 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     try {
         const { user, password } = await request.json();
 
-        // 🔐 Credenciales Requeridas
-        const expectedUser = import.meta.env.ADMIN_USER;
-        const expectedPassword = import.meta.env.ADMIN_PASSWORD;
-
-        if (!expectedUser || !expectedPassword) {
-            console.error("❌ ERROR: ADMIN_USER or ADMIN_PASSWORD not set in environment");
-            return new Response(JSON.stringify({ success: false, error: "Error de configuración servidor" }), { status: 500, headers: jsonHeaders });
+        if (!user || !password) {
+            return new Response(JSON.stringify({ success: false, error: "Credenciales faltantes" }), { status: 400, headers: jsonHeaders });
         }
 
-        // Comparación segura (timing attack resistant)
-        const userBuffer = Buffer.from(user ?? "");
-        const expectedUserBuffer = Buffer.from(expectedUser);
-        const passBuffer = Buffer.from(password ?? "");
-        const expectedPassBuffer = Buffer.from(expectedPassword);
+        // 🔐 Autenticación con Supabase Auth
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: user, // Asumimos que el "usuario" es el email en Supabase
+            password: password,
+        });
 
-        const userMatch = userBuffer.length === expectedUserBuffer.length && timingSafeEqual(userBuffer, expectedUserBuffer);
-        const passMatch = passBuffer.length === expectedPassBuffer.length && timingSafeEqual(passBuffer, expectedPassBuffer);
-
-        if (userMatch && passMatch) {
-            // ✅ Crear sesión segura
-            const token = createSession(expectedUser);
-
-            cookies.set("admin_session", token, {
-                path: "/",
-                httpOnly: true,
-                secure: import.meta.env.PROD, // Secure in calc
-                sameSite: "strict",
-                maxAge: 60 * 60 * 24 // 1 día
-            });
-
-            return new Response(JSON.stringify({ success: true }), { status: 200, headers: jsonHeaders });
+        if (error || !data.user) {
+            console.error("Login Auth Error:", error?.message);
+            return new Response(JSON.stringify({ success: false, error: "Credenciales inválidas" }), { status: 401, headers: jsonHeaders });
         }
 
-        return new Response(JSON.stringify({ success: false, error: "Credenciales inválidas" }), { status: 401, headers: jsonHeaders });
+        // ✅ Crear sesión segura (usamos el ID del usuario de Supabase)
+        const token = createSession(data.user.id);
+
+        cookies.set("admin_session", token, {
+            path: "/",
+            httpOnly: true,
+            secure: import.meta.env.PROD,
+            sameSite: "strict",
+            maxAge: 60 * 60 * 24 // 1 día
+        });
+
+        return new Response(JSON.stringify({ success: true }), { status: 200, headers: jsonHeaders });
 
     } catch (err: any) {
         console.error("Login Error:", err);
