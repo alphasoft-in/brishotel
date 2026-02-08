@@ -123,14 +123,22 @@ export const db = {
     },
 
     getRoomCategories: async () => {
+        console.log('🔍 Fetching room categories from Supabase...');
         const { data: rows, error } = await supabase
             .from('rooms')
             .select('*');
 
-        if (error || !rows) {
-            console.error('Error fetching categories:', error);
+        if (error) {
+            console.error('❌ Error fetching categories:', error);
             return [];
         }
+
+        if (!rows || rows.length === 0) {
+            console.warn('⚠️ No rooms found in Supabase "rooms" table.');
+            return [];
+        }
+
+        console.log(`✅ Found ${rows.length} room units.`);
 
         const grouped: Record<string, any> = {};
 
