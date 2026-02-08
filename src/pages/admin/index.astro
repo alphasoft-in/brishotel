@@ -929,12 +929,12 @@ const statusConfig = {
     </div>
 
     <script>
-        import ExcelJS from "exceljs";
+        import * as ExcelJS from "exceljs";
         import { saveAs } from "file-saver";
-        import jsPDF from "jspdf";
+        import { jsPDF } from "jspdf";
         import autoTable from "jspdf-autotable";
 
-        console.log("📊 Professional Export script initialized");
+        console.log("📊 Diagnostic Export script initialized");
 
         const BRAND_GREEN = [117, 145, 32]; // #759120
         const BRAND_BROWN = [90, 61, 55]; // #5a3d37
@@ -942,68 +942,81 @@ const statusConfig = {
         // --- DATA EXTRACTION ---
         const getDetailedTableData = () => {
             console.log("🔍 Extracting detailed table data...");
-            const rows = Array.from(
-                document.querySelectorAll("#transactions-body tr.tx-row"),
-            );
+            try {
+                const rows = Array.from(
+                    document.querySelectorAll("#transactions-body tr.tx-row"),
+                );
 
-            return rows
-                .map((row) => {
-                    const cols = row.querySelectorAll("td");
-                    if (cols.length < 6) return null;
+                if (rows.length === 0) {
+                    console.warn("⚠️ No rows found");
+                    return [];
+                }
 
-                    const date = cols[0].textContent.trim();
-                    const orderId = cols[1].textContent.trim();
+                return rows
+                    .map((row, idx) => {
+                        const cols = row.querySelectorAll("td");
+                        if (cols.length < 6) return null;
 
-                    const clientCell = cols[2];
-                    const clientName =
-                        clientCell
-                            .querySelector(".text-xs.font-bold")
-                            ?.textContent.trim() || "";
-                    const clientEmail =
-                        clientCell
-                            .querySelector(".text-\[10px\].text-slate-500")
-                            ?.textContent.trim() || "";
+                        const date = cols[0].textContent?.trim() || "N/A";
+                        const orderId = cols[1].textContent?.trim() || "N/A";
 
-                    // Select and clean DNI and Phone
-                    // We use search because the structure might vary slightly if one is missing
-                    const spanTexts = Array.from(
-                        clientCell.querySelectorAll("span"),
-                    ).map((s) => s.textContent.trim());
-                    const clientDni =
-                        spanTexts
-                            .find((t) => t.includes("DNI:"))
-                            ?.replace("DNI: ", "") || "";
-                    const clientPhone =
-                        spanTexts
-                            .find((t) => t.includes("Telf:"))
-                            ?.replace("Telf: ", "") || "";
+                        const clientCell = cols[2];
+                        const clientName =
+                            clientCell
+                                .querySelector(".text-xs.font-bold")
+                                ?.textContent?.trim() ||
+                            clientCell.children[0]?.children[0]?.textContent?.trim() ||
+                            "N/A";
+                        const clientEmail =
+                            clientCell
+                                .querySelector(".text-\[10px\].text-slate-500")
+                                ?.textContent?.trim() ||
+                            clientCell.children[0]?.children[1]?.textContent?.trim() ||
+                            "";
 
-                    const room = cols[3].textContent.trim();
-                    const amount = cols[4].textContent
-                        .trim()
-                        .replace("S/ ", "");
-                    const status = cols[5].textContent.trim();
+                        const spanTexts = Array.from(
+                            clientCell.querySelectorAll("span"),
+                        ).map((s) => s.textContent?.trim() || "");
+                        const clientDni =
+                            spanTexts
+                                .find((t) => t.includes("DNI:"))
+                                ?.replace("DNI: ", "") || "";
+                        const clientPhone =
+                            spanTexts
+                                .find((t) => t.includes("Telf:"))
+                                ?.replace("Telf: ", "") || "";
 
-                    return {
-                        date,
-                        orderId,
-                        clientName,
-                        clientEmail,
-                        clientDni,
-                        clientPhone,
-                        room,
-                        amount,
-                        status,
-                    };
-                })
-                .filter((r) => r !== null);
+                        const room = cols[3].textContent?.trim() || "N/A";
+                        const amount =
+                            cols[4].textContent?.trim()?.replace("S/ ", "") ||
+                            "0";
+                        const status = cols[5].textContent?.trim() || "N/A";
+
+                        return {
+                            date,
+                            orderId,
+                            clientName,
+                            clientEmail,
+                            clientDni,
+                            clientPhone,
+                            room,
+                            amount,
+                            status,
+                        };
+                    })
+                    .filter((r) => r !== null);
+            } catch (error) {
+                console.error("Data extraction error:", error);
+                alert("Error al extraer datos: " + (error as Error).message);
+                return [];
+            }
         };
 
-        // --- EXCEL EXPORT (PRO) ---
+        // --- EXCEL EXPORT ---
         const exportExcelBtn = document.getElementById("export-excel-btn");
         if (exportExcelBtn) {
             exportExcelBtn.addEventListener("click", async () => {
-                console.log("📥 Professional Excel export triggered");
+                console.log("📥 Excel triggered");
                 try {
                     const data = getDetailedTableData();
                     if (data.length === 0) {
@@ -1011,10 +1024,11 @@ const statusConfig = {
                         return;
                     }
 
-                    const workbook = new ExcelJS.Workbook();
+                    // Handle ExcelJS ESM / CJS diffs
+                    const ExcelJSVar: any = (ExcelJS as any).default || ExcelJS;
+                    const workbook = new ExcelJSVar.Workbook();
                     const worksheet = workbook.addWorksheet("Transacciones");
 
-                    // Header row
                     const headerRow = worksheet.addRow([
                         "FECHA Y HORA",
                         "ORDEN ID",
@@ -1027,30 +1041,19 @@ const statusConfig = {
                         "ESTADO",
                     ]);
 
-                    // Style headers
                     headerRow.eachCell((cell) => {
                         cell.fill = {
                             type: "pattern",
                             pattern: "solid",
-                            fgColor: { argb: "FF759120" }, // #759120
+                            fgColor: { argb: "FF759120" },
                         };
-                        cell.font = {
-                            color: { argb: "FFFFFFFF" },
-                            bold: true,
-                        };
+                        cell.font = { color: { argb: "FFFFFFFF" }, bold: true };
                         cell.alignment = {
                             vertical: "middle",
                             horizontal: "center",
                         };
-                        cell.border = {
-                            top: { style: "thin" },
-                            left: { style: "thin" },
-                            bottom: { style: "thin" },
-                            right: { style: "thin" },
-                        };
                     });
 
-                    // Add data rows
                     data.forEach((item) => {
                         const row = worksheet.addRow([
                             item.date,
@@ -1063,35 +1066,11 @@ const statusConfig = {
                             parseFloat(item.amount),
                             item.status,
                         ]);
-
-                        // Cell styling
-                        const statusCell = row.getCell(9);
-                        if (item.status === "EXITOSO")
-                            statusCell.font = {
-                                color: { argb: "FF059669" },
-                                bold: true,
-                            };
-                        if (item.status === "PENDIENTE")
-                            statusCell.font = {
-                                color: { argb: "FFD97706" },
-                                bold: true,
-                            };
-
-                        row.eachCell((c) => {
-                            c.alignment = { vertical: "middle" };
-                            c.border = {
-                                bottom: {
-                                    style: "thin",
-                                    color: { argb: "FFF1F5F9" },
-                                },
-                            };
-                        });
+                        row.eachCell(
+                            (c) => (c.alignment = { vertical: "middle" }),
+                        );
                     });
 
-                    // Auto-filter
-                    worksheet.autoFilter = "A1:I1";
-
-                    // Column widths
                     worksheet.columns = [
                         { width: 25 },
                         { width: 15 },
@@ -1111,76 +1090,83 @@ const statusConfig = {
                     );
                 } catch (err) {
                     console.error("Excel Error:", err);
-                    alert("Error al generar Excel");
+                    alert("Error en ExcelJS: " + (err as Error).message);
                 }
             });
         }
 
-        // --- PDF EXPORT (PRO) ---
+        // --- PDF EXPORT ---
         const exportPdfBtn = document.getElementById("export-pdf-btn");
         if (exportPdfBtn) {
             exportPdfBtn.addEventListener("click", () => {
-                const data = getDetailedTableData();
-                if (data.length === 0) return;
+                console.log("📥 PDF triggered");
+                try {
+                    const data = getDetailedTableData();
+                    if (!data || data.length === 0) {
+                        alert("No hay datos para exportar");
+                        return;
+                    }
 
-                const doc = new jsPDF();
-                const pageWidth = doc.internal.pageSize.width;
+                    const doc = new jsPDF();
+                    const pageWidth = doc.internal.pageSize.width;
 
-                doc.setFillColor(
-                    BRAND_GREEN[0],
-                    BRAND_GREEN[1],
-                    BRAND_GREEN[2],
-                );
-                doc.rect(0, 0, pageWidth, 40, "F");
+                    doc.setFillColor(
+                        BRAND_GREEN[0],
+                        BRAND_GREEN[1],
+                        BRAND_GREEN[2],
+                    );
+                    doc.rect(0, 0, pageWidth, 40, "F");
 
-                doc.setTextColor(255, 255, 255);
-                doc.setFontSize(24);
-                doc.text("Bris Hotel", 14, 20);
-                doc.setFontSize(10);
-                doc.text("REPORTE DE TRANSACCIONES", 14, 28);
-                doc.setFontSize(8);
-                doc.text(`Generado: ${new Date().toLocaleString()}`, 14, 34);
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(24);
+                    doc.text("Bris Hotel", 14, 20);
+                    doc.setFontSize(10);
+                    doc.text("REPORTE DE TRANSACCIONES", 14, 28);
 
-                const tableBody = data.map((d) => [
-                    d.date,
-                    d.orderId,
-                    `${d.clientName}\n${d.clientEmail}\n${d.clientDni}`,
-                    d.room,
-                    `S/ ${parseFloat(d.amount).toFixed(2)}`,
-                    d.status,
-                ]);
+                    const tableBody = data.map((d) => [
+                        d.date,
+                        d.orderId,
+                        `${d.clientName}\n${d.clientEmail}\n${d.clientDni}`,
+                        d.room,
+                        `S/ ${parseFloat(d.amount).toFixed(2)}`,
+                        d.status,
+                    ]);
 
-                autoTable(doc, {
-                    startY: 50,
-                    head: [
-                        [
-                            "FECHA",
-                            "ORDEN ID",
-                            "CLIENTE",
-                            "HAB.",
-                            "MONTO",
-                            "ESTADO",
+                    autoTable(doc, {
+                        startY: 50,
+                        head: [
+                            [
+                                "FECHA",
+                                "ORDEN ID",
+                                "CLIENTE",
+                                "HAB.",
+                                "MONTO",
+                                "ESTADO",
+                            ],
                         ],
-                    ],
-                    body: tableBody,
-                    theme: "striped",
-                    headStyles: {
-                        fillColor: [
-                            BRAND_BROWN[0],
-                            BRAND_BROWN[1],
-                            BRAND_BROWN[2],
-                        ],
-                    },
-                    styles: { fontSize: 8, valign: "middle" },
-                    columnStyles: {
-                        2: { cellWidth: 50 },
-                        4: { halign: "right" },
-                    },
-                });
+                        body: tableBody,
+                        theme: "striped",
+                        headStyles: {
+                            fillColor: [
+                                BRAND_BROWN[0],
+                                BRAND_BROWN[1],
+                                BRAND_BROWN[2],
+                            ] as any,
+                        },
+                        styles: { fontSize: 8, valign: "middle" },
+                        columnStyles: {
+                            2: { cellWidth: 50 },
+                            4: { halign: "right" },
+                        },
+                    });
 
-                doc.save(
-                    `BrisHotel_Reporte_${new Date().toISOString().split("T")[0]}.pdf`,
-                );
+                    doc.save(
+                        `BrisHotel_Reporte_${new Date().toISOString().split("T")[0]}.pdf`,
+                    );
+                } catch (err) {
+                    console.error("PDF Error:", err);
+                    alert("Error en jsPDF: " + (err as Error).message);
+                }
             });
         }
     </script>
