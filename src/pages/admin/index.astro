@@ -944,9 +944,10 @@ const statusConfig = {
                     const cols = row.querySelectorAll("td");
                     if (cols.length < 6) return null;
 
-                    // Extract data by column index to be more robust
-                    const date = cols[0].innerText.trim();
-                    const orderId = cols[1].innerText.trim();
+                    // Extract and format date
+                    // Original format might be from .toLocaleString("es-PE", ...) or direct text
+                    // To be safe, we'll try to parse the timestamp or reformat the existing text
+                    const rawDate = cols[0].innerText.trim();
 
                     // Cliente column (Complex structure)
                     const clientCell = cols[2];
@@ -961,11 +962,12 @@ const statusConfig = {
                         "";
                     const client = `${clientName}\n${clientEmail}\n${clientDni}`;
 
+                    const orderId = cols[1].innerText.trim();
                     const room = cols[3].innerText.trim();
                     const amount = cols[4].innerText.trim().replace("S/ ", "");
                     const status = cols[5].innerText.trim();
 
-                    return [date, orderId, client, room, amount, status];
+                    return [rawDate, orderId, client, room, amount, status];
                 })
                 .filter((r) => r !== null);
 
@@ -988,34 +990,34 @@ const statusConfig = {
 
                     // Headers
                     data.unshift([
-                        "Fecha",
-                        "ID Orden",
-                        "Cliente",
-                        "Habitación",
-                        "Monto",
-                        "Estado",
+                        "FECHA Y HORA",
+                        "ORDEN ID",
+                        "CLIENTE / DATOS",
+                        "Alojamiento",
+                        "MONTO (S/)",
+                        "ESTADO",
                     ]);
 
                     const ws = XLSX.utils.aoa_to_sheet(data);
-                    const wscols = [
-                        { wch: 20 },
-                        { wch: 15 },
-                        { wch: 40 },
-                        { wch: 15 },
-                        { wch: 12 },
-                        { wch: 12 },
+
+                    // Column widths
+                    ws["!cols"] = [
+                        { wch: 25 }, // Fecha
+                        { wch: 15 }, // ID
+                        { wch: 45 }, // Cliente
+                        { wch: 20 }, // Habitación
+                        { wch: 12 }, // Monto
+                        { wch: 15 }, // Estado
                     ];
-                    ws["!cols"] = wscols;
 
                     const wb = XLSX.utils.book_new();
                     XLSX.utils.book_append_sheet(wb, ws, "Transacciones");
 
                     const fileName = `BrisHotel_Reporte_${new Date().toISOString().slice(0, 10)}.xlsx`;
-                    console.log(`💾 Saving Excel: ${fileName}`);
                     XLSX.writeFile(wb, fileName);
                 } catch (err) {
                     console.error("❌ Excel Export Error:", err);
-                    alert("Error al generar el Excel. Revisa la consola.");
+                    alert("Error al generar el Excel.");
                 }
             });
         }
@@ -1034,18 +1036,22 @@ const statusConfig = {
                     const doc = new jsPDF();
                     const pageWidth = doc.internal.pageSize.width;
 
-                    // Header
-                    doc.setFillColor(0, 161, 155);
+                    // Header (Olive Green #759120)
+                    doc.setFillColor(117, 145, 32);
                     doc.rect(0, 0, pageWidth, 40, "F");
+
                     doc.setTextColor(255, 255, 255);
-                    doc.setFontSize(22);
+                    doc.setFontSize(24);
                     doc.setFont("helvetica", "bold");
                     doc.text("Bris Hotel", 14, 20);
+
                     doc.setFontSize(10);
-                    doc.text("Reporte de Transacciones y Reservas", 14, 28);
+                    doc.setFont("helvetica", "normal");
+                    doc.text("REPORTE DE TRANSACCIONES Y RESERVAS", 14, 28);
+
                     doc.setFontSize(8);
                     doc.text(
-                        `Generado: ${new Date().toLocaleString()}`,
+                        `Generado el: ${new Date().toLocaleString("es-PE")}`,
                         14,
                         34,
                     );
@@ -1054,26 +1060,36 @@ const statusConfig = {
                         startY: 50,
                         head: [
                             [
-                                "Fecha",
-                                "ID Orden",
-                                "Cliente",
-                                "Hab.",
-                                "Monto",
-                                "Estado",
+                                "FECHA",
+                                "ORDEN ID",
+                                "CLIENTE",
+                                "HAB.",
+                                "MONTO",
+                                "ESTADO",
                             ],
                         ],
                         body: data,
-                        theme: "grid",
+                        theme: "striped",
                         headStyles: {
-                            fillColor: [248, 250, 252],
-                            textColor: [71, 85, 105],
+                            fillColor: [90, 61, 55], // Brown #5a3d37
+                            textColor: [255, 255, 255],
                             fontStyle: "bold",
+                            fontSize: 9,
+                        },
+                        bodyStyles: {
+                            fontSize: 8,
+                            textColor: [80, 80, 80],
                         },
                         columnStyles: {
                             0: { cellWidth: 35 },
-                            1: { cellWidth: 25 },
+                            1: { cellWidth: 25, fontStyle: "bold" },
                             2: { cellWidth: 60 },
-                            4: { halign: "right" },
+                            4: { halign: "right", fontStyle: "bold" },
+                            5: { halign: "center" },
+                        },
+                        styles: {
+                            valign: "middle",
+                            overflow: "linebreak",
                         },
                         didDrawPage: (data) => {
                             const str = "Página " + doc.getNumberOfPages();
