@@ -782,15 +782,20 @@ const statusConfig = {
                                                 data-index={index}
                                             >
                                                 <td class="py-4 px-6 text-xs text-slate-400 font-medium">
-                                                    {new Date(
-                                                        tx.timestamp,
-                                                    ).toLocaleString("es-PE", {
-                                                        day: "2-digit",
-                                                        month: "short",
-                                                        year: "numeric",
-                                                        hour: "2-digit",
-                                                        minute: "2-digit",
-                                                    })}
+                                                    {new Date(tx.timestamp)
+                                                        .toLocaleString(
+                                                            "es-PE",
+                                                            {
+                                                                day: "2-digit",
+                                                                month: "2-digit",
+                                                                year: "numeric",
+                                                                hour: "2-digit",
+                                                                minute: "2-digit",
+                                                                hour12: true,
+                                                            },
+                                                        )
+                                                        .replace(",", " -")
+                                                        .toUpperCase()}
                                                 </td>
                                                 <td class="py-4 px-6 text-xs font-mono text-slate-300">
                                                     {tx.order_id}
@@ -945,29 +950,29 @@ const statusConfig = {
                     if (cols.length < 6) return null;
 
                     // Extract and format date
-                    // Original format might be from .toLocaleString("es-PE", ...) or direct text
-                    // To be safe, we'll try to parse the timestamp or reformat the existing text
-                    const rawDate = cols[0].innerText.trim();
+                    const date = cols[0].textContent.trim();
+                    const orderId = cols[1].textContent.trim();
 
-                    // Cliente column (Complex structure)
+                    // Cliente column
                     const clientCell = cols[2];
                     const clientName =
-                        clientCell.children[0]?.children[0]?.innerText.trim() ||
+                        clientCell.children[0]?.children[0]?.textContent.trim() ||
                         "";
                     const clientEmail =
-                        clientCell.children[0]?.children[1]?.innerText.trim() ||
+                        clientCell.children[0]?.children[1]?.textContent.trim() ||
                         "";
                     const clientDni =
-                        clientCell.children[0]?.children[2]?.innerText.trim() ||
+                        clientCell.children[0]?.children[2]?.textContent.trim() ||
                         "";
                     const client = `${clientName}\n${clientEmail}\n${clientDni}`;
 
-                    const orderId = cols[1].innerText.trim();
-                    const room = cols[3].innerText.trim();
-                    const amount = cols[4].innerText.trim().replace("S/ ", "");
-                    const status = cols[5].innerText.trim();
+                    const room = cols[3].textContent.trim();
+                    const amount = cols[4].textContent
+                        .trim()
+                        .replace("S/ ", "");
+                    const status = cols[5].textContent.trim();
 
-                    return [rawDate, orderId, client, room, amount, status];
+                    return [date, orderId, client, room, amount, status];
                 })
                 .filter((r) => r !== null);
 
