@@ -36,7 +36,7 @@ export const POST: APIRoute = async ({ request }) => {
 
         // Actualizar DB
         const finalStatus = orderStatus === "PAID" ? "EXITOSO" : "FALLIDO";
-        db.updateTransactionStatus(orderId, finalStatus, answer);
+        await db.updateTransactionStatus(orderId, finalStatus, answer);
 
         return new Response(JSON.stringify({ success: true }), { status: 200, headers: jsonHeaders });
 

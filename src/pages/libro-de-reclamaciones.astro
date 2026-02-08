@@ -1,0 +1,394 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/ui/Navbar.astro";
+import Footer from "../components/ui/Footer.astro";
+---
+
+<Layout
+    title="Libro de Reclamaciones - Bris Hotel"
+    description="Formulario oficial del Libro de Reclamaciones de Bris Hotel Nasca. Expresa tus quejas o reclamos de acuerdo a ley."
+>
+    <Navbar />
+
+    <main class="pt-32 pb-20 bg-slate-50 min-h-screen">
+        <div class="max-w-4xl mx-auto px-6">
+            <!-- Header Section -->
+            <div
+                class="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-slate-100 mb-8"
+            >
+                <div
+                    class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8"
+                >
+                    <div>
+                        <h1
+                            class="font-kestrel text-4xl md:text-5xl text-[#5a3d37] mb-2"
+                        >
+                            Libro de Reclamaciones
+                        </h1>
+                        <p
+                            class="merriweather text-slate-500 uppercase tracking-widest text-[10px] font-bold"
+                        >
+                            Hoja de Reclamación Virtual
+                        </p>
+                    </div>
+                    <div
+                        class="bg-[#fcf8f8] border border-[#759120]/20 p-4 rounded-2xl flex items-center gap-4"
+                    >
+                        <div
+                            class="w-12 h-12 rounded-full bg-[#759120] flex items-center justify-center text-white"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="w-6 h-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                                ></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p
+                                class="text-[10px] font-bold text-slate-400 uppercase tracking-wider"
+                            >
+                                Bris Hotel
+                            </p>
+                            <p class="text-sm font-bold text-[#5a3d37]">
+                                Calle Callao 907, Nasca
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="prose prose-slate max-w-none text-sm text-slate-600 merriweather leading-relaxed"
+                >
+                    <p>
+                        Conforme a lo establecido en el Código de Protección y
+                        Defensa del Consumidor, nuestra institución cuenta con
+                        un Libro de Reclamaciones a su disposición.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Form Section -->
+            <form id="complaint-form" class="space-y-6">
+                <!-- 1. IDENTIFICACIÓN DEL CONSUMIDOR -->
+                <div
+                    class="bg-white rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100"
+                >
+                    <div class="flex items-center gap-3 mb-8">
+                        <span
+                            class="w-8 h-8 rounded-full bg-[#5a3d37] text-white flex items-center justify-center font-bold text-sm"
+                            >1</span
+                        >
+                        <h2 class="text-xl font-bold text-[#5a3d37]">
+                            Identificación del Consumidor
+                        </h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label
+                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1"
+                                for="fullName">Nombre Completo *</label
+                            >
+                            <input
+                                type="text"
+                                id="fullName"
+                                name="fullName"
+                                required
+                                class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#759120]/20 focus:border-[#759120] outline-none transition-all"
+                                placeholder="Ej. Juan Pérez"
+                            />
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="space-y-2">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1"
+                                    for="documentType">Tipo Doc. *</label
+                                >
+                                <select
+                                    id="documentType"
+                                    name="documentType"
+                                    class="w-full bg-slate-50 border border-slate-100 rounded-xl px-2 py-3 text-sm focus:ring-2 focus:ring-[#759120]/20 focus:border-[#759120] outline-none transition-all"
+                                >
+                                    <option value="DNI">DNI</option>
+                                    <option value="CE">C.E.</option>
+                                    <option value="PASAPORTE">PAS</option>
+                                </select>
+                            </div>
+                            <div class="col-span-2 space-y-2">
+                                <label
+                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1"
+                                    for="documentNumber">N° Documento *</label
+                                >
+                                <input
+                                    type="text"
+                                    id="documentNumber"
+                                    name="documentNumber"
+                                    required
+                                    class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#759120]/20 focus:border-[#759120] outline-none transition-all"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label
+                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1"
+                                for="email">E-mail *</label
+                            >
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                required
+                                class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#759120]/20 focus:border-[#759120] outline-none transition-all"
+                                placeholder="ejemplo@correo.com"
+                            />
+                        </div>
+
+                        <div class="space-y-2">
+                            <label
+                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1"
+                                for="phone">Teléfono / Celular</label
+                            >
+                            <input
+                                type="tel"
+                                id="phone"
+                                name="phone"
+                                class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#759120]/20 focus:border-[#759120] outline-none transition-all"
+                            />
+                        </div>
+
+                        <div class="md:col-span-2 space-y-2">
+                            <label
+                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1"
+                                for="address">Domicilio</label
+                            >
+                            <input
+                                type="text"
+                                id="address"
+                                name="address"
+                                class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#759120]/20 focus:border-[#759120] outline-none transition-all"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. DETALLE DE LA RECLAMACIÓN -->
+                <div
+                    class="bg-white rounded-3xl p-8 md:p-10 shadow-sm border border-slate-100"
+                >
+                    <div class="flex items-center gap-3 mb-8">
+                        <span
+                            class="w-8 h-8 rounded-full bg-[#5a3d37] text-white flex items-center justify-center font-bold text-sm"
+                            >2</span
+                        >
+                        <h2 class="text-xl font-bold text-[#5a3d37]">
+                            Detalle de la Reclamación
+                        </h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="flex items-center gap-8 bg-slate-50 p-6 rounded-2xl border border-slate-100"
+                        >
+                            <label
+                                class="flex items-center gap-3 cursor-pointer"
+                            >
+                                <input
+                                    type="radio"
+                                    name="type"
+                                    value="RECLAMO"
+                                    checked
+                                    class="w-4 h-4 text-[#759120] focus:ring-[#759120]/20"
+                                />
+                                <span class="text-sm font-bold text-[#5a3d37]"
+                                    >Reclamo</span
+                                >
+                            </label>
+                            <label
+                                class="flex items-center gap-3 cursor-pointer"
+                            >
+                                <input
+                                    type="radio"
+                                    name="type"
+                                    value="QUEJA"
+                                    class="w-4 h-4 text-[#759120] focus:ring-[#759120]/20"
+                                />
+                                <span class="text-sm font-bold text-[#5a3d37]"
+                                    >Queja</span
+                                >
+                            </label>
+                        </div>
+
+                        <div
+                            class="text-[10px] text-slate-400 bg-white p-3 rounded-xl border border-slate-50 leading-relaxed uppercase tracking-wider font-medium"
+                        >
+                            <p>
+                                <strong>RECLAMO:</strong> Disconformidad relacionada
+                                a los productos o servicios.
+                            </p>
+                            <p class="mt-1">
+                                <strong>QUEJA:</strong> Disconformidad no relacionada
+                                a los productos o servicios; o, malestar o descontento
+                                respecto a la atención al público.
+                            </p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label
+                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1"
+                                for="description"
+                                >Detalle de Queja o Reclamo *</label
+                            >
+                            <textarea
+                                id="description"
+                                name="description"
+                                required
+                                rows="6"
+                                class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#759120]/20 focus:border-[#759120] outline-none transition-all resize-none"
+                                placeholder="Describa lo sucedido..."
+                            ></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex flex-col items-center gap-4">
+                    <button
+                        type="submit"
+                        id="submit-btn"
+                        class="w-full md:w-auto px-12 py-4 bg-[#759120] text-white font-bold rounded-2xl shadow-lg shadow-[#759120]/20 hover:bg-[#5a7018] animate-pulse-slow hover:animate-none transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        ENVIAR RECLAMACIÓN
+                    </button>
+                    <p
+                        class="text-[10px] text-slate-400 merriweather uppercase tracking-widest"
+                    >
+                        Al enviar, usted acepta el tratamiento de sus datos
+                        personales para esta gestión.
+                    </p>
+                </div>
+            </form>
+
+            <!-- Success Message (Hidden) -->
+            <div
+                id="success-msg"
+                class="hidden bg-white rounded-3xl p-12 shadow-xl border border-emerald-100 text-center space-y-6"
+            >
+                <div
+                    class="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-500 mx-auto"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="w-10 h-10"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-bold text-[#5a3d37] mb-2">
+                        ¡Enviado con éxito!
+                    </h2>
+                    <p class="merriweather text-slate-500">
+                        Su reclamación ha sido registrada. Pronto nos pondremos
+                        en contacto con usted.
+                    </p>
+                </div>
+                <div
+                    class="p-6 bg-slate-50 rounded-2xl border border-slate-100 inline-block"
+                >
+                    <p
+                        class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1"
+                    >
+                        Código de Seguimiento
+                    </p>
+                    <p
+                        id="complaint-id"
+                        class="text-lg font-mono font-bold text-[#5a3d37] tracking-wider"
+                    >
+                    </p>
+                </div>
+                <div>
+                    <a href="/" class="text-[#759120] font-bold hover:underline"
+                        >Volver al Inicio</a
+                    >
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <Footer />
+</Layout>
+
+<script is:inline>
+    const form = document.getElementById("complaint-form");
+    const submitBtn = document.getElementById("submit-btn");
+    const successMsg = document.getElementById("success-msg");
+    const complaintIdSpan = document.getElementById("complaint-id");
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = "Enviando...";
+
+        try {
+            const response = await fetch("/api/complaints", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                form.classList.add("hidden");
+                successMsg.classList.remove("hidden");
+                complaintIdSpan.innerText = result.complaintId;
+                window.scrollTo({ top: 100, behavior: "smooth" });
+            } else {
+                throw new Error(result.error || "Error al enviar");
+            }
+        } catch (error) {
+            alert(error.message);
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = "ENVIAR RECLAMACIÓN";
+        }
+    });
+</script>
+
+<style>
+    .animate-pulse-slow {
+        animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulse {
+        0%,
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 0.95;
+            transform: scale(1.01);
+        }
+    }
+</style>

@@ -1,181 +1,328 @@
-import Database from 'better-sqlite3';
-import path from 'node:path';
-import fs from 'node:fs';
+import { createClient } from '@supabase/supabase-js';
 
-const DB_PATH = path.resolve('hotel.db');
-const dbInstance = new Database(DB_PATH);
+const supabaseUrl = import.meta.env.SUPABASE_URL || process.env.SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+    console.error('❌ Supabase credentials missing in environment variables.');
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Tipos
 export interface Room {
     id: string;
     subtitle: string;
+    unit_name: string;
     title: string;
     price: number;
     status: 'libre' | 'ocupado' | 'limpieza' | 'reservado' | 'mantenimiento';
-    features: string; // Guardado como JSON string en SQLite
-    images: string;   // Guardado como JSON string en SQLite
-    reverse: number;  // Booleano (0 o 1)
+    features: any;
+    images: any;
+    reverse: boolean;
 }
 
 export interface Transaction {
     id: string;
-    orderId: string;
-    roomName: string;
+    order_id: string;
+    room_name: string;
     amount: number;
-    customer: string;
+    customer: any;
     status: 'PENDIENTE' | 'EXITOSO' | 'FALLIDO' | 'CANCELADO' | 'INICIADO';
     timestamp: string;
-    detail?: string;  // JSON string
+    detail?: any;
 }
 
-// Inicialización de Tablas
-dbInstance.exec(`
-  CREATE TABLE IF NOT EXISTS rooms (
-    id TEXT PRIMARY KEY,
-    subtitle TEXT,
-    title TEXT,
-    price REAL,
-    status TEXT,
-    features TEXT,
-    images TEXT,
-    reverse INTEGER DEFAULT 0
-  );
-
-  CREATE TABLE IF NOT EXISTS transactions (
-    id TEXT PRIMARY KEY,
-    orderId TEXT,
-    roomName TEXT,
-    amount REAL,
-    customer TEXT,
-    status TEXT,
-    timestamp TEXT,
-    detail TEXT
-  );
-`);
-
-// Lógica de Migración (Solo si las tablas están vacías)
-const migrateInitialData = () => {
-    const roomCount = dbInstance.prepare('SELECT count(*) as count FROM rooms').get() as { count: number };
-
-    if (roomCount.count === 0) {
-        console.log("🚚 Migrando datos desde JSON a SQLite...");
-
-        // Migrar Habitaciones
-        const roomsJsonPath = path.resolve('src/data/rooms.json');
-        if (fs.existsSync(roomsJsonPath)) {
-            const rooms = JSON.parse(fs.readFileSync(roomsJsonPath, 'utf-8'));
-            const insertRoom = dbInstance.prepare(`
-        INSERT INTO rooms (id, subtitle, title, price, status, features, images, reverse)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      `);
-
-            for (const room of rooms) {
-                insertRoom.run(
-                    room.id,
-                    room.subtitle,
-                    room.title,
-                    room.price,
-                    room.status,
-                    JSON.stringify(room.features),
-                    JSON.stringify(room.images),
-                    room.reverse ? 1 : 0
-                );
-            }
-        }
-
-        // Migrar Transacciones
-        const txJsonPath = path.resolve('src/data/transactions.json');
-        if (fs.existsSync(txJsonPath)) {
-            const txs = JSON.parse(fs.readFileSync(txJsonPath, 'utf-8'));
-            const insertTx = dbInstance.prepare(`
-        INSERT INTO transactions (id, orderId, roomName, amount, customer, status, timestamp, detail)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      `);
-
-            for (const tx of txs) {
-                insertTx.run(
-                    tx.id,
-                    tx.orderId,
-                    tx.roomName,
-                    tx.amount,
-                    tx.customer,
-                    tx.status,
-                    tx.timestamp,
-                    tx.detail ? JSON.stringify(tx.detail) : null
-                );
-            }
-        }
-        console.log("✅ Migración completada.");
-    }
-};
-
-migrateInitialData();
+export interface Complaint {
+    id: string;
+    full_name: string;
+    document_type: string;
+    document_number: string;
+    email: string;
+    phone: string;
+    address: string;
+    type: string;
+    description: string;
+    date: string;
+    status: string;
+}
 
 export const db = {
-    getRooms: () => {
-        const rows = dbInstance.prepare('SELECT * FROM rooms').all() as any[];
-        return rows.map(r => ({
-            ...r,
-            features: JSON.parse(r.features),
-            images: JSON.parse(r.images),
-            reverse: !!r.reverse
-        }));
+    getRooms: async (): Promise<Room[]> => {
+        const { data, error } = await supabase
+            .from('rooms')
+            .select('*')
+            .order('subtitle', { ascending: true })
+            .order('unit_name', { ascending: true });
+
+        if (error) {
+            console.error('Error fetching rooms:', error);
+            return [];
+        }
+        return data as Room[];
     },
 
-    updateRoomStatus: (id: string, status: string) => {
-        const result = dbInstance.prepare('UPDATE rooms SET status = ? WHERE id = ?').run(status, id);
-        return result.changes > 0;
+    updateRoomStatus: async (id: string, status: string) => {
+        const { error } = await supabase
+            .from('rooms')
+            .update({ status })
+            .eq('id', id);
+
+        if (error) {
+            console.error('Error updating room status:', error);
+            return false;
+        }
+        return true;
     },
 
-    updateRoomPrice: (id: string, price: number) => {
-        const result = dbInstance.prepare('UPDATE rooms SET price = ? WHERE id = ?').run(price, id);
-        return result.changes > 0;
+    updateRoomPrice: async (category: string, price: number) => {
+        const { error } = await supabase
+            .from('rooms')
+            .update({ price })
+            .eq('subtitle', category);
+
+        if (error) {
+            console.error('Error updating room price:', error);
+            return false;
+        }
+        return true;
     },
 
-    getTransactions: () => {
-        const rows = dbInstance.prepare('SELECT * FROM transactions ORDER BY timestamp DESC').all() as any[];
-        return rows.map(r => ({
-            ...r,
-            detail: r.detail ? JSON.parse(r.detail) : null
-        }));
+    getTransactions: async (): Promise<Transaction[]> => {
+        const { data, error } = await supabase
+            .from('transactions')
+            .select('*')
+            .order('timestamp', { ascending: false });
+
+        if (error) {
+            console.error('Error fetching transactions:', error);
+            return [];
+        }
+        return data as Transaction[];
     },
 
-    addTransaction: (tx: any) => {
-        dbInstance.prepare(`
-      INSERT INTO transactions (id, orderId, roomName, amount, customer, status, timestamp, detail)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(
-            tx.id,
-            tx.orderId,
-            tx.roomName,
-            tx.amount,
-            tx.customer,
-            tx.status,
-            tx.timestamp,
-            tx.detail ? JSON.stringify(tx.detail) : null
-        );
+    addTransaction: async (tx: any) => {
+        const { error } = await supabase
+            .from('transactions')
+            .insert({
+                id: tx.id,
+                order_id: tx.orderId,
+                room_name: tx.roomName,
+                amount: tx.amount,
+                customer: tx.customer,
+                status: tx.status,
+                timestamp: tx.timestamp,
+                detail: tx.detail || null
+            });
+
+        if (error) {
+            console.error('Error adding transaction:', error);
+            return false;
+        }
+        return true;
     },
 
-    updateTransactionStatus: (orderId: string, status: string, detail?: any) => {
-        const result = dbInstance.prepare(`
-      UPDATE transactions 
-      SET status = ?, detail = ? 
-      WHERE orderId = ?
-    `).run(status, detail ? JSON.stringify(detail) : null, orderId);
+    getRoomCategories: async () => {
+        const { data: rows, error } = await supabase
+            .from('rooms')
+            .select('*');
 
-        // Si el pago fue EXITOSO, bloquear la habitación automáticamente
-        if (result.changes > 0 && status === 'EXITOSO') {
+        if (error || !rows) {
+            console.error('Error fetching categories:', error);
+            return [];
+        }
+
+        const grouped: Record<string, any> = {};
+
+        rows.forEach(r => {
+            const cat = r.subtitle;
+            if (!grouped[cat]) {
+                grouped[cat] = {
+                    ...r,
+                    units: [],
+                    counts: {
+                        libre: 0,
+                        ocupado: 0,
+                        limpieza: 0,
+                        reservado: 0,
+                        mantenimiento: 0
+                    }
+                };
+            }
+            grouped[cat].units.push({
+                id: r.id,
+                unit_name: r.unit_name,
+                status: r.status
+            });
+            if (grouped[cat].counts[r.status] !== undefined) {
+                grouped[cat].counts[r.status]++;
+            }
+        });
+
+        return Object.values(grouped).map(cat => {
+            const hasLibre = cat.counts.libre > 0;
+            const allOcupado = (cat.counts.ocupado + cat.counts.reservado) === cat.units.length;
+
+            let finalStatus = cat.status;
+            if (hasLibre) finalStatus = 'libre';
+            else if (allOcupado) finalStatus = 'ocupado';
+
+            return { ...cat, status: finalStatus };
+        });
+    },
+
+    transitionRoomStatus: async (category: string, fromStatus: string, toStatus: string) => {
+        const { data: unit, error: findError } = await supabase
+            .from('rooms')
+            .select('id')
+            .eq('subtitle', category)
+            .eq('status', fromStatus)
+            .limit(1)
+            .maybeSingle();
+
+        if (findError || !unit) return false;
+
+        const { error: updateError } = await supabase
+            .from('rooms')
+            .update({ status: toStatus })
+            .eq('id', unit.id);
+
+        return !updateError;
+    },
+
+    addRoomUnit: async (category: string) => {
+        const { data: prototype, error: findError } = await supabase
+            .from('rooms')
+            .select('*')
+            .eq('subtitle', category)
+            .limit(1)
+            .maybeSingle();
+
+        if (findError || !prototype) return false;
+
+        const newId = `habitacion-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+        const { error: insertError } = await supabase
+            .from('rooms')
+            .insert({
+                id: newId,
+                subtitle: prototype.subtitle,
+                unit_name: null,
+                title: prototype.title,
+                price: prototype.price,
+                status: 'libre',
+                features: prototype.features,
+                images: prototype.images,
+                reverse: prototype.reverse
+            });
+
+        return !insertError;
+    },
+
+    removeRoomUnit: async (category: string) => {
+        const { data: unit, error: findError } = await supabase
+            .from('rooms')
+            .select('id')
+            .eq('subtitle', category)
+            .eq('status', 'libre')
+            .limit(1)
+            .maybeSingle();
+
+        if (findError || !unit) return false;
+
+        const { error: deleteError } = await supabase
+            .from('rooms')
+            .delete()
+            .eq('id', unit.id);
+
+        return !deleteError;
+    },
+
+    saveComplaint: async (data: any) => {
+        const id = `reclamacion-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+        const date = new Date().toISOString();
+
+        const { error } = await supabase
+            .from('complaints')
+            .insert({
+                id,
+                full_name: data.fullName,
+                document_type: data.documentType,
+                document_number: data.documentNumber,
+                email: data.email,
+                phone: data.phone,
+                address: data.address,
+                type: data.type,
+                description: data.description,
+                date,
+                status: 'PENDIENTE'
+            });
+
+        return error ? null : id;
+    },
+
+    getComplaints: async (): Promise<Complaint[]> => {
+        const { data, error } = await supabase
+            .from('complaints')
+            .select('*')
+            .order('date', { ascending: false });
+
+        if (error) {
+            console.error('Error fetching complaints:', error);
+            return [];
+        }
+        return data as Complaint[];
+    },
+
+    updateComplaintStatus: async (id: string, status: string) => {
+        const { error } = await supabase
+            .from('complaints')
+            .update({ status })
+            .eq('id', id);
+
+        return !error;
+    },
+
+    updateTransactionStatus: async (orderId: string, status: string, detail?: any) => {
+        const { error: updateError } = await supabase
+            .from('transactions')
+            .update({
+                status,
+                detail: detail || null
+            })
+            .eq('order_id', orderId);
+
+        if (updateError) return false;
+
+        if (status === 'EXITOSO') {
             try {
-                const tx = dbInstance.prepare('SELECT roomName FROM transactions WHERE orderId = ?').get(orderId) as any;
-                if (tx && tx.roomName) {
-                    console.log(`🔒 Bloqueando habitación: ${tx.roomName}`);
-                    dbInstance.prepare('UPDATE rooms SET status = ? WHERE subtitle = ?').run('reservado', tx.roomName);
+                const { data: tx } = await supabase
+                    .from('transactions')
+                    .select('room_name')
+                    .eq('order_id', orderId)
+                    .maybeSingle();
+
+                if (tx && tx.room_name) {
+                    const { data: availableUnit } = await supabase
+                        .from('rooms')
+                        .select('id')
+                        .eq('subtitle', tx.room_name)
+                        .eq('status', 'libre')
+                        .limit(1)
+                        .maybeSingle();
+
+                    if (availableUnit) {
+                        await supabase
+                            .from('rooms')
+                            .update({ status: 'reservado' })
+                            .eq('id', availableUnit.id);
+                    }
                 }
             } catch (error) {
                 console.error("Error auto-blocking room:", error);
             }
         }
 
-        return result.changes > 0;
+        return true;
     }
 };

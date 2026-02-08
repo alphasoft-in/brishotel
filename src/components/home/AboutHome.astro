@@ -3,24 +3,30 @@ import about from "../../assets/images/about-2.png";
 ---
 
 <section class="relative bg-[#f4ecec] py-10 md:py-16">
-	<div class="max-w-7xl mx-auto grid md:grid-cols-2 items-center gap-10 px-6">
+	<div
+		class="max-w-7xl mx-auto grid md:grid-cols-2 items-center gap-6 md:gap-10 px-6"
+	>
 		<div class="relative">
 			<div class="bg-white p-4 shadow-lg">
-				<img src={about.src} alt="Rooms" class="w-full object-cover" />
+				<img
+					src={about.src}
+					alt="Nuestra Historia"
+					class="w-full h-[500px] sm:h-[600px] object-cover"
+				/>
 			</div>
 		</div>
 
 		<div class="text-[#5a3d37] mt-10 md:mt-0">
-			<h2 class="text-3xl sm:text-4xl md:text-6xl font-kestrel">
+			<h2 class="text-2xl sm:text-3xl md:text-5xl font-kestrel">
 				Nuestra Historia
 			</h2>
 			<h3
-				class="text-2xl sm:text-3xl md:text-5xl merriweather text-[#759120] mt-1"
+				class="text-xl sm:text-2xl md:text-4xl merriweather text-[#759120] mt-1"
 			>
 				La historia de Bris Hotel.
 			</h3>
 			<p
-				class="mt-4 text-xs sm:text-sm md:text-base merriweather leading-relaxed opacity-80"
+				class="mt-4 text-xs sm:text-sm md:text-sm merriweather leading-relaxed opacity-80"
 			>
 				Bris Hotel nació de la visión de crear un refugio verdaderamente
 				acogedor en el corazón de Nasca, combinando una hospitalidad
@@ -31,7 +37,7 @@ import about from "../../assets/images/about-2.png";
 			</p>
 
 			<p
-				class="mt-4 text-xs sm:text-sm md:text-base merriweather leading-relaxed opacity-80"
+				class="mt-4 text-xs sm:text-sm md:text-sm merriweather leading-relaxed opacity-80"
 			>
 				Nuestro profundo compromiso con la calidad y la comunidad guía
 				todo lo que hacemos. Desde los ingredientes locales que dan
@@ -49,7 +55,7 @@ import about from "../../assets/images/about-2.png";
 				class="merriweather mt-8 bg-[#5a3d37] text-white px-5 sm:px-8 py-2.5 sm:py-3.5 text-[10px] sm:text-xs font-bold tracking-[0.15em] uppercase hover:bg-[#759120] transition rounded shadow-sm hover:shadow-md active:scale-95 cursor-pointer"
 				onclick="enviarConsultaWhatsApp()"
 			>
-				RESERVA AHORA
+				<i class="fab fa-whatsapp text-lg mr-2"></i> CONSULTAR AHORA
 			</button>
 		</div>
 	</div>

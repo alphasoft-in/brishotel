@@ -11,7 +11,9 @@
   "dependencies": {
     "@astrojs/node": "^9.5.2",
     "@astrojs/sitemap": "^3.7.0",
+    "@astrojs/vercel": "^9.0.4",
     "@fortawesome/fontawesome-free": "^7.0.0",
+    "@supabase/supabase-js": "^2.95.3",
     "@tailwindcss/vite": "^4.1.12",
     "astro": "^5.17.1",
     "better-sqlite3": "^12.6.2",

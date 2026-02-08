@@ -1,7 +1,8 @@
 [
     {
-        "id": "simple",
+        "id": "habitacion-101",
         "subtitle": "Simple",
+        "unit_name": "101",
         "title": "HABITACIÓN",
         "price": 180,
         "status": "libre",
@@ -21,8 +22,75 @@
         ]
     },
     {
-        "id": "doble",
+        "id": "habitacion-102",
+        "subtitle": "Simple",
+        "unit_name": "102",
+        "title": "HABITACIÓN",
+        "price": 180,
+        "status": "libre",
+        "features": [
+            "Baño privado (agua caliente).",
+            "TV Cable.",
+            "Free wifi.",
+            "Room service.",
+            "Intercomunicador."
+        ],
+        "images": [
+            "/src/assets/images/rooms/simple.png",
+            "/src/assets/images/rooms/simple-1.png",
+            "/src/assets/images/rooms/simple-2.png",
+            "/src/assets/images/rooms/simple-3.png",
+            "/src/assets/images/rooms/simple-4.png"
+        ]
+    },
+    {
+        "id": "habitacion-103",
+        "subtitle": "Simple",
+        "unit_name": "103",
+        "title": "HABITACIÓN",
+        "price": 180,
+        "status": "libre",
+        "features": [
+            "Baño privado (agua caliente).",
+            "TV Cable.",
+            "Free wifi.",
+            "Room service.",
+            "Intercomunicador."
+        ],
+        "images": [
+            "/src/assets/images/rooms/simple.png",
+            "/src/assets/images/rooms/simple-1.png",
+            "/src/assets/images/rooms/simple-2.png",
+            "/src/assets/images/rooms/simple-3.png",
+            "/src/assets/images/rooms/simple-4.png"
+        ]
+    },
+    {
+        "id": "habitacion-104",
+        "subtitle": "Simple",
+        "unit_name": "104",
+        "title": "HABITACIÓN",
+        "price": 180,
+        "status": "ocupado",
+        "features": [
+            "Baño privado (agua caliente).",
+            "TV Cable.",
+            "Free wifi.",
+            "Room service.",
+            "Intercomunicador."
+        ],
+        "images": [
+            "/src/assets/images/rooms/simple.png",
+            "/src/assets/images/rooms/simple-1.png",
+            "/src/assets/images/rooms/simple-2.png",
+            "/src/assets/images/rooms/simple-3.png",
+            "/src/assets/images/rooms/simple-4.png"
+        ]
+    },
+    {
+        "id": "habitacion-201",
         "subtitle": "Doble",
+        "unit_name": "201",
         "title": "HABITACIÓN",
         "price": 220,
         "status": "ocupado",
@@ -42,8 +110,9 @@
         ]
     },
     {
-        "id": "matrimonial",
+        "id": "habitacion-301",
         "subtitle": "Matrimonial",
+        "unit_name": "301",
         "title": "HABITACIÓN",
         "price": 220,
         "status": "libre",
@@ -67,8 +136,35 @@
         ]
     },
     {
-        "id": "queen",
+        "id": "habitacion-302",
+        "subtitle": "Matrimonial",
+        "unit_name": "302",
+        "title": "HABITACIÓN",
+        "price": 220,
+        "status": "libre",
+        "features": [
+            "Baño privado (agua caliente).",
+            "TV Cable.",
+            "Free wifi.",
+            "Room service.",
+            "Intercomunicador."
+        ],
+        "images": [
+            "/src/assets/images/rooms/matrimonial.png",
+            "/src/assets/images/rooms/matrimonial-1.png",
+            "/src/assets/images/rooms/matrimonial-2.png",
+            "/src/assets/images/rooms/matrimonial-3.png",
+            "/src/assets/images/rooms/matrimonial-4.png",
+            "/src/assets/images/rooms/matrimonial-5.png",
+            "/src/assets/images/rooms/matrimonial-6.png",
+            "/src/assets/images/rooms/matrimonial-7.png",
+            "/src/assets/images/rooms/matrimonial-8.png"
+        ]
+    },
+    {
+        "id": "habitacion-401",
         "subtitle": "Queen",
+        "unit_name": "401",
         "title": "HABITACIÓN",
         "price": 300,
         "status": "limpieza",
@@ -87,8 +183,9 @@
         ]
     },
     {
-        "id": "king-size",
+        "id": "habitacion-501",
         "subtitle": "King Size",
+        "unit_name": "501",
         "title": "HABITACIÓN",
         "price": 320,
         "status": "reservado",
@@ -105,8 +202,9 @@
         ]
     },
     {
-        "id": "triple",
+        "id": "habitacion-601",
         "subtitle": "Triple",
+        "unit_name": "601",
         "title": "HABITACIÓN",
         "price": 280,
         "status": "libre",
@@ -125,8 +223,9 @@
         ]
     },
     {
-        "id": "cuadruple",
+        "id": "habitacion-701",
         "subtitle": "Cuádruple",
+        "unit_name": "701",
         "title": "HABITACIÓN",
         "price": 320,
         "status": "mantenimiento",

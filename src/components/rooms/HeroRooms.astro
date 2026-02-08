@@ -8,21 +8,25 @@ import image from "../../assets/images/room.png";
 	>
 		<div class="relative">
 			<div class="bg-white p-4 shadow-lg">
-				<img src={image.src} alt="Rooms" class="w-full object-cover" />
+				<img
+					src={image.src}
+					alt="Rooms"
+					class="w-full h-[500px] sm:h-[600px] object-cover"
+				/>
 			</div>
 		</div>
 
 		<div class="text-[#5a3d37] mt-10 md:mt-0">
-			<h2 class="text-3xl sm:text-4xl md:text-6xl font-kestrel">
+			<h2 class="text-2xl sm:text-3xl md:text-5xl font-kestrel">
 				Alojamiento
 			</h2>
 			<h3
-				class="text-2xl sm:text-3xl md:text-5xl merriweather text-[#759120] mt-1"
+				class="text-xl sm:text-2xl md:text-4xl merriweather text-[#759120] mt-1"
 			>
 				Comodidad en cada detalle
 			</h3>
 			<p
-				class="mt-4 text-xs sm:text-sm md:text-base merriweather leading-relaxed opacity-80"
+				class="mt-4 text-xs sm:text-sm md:text-sm merriweather leading-relaxed opacity-80"
 			>
 				Descubra nuestras hermosas y espaciosas habitaciones de Bris
 				Hotel en el corazón de Nasca, cada una con un nombre único. Su
@@ -47,7 +51,7 @@ import image from "../../assets/images/room.png";
 				class="merriweather mt-8 bg-[#5a3d37] text-white px-5 sm:px-8 py-2.5 sm:py-3.5 text-[10px] sm:text-xs font-bold tracking-[0.15em] uppercase hover:bg-[#759120] transition rounded shadow-sm hover:shadow-md active:scale-95 cursor-pointer"
 				onclick="enviarConsultaWhatsApp()"
 			>
-				RESERVA AHORA
+				<i class="fab fa-whatsapp text-lg mr-2"></i> CONSULTAR AHORA
 			</button>
 		</div>
 	</div>

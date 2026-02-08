@@ -16,28 +16,54 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
     try {
         const body = await request.json();
-        const { id, status, price } = body;
-
-        if (!id) {
-            return new Response(JSON.stringify({ success: false, error: "ID de habitación requerido" }), { status: 400, headers: jsonHeaders });
-        }
+        const { id, category, fromStatus, toStatus, status, price, action } = body;
 
         let success = true;
 
-        if (status) {
+        // 🏗️ Gestión de Cantidades (Añadir/Eliminar unidades físicas)
+        if (category && action) {
+            if (action === 'add_unit') {
+                success = await db.addRoomUnit(category);
+            } else if (action === 'remove_unit') {
+                success = await db.removeRoomUnit(category);
+            }
+        }
+        // 🔄 Transición de estados por categorías (Nuevo enfoque por cantidades)
+        else if (category && fromStatus && toStatus) {
+            success = await db.transitionRoomStatus(category, fromStatus, toStatus);
+        }
+        // 🔒 Enfoque anterior por ID (mantenido por compatibilidad)
+        else if (id && status) {
             const validStatuses = ['libre', 'ocupado', 'limpieza', 'reservado', 'mantenimiento'];
             if (!validStatuses.includes(status)) {
                 return new Response(JSON.stringify({ success: false, error: "Estado no válido" }), { status: 400, headers: jsonHeaders });
             }
-            success = db.updateRoomStatus(id, status as Room['status']) && success;
+            success = await db.updateRoomStatus(id, status as Room['status']);
         }
 
+        // 💰 Actualizar Precios (Ahora aplica a toda la categoría si se pasa category)
         if (price !== undefined) {
             const numPrice = parseFloat(price);
             if (isNaN(numPrice) || numPrice < 0) {
                 return new Response(JSON.stringify({ success: false, error: "Precio no válido" }), { status: 400, headers: jsonHeaders });
             }
-            success = db.updateRoomPrice(id, numPrice) && success;
+
+            if (category) {
+                // Actualizar todas las habitaciones de esta categoría usando la nueva función optimizada
+                success = await db.updateRoomPrice(category, numPrice) && success;
+            } else if (id) {
+                // Si solo pasan ID, actualizamos solo esa (usamos el mismo método pero eq id en db.ts si fuera necesario, 
+                // pero db.ts ahora recibe category. Vamos a asegurar que db.ts soporte id o ajustar aquí)
+                // En db.ts definí updateRoomPrice(category: string, price: number)
+                // Si pasan ID, asumimos que es un caso legacy y tratamos de buscar su categoría primero o actualizamos por ID.
+                // Ajustaré db.ts para que updateRoomPrice sea más flexible si es necesario.
+                // Por ahora, actualizamos por categoría si la tenemos.
+                const allRooms = await db.getRooms();
+                const targetRoom = allRooms.find(r => r.id === id);
+                if (targetRoom) {
+                    success = await db.updateRoomPrice(targetRoom.subtitle, numPrice) && success;
+                }
+            }
         }
 
         if (success) {

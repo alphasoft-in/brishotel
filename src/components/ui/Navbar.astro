@@ -1,5 +1,10 @@
 ---
 import logo from "../../assets/images/logo-white.png";
+
+const currentPath = Astro.url.pathname;
+const isActive = (path: string) =>
+	currentPath === path || currentPath === path + "/";
+const isGalleryActive = currentPath.startsWith("/gallery-");
 ---
 
 <nav
@@ -63,8 +68,22 @@ import logo from "../../assets/images/logo-white.png";
 
 				<a
 					href="#booking"
-					class="hidden md:inline-flex merriweather items-center justify-center rounded-xl px-4 py-2 text-xs sm:text-sm font-bold tracking-widest border border-white/30 bg-white/10 text-white hover:bg-white hover:text-[#5a3d37] transition-all duration-300 ease-in-out"
+					class="hidden md:inline-flex merriweather items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs sm:text-sm font-bold tracking-widest border border-white/30 bg-white/10 text-white hover:bg-white hover:text-[#5a3d37] transition-all duration-300 ease-in-out"
 				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="w-4 h-4"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v12a2 2 0 002 2z"
+						></path>
+					</svg>
 					RESERVA AHORA
 				</a>
 			</div>
@@ -107,18 +126,30 @@ import logo from "../../assets/images/logo-white.png";
 		>
 			<a
 				href="/"
-				class="menu-item block py-3 text-[#5a3d37] hover:text-[#759120] transition-all duration-700 transform translate-y-6 opacity-0"
-				>Inicio</a
+				class:list={[
+					"menu-item block py-3 transition-all duration-700 transform translate-y-6 opacity-0",
+					isActive("/")
+						? "text-[#759120] font-bold"
+						: "text-[#5a3d37] hover:text-[#759120]",
+				]}>Inicio</a
 			>
 			<a
 				href="/rooms"
-				class="menu-item block py-3 text-[#5a3d37] hover:text-[#759120] transition-all duration-700 transform translate-y-6 opacity-0"
-				>Habitaciones</a
+				class:list={[
+					"menu-item block py-3 transition-all duration-700 transform translate-y-6 opacity-0",
+					isActive("/rooms")
+						? "text-[#759120] font-bold"
+						: "text-[#5a3d37] hover:text-[#759120]",
+				]}>Habitaciones</a
 			>
 			<a
 				href="/restaurant"
-				class="menu-item block py-3 text-[#5a3d37] hover:text-[#759120] transition-all duration-700 transform translate-y-6 opacity-0"
-				>Restaurant</a
+				class:list={[
+					"menu-item block py-3 transition-all duration-700 transform translate-y-6 opacity-0",
+					isActive("/restaurant")
+						? "text-[#759120] font-bold"
+						: "text-[#5a3d37] hover:text-[#759120]",
+				]}>Restaurant</a
 			>
 
 			<div
@@ -126,7 +157,12 @@ import logo from "../../assets/images/logo-white.png";
 			>
 				<button
 					id="submenu-toggle"
-					class="w-full flex justify-between items-center py-3 text-[#5a3d37] hover:text-[#759120] transition-all"
+					class:list={[
+						"w-full flex justify-between items-center py-3 transition-all",
+						isGalleryActive
+							? "text-[#759120] font-bold"
+							: "text-[#5a3d37] hover:text-[#759120]",
+					]}
 				>
 					Galería
 					<svg
@@ -150,31 +186,51 @@ import logo from "../../assets/images/logo-white.png";
 				>
 					<a
 						href="/gallery-rooms"
-						class="submenu-item block text-sm text-gray-400 hover:text-[#759120] transition-all duration-700 transform translate-y-3 opacity-0"
-						>Habitaciones</a
+						class:list={[
+							"submenu-item block text-sm transition-all duration-700 transform translate-y-3 opacity-0",
+							isActive("/gallery-rooms")
+								? "text-[#759120] font-bold"
+								: "text-gray-400 hover:text-[#759120]",
+						]}>Habitaciones</a
 					>
 					<a
 						href="/gallery-restaurant"
-						class="submenu-item block text-sm text-gray-400 hover:text-[#759120] transition-all duration-700 transform translate-y-3 opacity-0"
-						>Restaurant</a
+						class:list={[
+							"submenu-item block text-sm transition-all duration-700 transform translate-y-3 opacity-0",
+							isActive("/gallery-restaurant")
+								? "text-[#759120] font-bold"
+								: "text-gray-400 hover:text-[#759120]",
+						]}>Restaurant</a
 					>
 					<a
 						href="/gallery-activities"
-						class="submenu-item block text-sm text-gray-400 hover:text-[#759120] transition-all duration-700 transform translate-y-3 opacity-0"
-						>Actividades</a
+						class:list={[
+							"submenu-item block text-sm transition-all duration-700 transform translate-y-3 opacity-0",
+							isActive("/gallery-activities")
+								? "text-[#759120] font-bold"
+								: "text-gray-400 hover:text-[#759120]",
+						]}>Actividades</a
 					>
 				</div>
 			</div>
 
 			<a
 				href="/about"
-				class="menu-item block py-3 text-[#5a3d37] hover:text-[#759120] transition-all duration-700 transform translate-y-6 opacity-0"
-				>Nosotros</a
+				class:list={[
+					"menu-item block py-3 transition-all duration-700 transform translate-y-6 opacity-0",
+					isActive("/about")
+						? "text-[#759120] font-bold"
+						: "text-[#5a3d37] hover:text-[#759120]",
+				]}>Nosotros</a
 			>
 			<a
 				href="/contact"
-				class="menu-item block py-3 text-[#5a3d37] hover:text-[#759120] transition-all duration-700 transform translate-y-6 opacity-0"
-				>Contáctanos</a
+				class:list={[
+					"menu-item block py-3 transition-all duration-700 transform translate-y-6 opacity-0",
+					isActive("/contact")
+						? "text-[#759120] font-bold"
+						: "text-[#5a3d37] hover:text-[#759120]",
+				]}>Contáctanos</a
 			>
 		</nav>
 	</div>

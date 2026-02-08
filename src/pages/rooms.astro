@@ -10,7 +10,7 @@ import CallToAction from "../components/shared/CTA.astro";
 import { db } from "../lib/db";
 import { getRoomImages } from "../lib/images";
 
-const rooms = db.getRooms();
+const rooms = await db.getRoomCategories();
 ---
 
 <Layout
@@ -30,6 +30,7 @@ const rooms = db.getRooms();
                 title={room.title}
                 price={room.price}
                 features={room.features}
+                availableCount={room.counts.libre}
                 images={getRoomImages(room.images)}
             />
         ))

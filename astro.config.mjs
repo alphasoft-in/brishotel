@@ -2,17 +2,17 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
-import node from '@astrojs/node';
+import vercel from '@astrojs/vercel';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://brishotelnasca.com',
   output: 'server',
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [/** @type {any} */ (tailwindcss())]
   },
   integrations: [sitemap()],
-  adapter: node({
-    mode: 'standalone',
+  adapter: vercel({
+    webAnalytics: { enabled: true }
   }),
 });

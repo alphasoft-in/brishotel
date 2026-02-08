@@ -99,7 +99,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
             // Tomar el detalle más relevante (la primera transacción o el answer)
             const transDetail = transactions.length > 0 ? transactions[0] : ans;
 
-            db.updateTransactionStatus(orderId, localStatus, transDetail);
+            await db.updateTransactionStatus(orderId, localStatus, transDetail);
 
             return new Response(JSON.stringify({
                 success: true,

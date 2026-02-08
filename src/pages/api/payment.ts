@@ -85,7 +85,7 @@ export const ALL: APIRoute = async ({ request }) => {
           phone
         });
 
-        db.addTransaction({
+        await db.addTransaction({
           id: `tx-${Date.now()}`,
           orderId: orderId,
           roomName: room,
