@@ -929,42 +929,54 @@ const statusConfig = {
     </div>
 
     <script>
-        import * as XLSX from "xlsx";
+        import ExcelJS from "exceljs";
+        import { saveAs } from "file-saver";
         import jsPDF from "jspdf";
         import autoTable from "jspdf-autotable";
 
-        console.log("📊 Export script initialized");
+        console.log("📊 Professional Export script initialized");
 
-        // --- EXPORT LOGIC ---
-        const getTableData = () => {
-            console.log("🔍 Extracting table data...");
+        const BRAND_GREEN = [117, 145, 32]; // #759120
+        const BRAND_BROWN = [90, 61, 55]; // #5a3d37
+
+        // --- DATA EXTRACTION ---
+        const getDetailedTableData = () => {
+            console.log("🔍 Extracting detailed table data...");
             const rows = Array.from(
                 document.querySelectorAll("#transactions-body tr.tx-row"),
             );
 
-            console.log(`Found ${rows.length} total transaction rows`);
-
-            const data = rows
+            return rows
                 .map((row) => {
                     const cols = row.querySelectorAll("td");
                     if (cols.length < 6) return null;
 
-                    // Extract and format date
                     const date = cols[0].textContent.trim();
                     const orderId = cols[1].textContent.trim();
 
-                    // Cliente column
                     const clientCell = cols[2];
                     const clientName =
-                        clientCell.children[0]?.children[0]?.textContent.trim() ||
-                        "";
+                        clientCell
+                            .querySelector(".text-xs.font-bold")
+                            ?.textContent.trim() || "";
                     const clientEmail =
-                        clientCell.children[0]?.children[1]?.textContent.trim() ||
-                        "";
+                        clientCell
+                            .querySelector(".text-\[10px\].text-slate-500")
+                            ?.textContent.trim() || "";
+
+                    // Select and clean DNI and Phone
+                    // We use search because the structure might vary slightly if one is missing
+                    const spanTexts = Array.from(
+                        clientCell.querySelectorAll("span"),
+                    ).map((s) => s.textContent.trim());
                     const clientDni =
-                        clientCell.children[0]?.children[2]?.textContent.trim() ||
-                        "";
-                    const client = `${clientName}\n${clientEmail}\n${clientDni}`;
+                        spanTexts
+                            .find((t) => t.includes("DNI:"))
+                            ?.replace("DNI: ", "") || "";
+                    const clientPhone =
+                        spanTexts
+                            .find((t) => t.includes("Telf:"))
+                            ?.replace("Telf: ", "") || "";
 
                     const room = cols[3].textContent.trim();
                     const amount = cols[4].textContent
@@ -972,477 +984,550 @@ const statusConfig = {
                         .replace("S/ ", "");
                     const status = cols[5].textContent.trim();
 
-                    return [date, orderId, client, room, amount, status];
+                    return {
+                        date,
+                        orderId,
+                        clientName,
+                        clientEmail,
+                        clientDni,
+                        clientPhone,
+                        room,
+                        amount,
+                        status,
+                    };
                 })
                 .filter((r) => r !== null);
-
-            console.log(
-                `Successfully processed ${data.length} rows for export`,
-            );
-            return data;
         };
 
+        // --- EXCEL EXPORT (PRO) ---
         const exportExcelBtn = document.getElementById("export-excel-btn");
         if (exportExcelBtn) {
-            exportExcelBtn.addEventListener("click", () => {
-                console.log("📥 Excel export triggered");
+            exportExcelBtn.addEventListener("click", async () => {
+                console.log("📥 Professional Excel export triggered");
                 try {
-                    const data = getTableData();
+                    const data = getDetailedTableData();
                     if (data.length === 0) {
                         alert("No hay datos para exportar");
                         return;
                     }
 
-                    // Headers
-                    data.unshift([
+                    const workbook = new ExcelJS.Workbook();
+                    const worksheet = workbook.addWorksheet("Transacciones");
+
+                    // Header row
+                    const headerRow = worksheet.addRow([
                         "FECHA Y HORA",
                         "ORDEN ID",
-                        "CLIENTE / DATOS",
-                        "Alojamiento",
+                        "CLIENTE",
+                        "EMAIL",
+                        "DNI",
+                        "TELÉFONO",
+                        "HABITACIÓN",
                         "MONTO (S/)",
                         "ESTADO",
                     ]);
 
-                    const ws = XLSX.utils.aoa_to_sheet(data);
+                    // Style headers
+                    headerRow.eachCell((cell) => {
+                        cell.fill = {
+                            type: "pattern",
+                            pattern: "solid",
+                            fgColor: { argb: "FF759120" }, // #759120
+                        };
+                        cell.font = {
+                            color: { argb: "FFFFFFFF" },
+                            bold: true,
+                        };
+                        cell.alignment = {
+                            vertical: "middle",
+                            horizontal: "center",
+                        };
+                        cell.border = {
+                            top: { style: "thin" },
+                            left: { style: "thin" },
+                            bottom: { style: "thin" },
+                            right: { style: "thin" },
+                        };
+                    });
+
+                    // Add data rows
+                    data.forEach((item) => {
+                        const row = worksheet.addRow([
+                            item.date,
+                            item.orderId,
+                            item.clientName,
+                            item.clientEmail,
+                            item.clientDni,
+                            item.clientPhone,
+                            item.room,
+                            parseFloat(item.amount),
+                            item.status,
+                        ]);
+
+                        // Cell styling
+                        const statusCell = row.getCell(9);
+                        if (item.status === "EXITOSO")
+                            statusCell.font = {
+                                color: { argb: "FF059669" },
+                                bold: true,
+                            };
+                        if (item.status === "PENDIENTE")
+                            statusCell.font = {
+                                color: { argb: "FFD97706" },
+                                bold: true,
+                            };
+
+                        row.eachCell((c) => {
+                            c.alignment = { vertical: "middle" };
+                            c.border = {
+                                bottom: {
+                                    style: "thin",
+                                    color: { argb: "FFF1F5F9" },
+                                },
+                            };
+                        });
+                    });
+
+                    // Auto-filter
+                    worksheet.autoFilter = "A1:I1";
 
                     // Column widths
-                    ws["!cols"] = [
-                        { wch: 25 }, // Fecha
-                        { wch: 15 }, // ID
-                        { wch: 45 }, // Cliente
-                        { wch: 20 }, // Habitación
-                        { wch: 12 }, // Monto
-                        { wch: 15 }, // Estado
+                    worksheet.columns = [
+                        { width: 25 },
+                        { width: 15 },
+                        { width: 35 },
+                        { width: 35 },
+                        { width: 15 },
+                        { width: 15 },
+                        { width: 20 },
+                        { width: 12 },
+                        { width: 15 },
                     ];
 
-                    const wb = XLSX.utils.book_new();
-                    XLSX.utils.book_append_sheet(wb, ws, "Transacciones");
-
-                    const fileName = `BrisHotel_Reporte_${new Date().toISOString().slice(0, 10)}.xlsx`;
-                    XLSX.writeFile(wb, fileName);
+                    const buffer = await workbook.xlsx.writeBuffer();
+                    saveAs(
+                        new Blob([buffer]),
+                        `BrisHotel_Reporte_${new Date().toISOString().split("T")[0]}.xlsx`,
+                    );
                 } catch (err) {
-                    console.error("❌ Excel Export Error:", err);
-                    alert("Error al generar el Excel.");
+                    console.error("Excel Error:", err);
+                    alert("Error al generar Excel");
                 }
             });
         }
 
+        // --- PDF EXPORT (PRO) ---
         const exportPdfBtn = document.getElementById("export-pdf-btn");
         if (exportPdfBtn) {
             exportPdfBtn.addEventListener("click", () => {
-                console.log("📥 PDF export triggered");
-                try {
-                    const data = getTableData();
-                    if (data.length === 0) {
-                        alert("No hay datos para exportar");
-                        return;
-                    }
+                const data = getDetailedTableData();
+                if (data.length === 0) return;
 
-                    const doc = new jsPDF();
-                    const pageWidth = doc.internal.pageSize.width;
+                const doc = new jsPDF();
+                const pageWidth = doc.internal.pageSize.width;
 
-                    // Header (Olive Green #759120)
-                    doc.setFillColor(117, 145, 32);
-                    doc.rect(0, 0, pageWidth, 40, "F");
+                doc.setFillColor(
+                    BRAND_GREEN[0],
+                    BRAND_GREEN[1],
+                    BRAND_GREEN[2],
+                );
+                doc.rect(0, 0, pageWidth, 40, "F");
 
-                    doc.setTextColor(255, 255, 255);
-                    doc.setFontSize(24);
-                    doc.setFont("helvetica", "bold");
-                    doc.text("Bris Hotel", 14, 20);
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(24);
+                doc.text("Bris Hotel", 14, 20);
+                doc.setFontSize(10);
+                doc.text("REPORTE DE TRANSACCIONES", 14, 28);
+                doc.setFontSize(8);
+                doc.text(`Generado: ${new Date().toLocaleString()}`, 14, 34);
 
-                    doc.setFontSize(10);
-                    doc.setFont("helvetica", "normal");
-                    doc.text("REPORTE DE TRANSACCIONES Y RESERVAS", 14, 28);
+                const tableBody = data.map((d) => [
+                    d.date,
+                    d.orderId,
+                    `${d.clientName}\n${d.clientEmail}\n${d.clientDni}`,
+                    d.room,
+                    `S/ ${parseFloat(d.amount).toFixed(2)}`,
+                    d.status,
+                ]);
 
-                    doc.setFontSize(8);
-                    doc.text(
-                        `Generado el: ${new Date().toLocaleString("es-PE")}`,
-                        14,
-                        34,
-                    );
-
-                    autoTable(doc, {
-                        startY: 50,
-                        head: [
-                            [
-                                "FECHA",
-                                "ORDEN ID",
-                                "CLIENTE",
-                                "HAB.",
-                                "MONTO",
-                                "ESTADO",
-                            ],
+                autoTable(doc, {
+                    startY: 50,
+                    head: [
+                        [
+                            "FECHA",
+                            "ORDEN ID",
+                            "CLIENTE",
+                            "HAB.",
+                            "MONTO",
+                            "ESTADO",
                         ],
-                        body: data,
-                        theme: "striped",
-                        headStyles: {
-                            fillColor: [90, 61, 55], // Brown #5a3d37
-                            textColor: [255, 255, 255],
-                            fontStyle: "bold",
-                            fontSize: 9,
-                        },
-                        bodyStyles: {
-                            fontSize: 8,
-                            textColor: [80, 80, 80],
-                        },
-                        columnStyles: {
-                            0: { cellWidth: 35 },
-                            1: { cellWidth: 25, fontStyle: "bold" },
-                            2: { cellWidth: 60 },
-                            4: { halign: "right", fontStyle: "bold" },
-                            5: { halign: "center" },
-                        },
-                        styles: {
-                            valign: "middle",
-                            overflow: "linebreak",
-                        },
-                        didDrawPage: (data) => {
-                            const str = "Página " + doc.getNumberOfPages();
-                            doc.setFontSize(8);
-                            doc.setTextColor(150);
-                            doc.text(
-                                str,
-                                pageWidth - 30,
-                                doc.internal.pageSize.height - 10,
-                            );
-                        },
-                    });
+                    ],
+                    body: tableBody,
+                    theme: "striped",
+                    headStyles: {
+                        fillColor: [
+                            BRAND_BROWN[0],
+                            BRAND_BROWN[1],
+                            BRAND_BROWN[2],
+                        ],
+                    },
+                    styles: { fontSize: 8, valign: "middle" },
+                    columnStyles: {
+                        2: { cellWidth: 50 },
+                        4: { halign: "right" },
+                    },
+                });
 
-                    const fileName = `BrisHotel_Reporte_${new Date().toISOString().slice(0, 10)}.pdf`;
-                    console.log(`💾 Saving PDF: ${fileName}`);
-                    doc.save(fileName);
-                } catch (err) {
-                    console.error("❌ PDF Export Error:", err);
-                    alert("Error al generar el PDF. Revisa la consola.");
-                }
+                doc.save(
+                    `BrisHotel_Reporte_${new Date().toISOString().split("T")[0]}.pdf`,
+                );
             });
         }
     </script>
-</Layout>
 
-<script is:inline>
-    // 🔄 Transición de Estados por Categoría
-    const transitionSelects = document.querySelectorAll(
-        ".transition-status-btn",
-    );
-    transitionSelects.forEach((select) => {
-        select.addEventListener("change", async (e) => {
-            const category = e.target.dataset.category;
-            const fromStatus = e.target.dataset.fromStatus;
-            const toStatus = e.target.value;
-            const card = e.target.closest("div.group");
+    <script is:inline>
+        // 🔄 Transición de Estados por Categoría
+        const transitionSelects = document.querySelectorAll(
+            ".transition-status-btn",
+        );
+        transitionSelects.forEach((select) => {
+            select.addEventListener("change", async (e) => {
+                const category = e.target.dataset.category;
+                const fromStatus = e.target.dataset.fromStatus;
+                const toStatus = e.target.value;
+                const card = e.target.closest("div.group");
 
-            if (!toStatus) return;
+                if (!toStatus) return;
 
-            e.target.disabled = true;
-            if (card) card.style.opacity = "0.3";
+                e.target.disabled = true;
+                if (card) card.style.opacity = "0.3";
 
-            try {
-                const response = await fetch("/api/admin/rooms", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        category,
-                        fromStatus,
-                        toStatus,
-                    }),
-                });
-                if (response.ok) window.location.reload();
-                else throw new Error();
-            } catch (err) {
-                alert("Error en el servidor al realizar la transición");
-                window.location.reload();
-            }
-        });
-    });
-
-    // 💰 Gestión de Precios por Categoría
-    const priceContainers = document.querySelectorAll(".price-container");
-    priceContainers.forEach((container) => {
-        const category = container.dataset.category;
-        const viewMode = container.querySelector(".price-view");
-        const editMode = container.querySelector(".price-edit");
-        const input = container.querySelector(".room-price-input");
-        const editBtn = container.querySelector(".edit-price-btn");
-        const saveBtn = container.querySelector(".save-price-btn");
-        const cancelBtn = container.querySelector(".cancel-price-btn");
-        const card = container.closest("div.group");
-
-        editBtn.addEventListener("click", () => {
-            viewMode.classList.add("hidden");
-            editMode.classList.remove("hidden");
-            input.focus();
+                try {
+                    const response = await fetch("/api/admin/rooms", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            category,
+                            fromStatus,
+                            toStatus,
+                        }),
+                    });
+                    if (response.ok) window.location.reload();
+                    else throw new Error();
+                } catch (err) {
+                    alert("Error en el servidor al realizar la transición");
+                    window.location.reload();
+                }
+            });
         });
 
-        // Cerrar al pulsar X
-        cancelBtn.addEventListener("click", () => {
-            editMode.classList.add("hidden");
-            viewMode.classList.remove("hidden");
-            input.value = input.defaultValue;
-        });
+        // 💰 Gestión de Precios por Categoría
+        const priceContainers = document.querySelectorAll(".price-container");
+        priceContainers.forEach((container) => {
+            const category = container.dataset.category;
+            const viewMode = container.querySelector(".price-view");
+            const editMode = container.querySelector(".price-edit");
+            const input = container.querySelector(".room-price-input");
+            const editBtn = container.querySelector(".edit-price-btn");
+            const saveBtn = container.querySelector(".save-price-btn");
+            const cancelBtn = container.querySelector(".cancel-price-btn");
+            const card = container.closest("div.group");
 
-        // Cerrar al perder foco o ESC
-        input.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") {
+            editBtn.addEventListener("click", () => {
+                viewMode.classList.add("hidden");
+                editMode.classList.remove("hidden");
+                input.focus();
+            });
+
+            // Cerrar al pulsar X
+            cancelBtn.addEventListener("click", () => {
                 editMode.classList.add("hidden");
                 viewMode.classList.remove("hidden");
-            }
+                input.value = input.defaultValue;
+            });
+
+            // Cerrar al perder foco o ESC
+            input.addEventListener("keydown", (e) => {
+                if (e.key === "Escape") {
+                    editMode.classList.add("hidden");
+                    viewMode.classList.remove("hidden");
+                }
+            });
+
+            saveBtn.addEventListener("click", async () => {
+                const newPrice = input.value;
+
+                saveBtn.disabled = true;
+                input.disabled = true;
+                if (card) card.style.opacity = "0.5";
+
+                try {
+                    const response = await fetch("/api/admin/rooms", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            category,
+                            price: newPrice,
+                        }),
+                    });
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        throw new Error();
+                    }
+                } catch (err) {
+                    alert("Error al actualizar el precio de la categoría");
+                    saveBtn.disabled = false;
+                    input.disabled = false;
+                    if (card) card.style.opacity = "1";
+                }
+            });
         });
 
-        saveBtn.addEventListener("click", async () => {
-            const newPrice = input.value;
+        // 🔢 Paginación de Transacciones
+        let currentTxPage = 1;
+        const txPerPage = 10;
+        const txRows = document.querySelectorAll(".tx-row");
+        const totalTx = txRows.length;
+        const prevBtn = document.getElementById("prev-page");
+        const nextBtn = document.getElementById("next-page");
+        const rangeText = document.getElementById("current-range");
 
-            saveBtn.disabled = true;
-            input.disabled = true;
-            if (card) card.style.opacity = "0.5";
+        function updateTxPagination() {
+            if (!txRows.length) return;
 
+            const start = (currentTxPage - 1) * txPerPage;
+            const end = start + txPerPage;
+
+            txRows.forEach((row, index) => {
+                if (index >= start && index < end) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            if (rangeText) {
+                rangeText.textContent = `${start + 1}-${Math.min(end, totalTx)}`;
+            }
+            if (prevBtn) prevBtn.disabled = currentTxPage === 1;
+            if (nextBtn) nextBtn.disabled = end >= totalTx;
+        }
+
+        if (prevBtn && nextBtn) {
+            prevBtn.addEventListener("click", () => {
+                if (currentTxPage > 1) {
+                    currentTxPage--;
+                    updateTxPagination();
+                }
+            });
+            nextBtn.addEventListener("click", () => {
+                if (currentTxPage * txPerPage < totalTx) {
+                    currentTxPage++;
+                    updateTxPagination();
+                }
+            });
+            updateTxPagination(); // Inicializar
+        }
+
+        // 🔢 Paginación de Libro de Reclamaciones
+        let currentComplaintPage = 1;
+        const complaintsPerPage = 10;
+        const complaintRows = document.querySelectorAll(".complaint-row");
+        const totalComplaints = complaintRows.length;
+        const prevComplaintBtn = document.getElementById("prev-complaint-page");
+        const nextComplaintBtn = document.getElementById("next-complaint-page");
+        const complaintRangeText = document.getElementById("complaint-range");
+
+        function updateComplaintPagination() {
+            if (!complaintRows.length) return;
+
+            const start = (currentComplaintPage - 1) * complaintsPerPage;
+            const end = start + complaintsPerPage;
+
+            complaintRows.forEach((row, index) => {
+                if (index >= start && index < end) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            if (complaintRangeText) {
+                complaintRangeText.textContent = `${start + 1}-${Math.min(end, totalComplaints)}`;
+            }
+            if (prevComplaintBtn)
+                prevComplaintBtn.disabled = currentComplaintPage === 1;
+            if (nextComplaintBtn)
+                nextComplaintBtn.disabled = end >= totalComplaints;
+        }
+
+        if (prevComplaintBtn && nextComplaintBtn) {
+            prevComplaintBtn.addEventListener("click", () => {
+                if (currentComplaintPage > 1) {
+                    currentComplaintPage--;
+                    updateComplaintPagination();
+                }
+            });
+            nextComplaintBtn.addEventListener("click", () => {
+                if (
+                    currentComplaintPage * complaintsPerPage <
+                    totalComplaints
+                ) {
+                    currentComplaintPage++;
+                    updateComplaintPagination();
+                }
+            });
+            updateComplaintPagination(); // Inicializar
+        }
+
+        // 🏗️ Gestión de Cantidades (Añadir/Eliminar unidades)
+        const qtyPlusBtns = document.querySelectorAll(".qty-btn-plus");
+        const qtyMinusBtns = document.querySelectorAll(".qty-btn-minus");
+
+        const updateQuantity = async (category, action) => {
             try {
                 const response = await fetch("/api/admin/rooms", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ category, price: newPrice }),
-                });
-                if (response.ok) {
-                    window.location.reload();
-                } else {
-                    throw new Error();
-                }
-            } catch (err) {
-                alert("Error al actualizar el precio de la categoría");
-                saveBtn.disabled = false;
-                input.disabled = false;
-                if (card) card.style.opacity = "1";
-            }
-        });
-    });
-
-    // 🔢 Paginación de Transacciones
-    let currentTxPage = 1;
-    const txPerPage = 10;
-    const txRows = document.querySelectorAll(".tx-row");
-    const totalTx = txRows.length;
-    const prevBtn = document.getElementById("prev-page");
-    const nextBtn = document.getElementById("next-page");
-    const rangeText = document.getElementById("current-range");
-
-    function updateTxPagination() {
-        if (!txRows.length) return;
-
-        const start = (currentTxPage - 1) * txPerPage;
-        const end = start + txPerPage;
-
-        txRows.forEach((row, index) => {
-            if (index >= start && index < end) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
-        });
-
-        if (rangeText) {
-            rangeText.textContent = `${start + 1}-${Math.min(end, totalTx)}`;
-        }
-        if (prevBtn) prevBtn.disabled = currentTxPage === 1;
-        if (nextBtn) nextBtn.disabled = end >= totalTx;
-    }
-
-    if (prevBtn && nextBtn) {
-        prevBtn.addEventListener("click", () => {
-            if (currentTxPage > 1) {
-                currentTxPage--;
-                updateTxPagination();
-            }
-        });
-        nextBtn.addEventListener("click", () => {
-            if (currentTxPage * txPerPage < totalTx) {
-                currentTxPage++;
-                updateTxPagination();
-            }
-        });
-        updateTxPagination(); // Inicializar
-    }
-
-    // 🔢 Paginación de Libro de Reclamaciones
-    let currentComplaintPage = 1;
-    const complaintsPerPage = 10;
-    const complaintRows = document.querySelectorAll(".complaint-row");
-    const totalComplaints = complaintRows.length;
-    const prevComplaintBtn = document.getElementById("prev-complaint-page");
-    const nextComplaintBtn = document.getElementById("next-complaint-page");
-    const complaintRangeText = document.getElementById("complaint-range");
-
-    function updateComplaintPagination() {
-        if (!complaintRows.length) return;
-
-        const start = (currentComplaintPage - 1) * complaintsPerPage;
-        const end = start + complaintsPerPage;
-
-        complaintRows.forEach((row, index) => {
-            if (index >= start && index < end) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
-        });
-
-        if (complaintRangeText) {
-            complaintRangeText.textContent = `${start + 1}-${Math.min(end, totalComplaints)}`;
-        }
-        if (prevComplaintBtn)
-            prevComplaintBtn.disabled = currentComplaintPage === 1;
-        if (nextComplaintBtn)
-            nextComplaintBtn.disabled = end >= totalComplaints;
-    }
-
-    if (prevComplaintBtn && nextComplaintBtn) {
-        prevComplaintBtn.addEventListener("click", () => {
-            if (currentComplaintPage > 1) {
-                currentComplaintPage--;
-                updateComplaintPagination();
-            }
-        });
-        nextComplaintBtn.addEventListener("click", () => {
-            if (currentComplaintPage * complaintsPerPage < totalComplaints) {
-                currentComplaintPage++;
-                updateComplaintPagination();
-            }
-        });
-        updateComplaintPagination(); // Inicializar
-    }
-
-    // 🏗️ Gestión de Cantidades (Añadir/Eliminar unidades)
-    const qtyPlusBtns = document.querySelectorAll(".qty-btn-plus");
-    const qtyMinusBtns = document.querySelectorAll(".qty-btn-minus");
-
-    const updateQuantity = async (category, action) => {
-        try {
-            const response = await fetch("/api/admin/rooms", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ category, action }),
-            });
-            if (response.ok) window.location.reload();
-            else throw new Error();
-        } catch (err) {
-            alert("Error al actualizar la cantidad de unidades");
-        }
-    };
-
-    qtyPlusBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-            const category = btn.dataset.category;
-            updateQuantity(category, "add_unit");
-        });
-    });
-
-    qtyMinusBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-            if (
-                !confirm(
-                    "¿Seguro que deseas eliminar una unidad de esta categoría? (Solo se eliminarán unidades libres)",
-                )
-            )
-                return;
-            const category = btn.dataset.category;
-            updateQuantity(category, "remove_unit");
-        });
-    });
-
-    // Sincronización Global de Pagos Pendientes
-    const syncAllBtn = document.getElementById("sync-all-btn");
-    if (syncAllBtn) {
-        syncAllBtn.addEventListener("click", async () => {
-            // Seleccionar todas las órdenes presentes en la tabla (RES-XXXX)
-            const allOrders = Array.from(document.querySelectorAll("td"))
-                .map((td) => td.textContent.trim())
-                .filter((text) => text.startsWith("RES-"));
-
-            if (allOrders.length === 0) {
-                alert("No hay transacciones para sincronizar.");
-                return;
-            }
-
-            syncAllBtn.disabled = true;
-            const originalText = syncAllBtn.innerHTML;
-            syncAllBtn.innerHTML = " Sincronizando...";
-
-            for (const orderId of allOrders) {
-                try {
-                    await fetch("/api/admin/sync-status", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ orderId }),
-                    });
-                } catch (e) {
-                    console.error("Error syncing", orderId, e);
-                }
-            }
-
-            window.location.reload();
-        });
-    }
-
-    const logoutBtn = document.getElementById("logout-btn");
-
-    // 📝 Gestión de Reclamaciones
-    const complaintBtns = document.querySelectorAll(".complaint-status-btn");
-    complaintBtns.forEach((btn) => {
-        btn.addEventListener("click", async () => {
-            const id = btn.dataset.id;
-            if (!confirm("¿Deseas marcar esta reclamación como ATENDIDA?"))
-                return;
-
-            try {
-                const response = await fetch("/api/admin/complaints", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ id, status: "ATENDIDO" }),
+                    body: JSON.stringify({ category, action }),
                 });
                 if (response.ok) window.location.reload();
                 else throw new Error();
             } catch (err) {
-                alert("Error al actualizar el estado de la reclamación");
+                alert("Error al actualizar la cantidad de unidades");
             }
+        };
+
+        qtyPlusBtns.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const category = btn.dataset.category;
+                updateQuantity(category, "add_unit");
+            });
         });
-    });
 
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", async () => {
-            await fetch("/api/logout", { method: "POST" });
-            window.location.href = "/login";
+        qtyMinusBtns.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                if (
+                    !confirm(
+                        "¿Seguro que deseas eliminar una unidad de esta categoría? (Solo se eliminarán unidades libres)",
+                    )
+                )
+                    return;
+                const category = btn.dataset.category;
+                updateQuantity(category, "remove_unit");
+            });
         });
-    }
-</script>
 
-<style is:global>
-    @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+        // Sincronización Global de Pagos Pendientes
+        const syncAllBtn = document.getElementById("sync-all-btn");
+        if (syncAllBtn) {
+            syncAllBtn.addEventListener("click", async () => {
+                // Seleccionar todas las órdenes presentes en la tabla (RES-XXXX)
+                const allOrders = Array.from(document.querySelectorAll("td"))
+                    .map((td) => td.textContent.trim())
+                    .filter((text) => text.startsWith("RES-"));
 
-    html,
-    body,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        font-family: "Inter", sans-serif !important;
-    }
+                if (allOrders.length === 0) {
+                    alert("No hay transacciones para sincronizar.");
+                    return;
+                }
 
-    body {
-        -webkit-font-smoothing: antialiased;
-        background: #fdfbf9;
-    }
+                syncAllBtn.disabled = true;
+                const originalText = syncAllBtn.innerHTML;
+                syncAllBtn.innerHTML = " Sincronizando...";
 
-    ::-webkit-scrollbar {
-        width: 5px;
-        height: 5px;
-    }
-    ::-webkit-scrollbar-thumb {
-        background: #e2e8f0;
-        border-radius: 10px;
-    }
+                for (const orderId of allOrders) {
+                    try {
+                        await fetch("/api/admin/sync-status", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ orderId }),
+                        });
+                    } catch (e) {
+                        console.error("Error syncing", orderId, e);
+                    }
+                }
 
-    select {
-        background-image: none !important;
-    }
-</style>
+                window.location.reload();
+            });
+        }
+
+        const logoutBtn = document.getElementById("logout-btn");
+
+        // 📝 Gestión de Reclamaciones
+        const complaintBtns = document.querySelectorAll(
+            ".complaint-status-btn",
+        );
+        complaintBtns.forEach((btn) => {
+            btn.addEventListener("click", async () => {
+                const id = btn.dataset.id;
+                if (!confirm("¿Deseas marcar esta reclamación como ATENDIDA?"))
+                    return;
+
+                try {
+                    const response = await fetch("/api/admin/complaints", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            id,
+                            status: "ATENDIDO",
+                        }),
+                    });
+                    if (response.ok) window.location.reload();
+                    else throw new Error();
+                } catch (err) {
+                    alert("Error al actualizar el estado de la reclamación");
+                }
+            });
+        });
+
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", async () => {
+                await fetch("/api/logout", { method: "POST" });
+                window.location.href = "/login";
+            });
+        }
+    </script>
+
+    <style is:global>
+        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+        html,
+        body,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: "Inter", sans-serif !important;
+        }
+
+        body {
+            -webkit-font-smoothing: antialiased;
+            background: #fdfbf9;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        select {
+            background-image: none !important;
+        }
+    </style>
+</Layout>

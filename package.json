@@ -17,6 +17,8 @@
     "@tailwindcss/vite": "^4.1.12",
     "astro": "^5.17.1",
     "better-sqlite3": "^12.6.2",
+    "exceljs": "^4.4.0",
+    "file-saver": "^2.0.5",
     "jspdf": "^4.0.0",
     "jspdf-autotable": "^5.0.7",
     "tailwindcss": "^4.1.12",
@@ -24,6 +26,7 @@
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
+    "@types/file-saver": "^2.0.7",
     "@types/node": "^25.1.0"
   }
 }
