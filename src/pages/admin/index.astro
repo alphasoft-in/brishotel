@@ -1541,9 +1541,9 @@ const statusConfig = {
         if (!isAuto) {
             window.location.reload();
         } else {
-            // Recarga silenciosa o solo si hay cambios reales sería ideal,
-            // pero por simplicidad recargaremos cada 5 min.
-            console.log("Auto-sync completado.");
+            // Recarga para que el usuario vea los cambios reflejados en los contadores (KPIs)
+            console.log("Auto-sync completado. Recargando...");
+            window.location.reload();
         }
     }
 
@@ -1552,7 +1552,7 @@ const statusConfig = {
         syncAllBtn.addEventListener("click", () => syncAllTransactions(false));
     }
 
-    // Intervalo de Auto-Sync (cada 5 minutos)
+    // Intervalo de Auto-Sync (cada 3 minutos)
     setInterval(
         () => {
             syncAllTransactions(true);
