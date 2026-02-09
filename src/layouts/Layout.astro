@@ -11,13 +11,18 @@ interface Props {
 const {
 	title,
 	description = "Bris Hotel Nasca - Tu mejor opción en Nazca. Habitaciones confortables, excelente servicio y ubicación privilegiada.",
-	image = "/assets/images/room.png",
+	image = "/og-image.png",
 	canonical,
 } = Astro.props;
 
-const siteUrl = "https://brishotelnasca.com";
+const siteUrl =
+	Astro.site?.toString().replace(/\/$/, "") || "https://brishotelnasca.com";
 const canonicalURL = canonical || new URL(Astro.url.pathname, siteUrl);
-const socialImageURL = new URL(image, siteUrl);
+
+// Asegurar que la imagen sea absoluta
+const socialImageURL = image.startsWith("http")
+	? image
+	: new URL(image, siteUrl).toString();
 ---
 
 <!doctype html>
@@ -38,6 +43,8 @@ const socialImageURL = new URL(image, siteUrl);
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:image" content={socialImageURL} />
+		<meta property="og:site_name" content="Bris Hotel Nasca" />
+		<meta property="og:locale" content="es_PE" />
 
 		<!-- Twitter -->
 		<meta property="twitter:card" content="summary_large_image" />
