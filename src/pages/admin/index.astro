@@ -781,7 +781,7 @@ const statusConfig = {
                                                 class="tx-row hover:bg-slate-50/50 transition-colors"
                                                 data-index={index}
                                             >
-                                                <td class="py-4 px-6 text-xs text-slate-400 font-medium">
+                                                <td class="py-4 px-6 text-[10px] text-slate-400 font-bold uppercase tracking-tight">
                                                     {new Date(tx.timestamp)
                                                         .toLocaleString(
                                                             "es-PE",
@@ -794,8 +794,7 @@ const statusConfig = {
                                                                 hour12: true,
                                                             },
                                                         )
-                                                        .replace(",", " -")
-                                                        .toUpperCase()}
+                                                        .replace(",", " -")}
                                                 </td>
                                                 <td class="py-4 px-6 text-xs font-mono text-slate-300">
                                                     {tx.order_id}
@@ -929,266 +928,189 @@ const statusConfig = {
     </div>
 
     <script>
-        import * as ExcelJS from "exceljs";
-        import { saveAs } from "file-saver";
-        import { jsPDF } from "jspdf";
+        import * as XLSX from "xlsx";
+        import jsPDF from "jspdf";
         import autoTable from "jspdf-autotable";
 
-        const BRAND_GREEN = [117, 145, 32]; // #759120
-        const BRAND_BROWN = [90, 61, 55]; // #5a3d37
+        console.log("📊 Export script initialized");
 
-        console.log("📊 Stable Professional Export initialized");
-
-        // --- DATA EXTRACTION ---
-        const getDetailedData = () => {
+        // --- EXPORT LOGIC ---
+        const getTableData = () => {
+            console.log("🔍 Extracting table data...");
             const rows = Array.from(
                 document.querySelectorAll("#transactions-body tr.tx-row"),
             );
-            return rows
+
+            console.log(`Found ${rows.length} total transaction rows`);
+
+            const data = rows
                 .map((row) => {
                     const cols = row.querySelectorAll("td");
                     if (cols.length < 6) return null;
 
-                    const date = cols[0].textContent?.trim() || "N/A";
-                    const orderId = cols[1].textContent?.trim() || "N/A";
+                    // Extract data by column index to be more robust
+                    const date = cols[0].innerText.trim();
+                    const orderId = cols[1].innerText.trim();
 
+                    // Cliente column (Complex structure)
                     const clientCell = cols[2];
                     const clientName =
-                        clientCell
-                            .querySelector(".text-xs.font-bold")
-                            ?.textContent?.trim() ||
-                        clientCell.children[0]?.children[0]?.textContent?.trim() ||
-                        "N/A";
-                    const clientEmail =
-                        clientCell
-                            .querySelector(".text-\[10px\].text-slate-500")
-                            ?.textContent?.trim() ||
-                        clientCell.children[0]?.children[1]?.textContent?.trim() ||
+                        clientCell.children[0]?.children[0]?.innerText.trim() ||
                         "";
-
-                    const spans = Array.from(
-                        clientCell.querySelectorAll("span"),
-                    ).map((s) => s.textContent?.trim() || "");
+                    const clientEmail =
+                        clientCell.children[0]?.children[1]?.innerText.trim() ||
+                        "";
                     const clientDni =
-                        spans
-                            .find((t) => t.includes("DNI:"))
-                            ?.replace("DNI: ", "") || "";
-                    const clientPhone =
-                        spans
-                            .find((t) => t.includes("Telf:"))
-                            ?.replace("Telf: ", "") || "";
+                        clientCell.children[0]?.children[2]?.innerText.trim() ||
+                        "";
+                    const client = `${clientName}\n${clientEmail}\n${clientDni}`;
 
-                    const room = cols[3].textContent?.trim() || "N/A";
-                    const amount =
-                        cols[4].textContent?.trim()?.replace("S/ ", "") || "0";
-                    const status = cols[5].textContent?.trim() || "N/A";
+                    const room = cols[3].innerText.trim();
+                    const amount = cols[4].innerText.trim().replace("S/ ", "");
+                    const status = cols[5].innerText.trim();
 
-                    return {
-                        date,
-                        orderId,
-                        clientName,
-                        clientEmail,
-                        clientDni,
-                        clientPhone,
-                        room,
-                        amount,
-                        status,
-                    };
+                    return [date, orderId, client, room, amount, status];
                 })
-                .filter((item) => item !== null);
+                .filter((r) => r !== null);
+
+            console.log(
+                `Successfully processed ${data.length} rows for export`,
+            );
+            return data;
         };
 
-        // --- EXCEL EXPORT (ExcelJS) ---
         const exportExcelBtn = document.getElementById("export-excel-btn");
         if (exportExcelBtn) {
-            exportExcelBtn.addEventListener("click", async () => {
-                console.log("📥 Professional Excel export triggered");
+            exportExcelBtn.addEventListener("click", () => {
+                console.log("📥 Excel export triggered");
                 try {
-                    const data = getDetailedData();
+                    const data = getTableData();
                     if (data.length === 0) {
                         alert("No hay datos para exportar");
                         return;
                     }
 
-                    const ExcelJSVar: any = (ExcelJS as any).default || ExcelJS;
-                    const workbook = new ExcelJSVar.Workbook();
-                    const worksheet = workbook.addWorksheet("Transacciones");
-
-                    // Header Setup
-                    const headerRow = worksheet.addRow([
-                        "FECHA Y HORA",
-                        "ORDEN ID",
-                        "NOMBRE CLIENTE",
-                        "EMAIL",
-                        "DNI",
-                        "TELÉFONO",
-                        "HABITACIÓN",
-                        "MONTO (S/)",
-                        "ESTADO",
-                    ]);
-
-                    headerRow.eachCell((cell) => {
-                        cell.fill = {
-                            type: "pattern",
-                            pattern: "solid",
-                            fgColor: { argb: "FF759120" }, // #759120
-                        };
-                        cell.font = { color: { argb: "FFFFFFFF" }, bold: true };
-                        cell.alignment = {
-                            vertical: "middle",
-                            horizontal: "center",
-                        };
-                        cell.border = {
-                            top: { style: "thin" },
-                            left: { style: "thin" },
-                            bottom: { style: "thin" },
-                            right: { style: "thin" },
-                        };
-                    });
-
-                    // Add Data
-                    data.forEach((item) => {
-                        const row = worksheet.addRow([
-                            item.date,
-                            item.orderId,
-                            item.clientName,
-                            item.clientEmail,
-                            item.clientDni,
-                            item.clientPhone,
-                            item.room,
-                            parseFloat(item.amount),
-                            item.status,
-                        ]);
-
-                        row.eachCell((c) => {
-                            c.alignment = { vertical: "middle" };
-                            c.border = {
-                                bottom: {
-                                    style: "thin",
-                                    color: { argb: "FFF1F5F9" },
-                                },
-                            };
-                        });
-
-                        const statusCell = row.getCell(9);
-                        if (item.status === "EXITOSO")
-                            statusCell.font = {
-                                color: { argb: "FF059669" },
-                                bold: true,
-                            };
-                        if (item.status === "PENDIENTE")
-                            statusCell.font = {
-                                color: { argb: "FFD97706" },
-                                bold: true,
-                            };
-                    });
-
-                    worksheet.autoFilter = "A1:I1";
-                    worksheet.columns = [
-                        { width: 25 },
-                        { width: 15 },
-                        { width: 30 },
-                        { width: 30 },
-                        { width: 15 },
-                        { width: 15 },
-                        { width: 20 },
-                        { width: 12 },
-                        { width: 15 },
+                    // Add Title and Metadata at the top
+                    const excelData = [
+                        ["REPORTE DE TRANSACCIONES - BRIS HOTEL"],
+                        [
+                            `Fecha de generación: ${new Date().toLocaleString("es-PE")}`,
+                        ],
+                        [],
+                        [
+                            "FECHA",
+                            "ID ORDEN",
+                            "CLIENTE",
+                            "HABITACIÓN",
+                            "MONTO",
+                            "ESTADO",
+                        ],
+                        ...data,
                     ];
 
-                    const buffer = await workbook.xlsx.writeBuffer();
-                    saveAs(
-                        new Blob([buffer]),
-                        `BrisHotel_Reporte_${new Date().toISOString().split("T")[0]}.xlsx`,
-                    );
+                    const ws = XLSX.utils.aoa_to_sheet(excelData);
+                    const wscols = [
+                        { wch: 20 },
+                        { wch: 15 },
+                        { wch: 40 },
+                        { wch: 15 },
+                        { wch: 12 },
+                        { wch: 12 },
+                    ];
+                    ws["!cols"] = wscols;
+
+                    const wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, "Transacciones");
+
+                    const fileName = `BrisHotel_Reporte_${new Date().toISOString().slice(0, 10)}.xlsx`;
+                    console.log(`💾 Saving Excel: ${fileName}`);
+                    XLSX.writeFile(wb, fileName);
                 } catch (err) {
-                    console.error("Excel Error:", err);
-                    alert(
-                        "Error generando Excel. Por favor verifique la consola.",
-                    );
+                    console.error("❌ Excel Export Error:", err);
+                    alert("Error al generar el Excel. Revisa la consola.");
                 }
             });
         }
 
-        // --- PDF EXPORT (jsPDF) ---
         const exportPdfBtn = document.getElementById("export-pdf-btn");
         if (exportPdfBtn) {
             exportPdfBtn.addEventListener("click", () => {
-                console.log("📥 Professional PDF export triggered");
+                console.log("📥 PDF export triggered");
                 try {
-                    const data = getDetailedData();
-                    if (data.length === 0) return;
+                    const data = getTableData();
+                    if (data.length === 0) {
+                        alert("No hay datos para exportar");
+                        return;
+                    }
 
                     const doc = new jsPDF();
                     const pageWidth = doc.internal.pageSize.width;
 
-                    // Brand Header
-                    doc.setFillColor(
-                        BRAND_GREEN[0],
-                        BRAND_GREEN[1],
-                        BRAND_GREEN[2],
-                    );
+                    // --- Header Branding (Bris Hotel Brown #5A3D37) ---
+                    doc.setFillColor(90, 61, 55);
                     doc.rect(0, 0, pageWidth, 40, "F");
 
                     doc.setTextColor(255, 255, 255);
-                    doc.setFontSize(22);
+                    doc.setFontSize(24);
                     doc.setFont("helvetica", "bold");
-                    doc.text("Bris Hotel", 14, 20);
+                    doc.text("Bris Hotel", 14, 22);
 
                     doc.setFontSize(10);
                     doc.setFont("helvetica", "normal");
-                    doc.text("REPORTE DE TRANSACCIONES", 14, 28);
+                    doc.text("REPORTE OFICIAL DE TRANSACCIONES", 14, 30);
+
                     doc.setFontSize(8);
                     doc.text(
-                        `Generado: ${new Date().toLocaleString("es-PE")}`,
+                        `Generado el: ${new Date().toLocaleString("es-PE")}`,
                         14,
-                        34,
+                        36,
                     );
-
-                    const tableBody = data.map((d) => [
-                        d.date,
-                        d.orderId,
-                        `${d.clientName}\n${d.clientEmail}\nDNI: ${d.clientDni}`,
-                        d.room,
-                        `S/ ${parseFloat(d.amount).toFixed(2)}`,
-                        d.status,
-                    ]);
 
                     autoTable(doc, {
                         startY: 50,
                         head: [
                             [
-                                "FECHA",
-                                "ORDEN ID",
-                                "CLIENTE",
-                                "HAB.",
-                                "MONTO",
-                                "ESTADO",
+                                "Fecha",
+                                "ID Orden",
+                                "Cliente",
+                                "Hab.",
+                                "Monto",
+                                "Estado",
                             ],
                         ],
-                        body: tableBody,
-                        theme: "striped",
+                        body: data,
+                        theme: "grid",
                         headStyles: {
-                            fillColor: [
-                                BRAND_BROWN[0],
-                                BRAND_BROWN[1],
-                                BRAND_BROWN[2],
-                            ] as any,
-                            fontSize: 9,
+                            fillColor: [117, 145, 32], // Bris Hotel Green #759120
+                            textColor: [255, 255, 255],
+                            fontStyle: "bold",
+                            halign: "center",
                         },
-                        styles: { fontSize: 8, valign: "middle" },
                         columnStyles: {
-                            2: { cellWidth: 50 },
-                            4: { halign: "right" },
+                            0: { cellWidth: 40 },
+                            1: { cellWidth: 25, fontStyle: "bold" },
+                            2: { cellWidth: 55 },
+                            4: { halign: "right", fontStyle: "bold" },
+                            5: { halign: "center" },
+                        },
+                        didDrawPage: (data) => {
+                            const str = "Página " + doc.getNumberOfPages();
+                            doc.setFontSize(8);
+                            doc.setTextColor(150);
+                            doc.text(
+                                str,
+                                pageWidth - 30,
+                                doc.internal.pageSize.height - 10,
+                            );
                         },
                     });
 
-                    doc.save(
-                        `BrisHotel_Reporte_${new Date().toISOString().split("T")[0]}.pdf`,
-                    );
+                    const fileName = `BrisHotel_Reporte_${new Date().toISOString().slice(0, 10)}.pdf`;
+                    console.log(`💾 Saving PDF: ${fileName}`);
+                    doc.save(fileName);
                 } catch (err) {
-                    console.error("PDF Error:", err);
-                    alert("Error generando PDF.");
+                    console.error("❌ PDF Export Error:", err);
+                    alert("Error al generar el PDF. Revisa la consola.");
                 }
             });
         }
