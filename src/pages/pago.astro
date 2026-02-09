@@ -12,7 +12,14 @@ const roomName = url.searchParams.get("room") || "Habitación";
 const price = url.searchParams.get("price") || "0";
 
 // Claves de configuración
-const publicKey = import.meta.env.PUBLIC_IZIPAY_PUBLIC_KEY || "24058106:testpublickey_h3tQty2wtw4bjhpOAbPfZTNxhgfKuoHV5fQoMOp0f9ysn";
+const mode = import.meta.env.IZIPAY_MODE || "TEST";
+const publicKey =
+    mode === "PRODUCTION"
+        ? import.meta.env.PUBLIC_IZIPAY_PUBLIC_KEY_PROD
+        : import.meta.env.PUBLIC_IZIPAY_PUBLIC_KEY;
+const jsUrl = import.meta.env.PUBLIC_IZIPAY_JS_URL || "https://static.micuentaweb.pe/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js";
+const classicJsUrl = "https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic.js";
+const classicResetUrl = "https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic-reset.min.css";
 ---
 
 <Layout title="Pago Seguro - Bris Hotel">
@@ -50,14 +57,14 @@ const publicKey = import.meta.env.PUBLIC_IZIPAY_PUBLIC_KEY || "24058106:testpubl
         <!-- Izipay Smart Form v4 (Native Modal) -->
         <div class="w-full flex justify-center min-h-[300px]">
           <script is:inline
-            src="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js"
+            src={jsUrl}
             kr-public-key={publicKey}
             kr-post-url-success={`/confirmacion?room=${encodeURIComponent(roomName)}&price=${price}&orderId=${orderId}`}
             kr-language="es-PE">
           </script>
 
-          <link rel="stylesheet" href="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic-reset.min.css" />
-          <script is:inline src="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic.js"></script>
+          <link rel="stylesheet" href={classicResetUrl} />
+          <script is:inline src={classicJsUrl}></script>
 
           <!-- Elemento donde Izipay inyecta el modal -->
           <div class="kr-smart-form" kr-popin kr-form-token={token}></div>

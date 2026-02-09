@@ -11,9 +11,14 @@ const price = url.searchParams.get("price") || "0";
 const orderIdProp = url.searchParams.get("orderId"); // Optional fallback
 
 // Claves de configuración
+const mode = import.meta.env.IZIPAY_MODE || "TEST";
 const publicKey =
-    import.meta.env.PUBLIC_IZIPAY_PUBLIC_KEY ||
-    "24058106:testpublickey_h3tQty2wtw4bjhpOAbPfZTNxhgfKuoHV5fQoMOp0f9ysn";
+    mode === "PRODUCTION"
+        ? import.meta.env.PUBLIC_IZIPAY_PUBLIC_KEY_PROD
+        : import.meta.env.PUBLIC_IZIPAY_PUBLIC_KEY;
+const jsUrl =
+    import.meta.env.PUBLIC_IZIPAY_JS_URL ||
+    "https://static.micuentaweb.pe/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js";
 ---
 
 <Layout
@@ -346,7 +351,7 @@ const publicKey =
     </main>
 </Layout>
 
-<script is:inline define:vars={{ publicKey, roomName, price }}>
+<script is:inline define:vars={{ publicKey, roomName, price, jsUrl }}>
     const form = document.getElementById("reservation-form");
     const submitBtn = document.getElementById("submit-btn");
     const loadingOverlay = document.getElementById("loading-overlay");
@@ -456,8 +461,7 @@ const publicKey =
 
             // Cargar Script
             const script = document.createElement("script");
-            script.src =
-                "https://static.micuentaweb.pe/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js";
+            script.src = jsUrl;
             script.setAttribute("kr-public-key", publicKey);
             script.setAttribute(
                 "kr-post-url-success",
