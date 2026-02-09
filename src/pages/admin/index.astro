@@ -662,9 +662,21 @@ const statusConfig = {
                             Registro Completo de Transacciones
                         </h4>
                         <div class="flex items-center gap-3">
+                            <div class="flex flex-col items-end mr-3">
+                                <span
+                                    class="text-[8px] font-black text-slate-300 uppercase tracking-widest leading-none"
+                                    >Auto-Sync</span
+                                >
+                                <span
+                                    id="last-sync-time"
+                                    class="text-[10px] font-bold text-[#00a19b] leading-tight"
+                                    >Última: {lastSyncDate}</span
+                                >
+                            </div>
+
                             <button
                                 id="sync-all-btn"
-                                class="text-[10px] font-bold text-[#00a19b] hover:bg-[#00a19b] hover:text-white border border-[#00a19b] px-3 py-1.5 rounded-lg transition-all flex items-center gap-2 uppercase tracking-widest bg-white shadow-sm"
+                                class="h-9 px-4 bg-[#00a19b]/10 text-[#00a19b] border border-[#00a19b]/20 rounded-lg text-[10px] font-bold hover:bg-[#00a19b] hover:text-white transition-all flex items-center gap-2 uppercase tracking-widest active:scale-95 group"
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -1545,7 +1557,7 @@ const statusConfig = {
         () => {
             syncAllTransactions(true);
         },
-        5 * 60 * 1000,
+        3 * 60 * 1000,
     );
 
     // 🗑️ Eliminar Transacción
