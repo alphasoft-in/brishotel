@@ -292,6 +292,16 @@ export const db = {
     },
 
     updateTransactionStatus: async (orderId: string, status: string, detail?: any) => {
+        // 1. Verificar estado actual para evitar duplicidad de bloqueos
+        const { data: currentTx } = await supabase
+            .from('transactions')
+            .select('status, room_name')
+            .eq('order_id', orderId)
+            .maybeSingle();
+
+        // Si ya está exitoso y volvemos a recibir EXITOSO, ignoramos la lógica de bloqueo de habitación
+        const alreadySuccessful = currentTx?.status === 'EXITOSO';
+
         const { error: updateError } = await supabase
             .from('transactions')
             .update({
@@ -302,19 +312,16 @@ export const db = {
 
         if (updateError) return false;
 
-        if (status === 'EXITOSO') {
+        // Solo bloqueamos la habitación si el nuevo estado es EXITOSO y NO estaba bloqueada previamente
+        if (status === 'EXITOSO' && !alreadySuccessful) {
             try {
-                const { data: tx } = await supabase
-                    .from('transactions')
-                    .select('room_name')
-                    .eq('order_id', orderId)
-                    .maybeSingle();
+                const roomToBlock = currentTx?.room_name;
 
-                if (tx && tx.room_name) {
+                if (roomToBlock) {
                     const { data: availableUnit } = await supabase
                         .from('rooms')
                         .select('id')
-                        .eq('subtitle', tx.room_name)
+                        .eq('subtitle', roomToBlock)
                         .eq('status', 'libre')
                         .limit(1)
                         .maybeSingle();
@@ -324,6 +331,7 @@ export const db = {
                             .from('rooms')
                             .update({ status: 'reservado' })
                             .eq('id', availableUnit.id);
+                        console.log(`✅ Habitación bloqueada exitosamente para orden ${orderId}`);
                     }
                 }
             } catch (error) {
