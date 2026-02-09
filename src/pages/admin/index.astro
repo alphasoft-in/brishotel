@@ -995,12 +995,12 @@ const statusConfig = {
                     const worksheet = workbook.addWorksheet("Transacciones");
 
                     // 1. Header Styling & Setup (Bris Hotel Brown #5A3D37)
-                    worksheet.mergeCells("A1:F1");
+                    worksheet.mergeCells("A1:E1");
                     const titleCell = worksheet.getCell("A1");
                     titleCell.value = "BRIS HOTEL - REPORTE DE TRANSACCIONES";
                     titleCell.font = {
                         name: "Arial Black",
-                        size: 16,
+                        size: 12,
                         color: { argb: "FFFFFFFF" },
                     };
                     titleCell.alignment = {
@@ -1013,10 +1013,38 @@ const statusConfig = {
                         fgColor: { argb: "FF5A3D37" },
                     };
 
+                    // Calculating Totals
+                    const totalMonto = data.reduce(
+                        (acc, curr) => acc + (parseFloat(curr[4]) || 0),
+                        0,
+                    );
+
+                    // Total Cell at the side
+                    const totalCell = worksheet.getCell("F1");
+                    totalCell.value = `TOTAL: S/ ${totalMonto.toFixed(2)}`;
+                    totalCell.font = {
+                        bold: true,
+                        size: 12,
+                        color: { argb: "FFFFFFFF" },
+                    };
+                    totalCell.fill = {
+                        type: "pattern",
+                        pattern: "solid",
+                        fgColor: { argb: "FF759120" },
+                    };
+                    totalCell.alignment = {
+                        vertical: "middle",
+                        horizontal: "center",
+                    };
+                    totalCell.border = {
+                        right: { style: "thin" },
+                        bottom: { style: "thin" },
+                    };
+
                     worksheet.mergeCells("A2:F2");
                     const metaCell = worksheet.getCell("A2");
                     metaCell.value = `Generado el: ${new Date().toLocaleString("es-PE")}`;
-                    metaCell.font = { name: "Arial", size: 10, italic: true };
+                    metaCell.font = { name: "Arial", size: 9, italic: true };
                     metaCell.alignment = { horizontal: "center" };
 
                     // 2. Main Table Headers (Bris Hotel Green #759120)
@@ -1038,7 +1066,7 @@ const statusConfig = {
                         cell.font = {
                             bold: true,
                             color: { argb: "FFFFFFFF" },
-                            size: 11,
+                            size: 9,
                         };
                         cell.alignment = {
                             vertical: "middle",
