@@ -1460,26 +1460,33 @@ const statusConfig = {
 
                 // --- Decorative Seal / Status ---
                 currentY += 10;
-                doc.setDrawColor(90, 61, 55, 0.1);
-                doc.setFillColor(255, 255, 255, 0.5);
-                doc.roundedRect(pageWidth - 65, currentY, 45, 20, 3, 3, "FD");
+                const isAtendido = c.status === "ATENDIDO";
+                const statusBg = isAtendido ? [220, 252, 231] : [254, 243, 199]; // Light Green vs Light Amber
+                const statusText = isAtendido ? [21, 128, 61] : [180, 83, 9]; // Dark Green vs Dark Amber
+
+                doc.setDrawColor(
+                    statusText[0],
+                    statusText[1],
+                    statusText[2],
+                    0.2,
+                );
+                doc.setFillColor(statusBg[0], statusBg[1], statusBg[2]);
+                doc.roundedRect(pageWidth - 65, currentY, 45, 18, 2, 2, "FD");
 
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(7);
-                doc.setTextColor(90, 61, 55, 0.5);
-                doc.text(
-                    "ESTADO DEL DOCUMENTO",
-                    pageWidth - 42.5,
-                    currentY + 6,
-                    { align: "center" },
-                );
-
-                doc.setFontSize(10);
                 doc.setTextColor(
-                    c.status === "ATENDIDO" ? 117 : 90,
-                    c.status === "ATENDIDO" ? 145 : 61,
-                    c.status === "ATENDIDO" ? 32 : 55,
+                    statusText[0],
+                    statusText[1],
+                    statusText[2],
+                    0.6,
                 );
+                doc.text("ESTADO ACTUAL", pageWidth - 42.5, currentY + 6, {
+                    align: "center",
+                });
+
+                doc.setFontSize(9);
+                doc.setTextColor(statusText[0], statusText[1], statusText[2]);
                 doc.text(
                     c.status.toUpperCase(),
                     pageWidth - 42.5,
