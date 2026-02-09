@@ -340,5 +340,18 @@ export const db = {
         }
 
         return true;
+    },
+
+    deleteTransaction: async (orderId: string) => {
+        const { error } = await supabase
+            .from('transactions')
+            .delete()
+            .eq('order_id', orderId);
+
+        if (error) {
+            console.error('Error deleting transaction:', error);
+            return false;
+        }
+        return true;
     }
 };
