@@ -1308,93 +1308,214 @@ const statusConfig = {
             try {
                 const doc = new jsPDF();
                 const pageWidth = doc.internal.pageSize.width;
+                const pageHeight = doc.internal.pageSize.height;
 
-                // --- Header Branding (Bris Hotel Brown #5A3D37) ---
-                doc.setFillColor(90, 61, 55);
-                doc.rect(0, 0, pageWidth, 40, "F");
+                // --- Foundation: Light Premium Background ---
+                doc.setFillColor(253, 251, 249); // #FDFBF9 (Cream)
+                doc.rect(0, 0, pageWidth, pageHeight, "F");
+
+                // --- Header Branding (Elegant & Spaced) ---
+                doc.setFillColor(90, 61, 55); // #5A3D37 (Hotel Brown)
+                doc.rect(0, 0, pageWidth, 45, "F");
+
+                // Gold Accent Line
+                doc.setFillColor(117, 145, 32); // #759120 (Hotel Green)
+                doc.rect(0, 45, pageWidth, 2, "F");
 
                 doc.setTextColor(255, 255, 255);
-                doc.setFontSize(24);
                 doc.setFont("helvetica", "bold");
-                doc.text("Bris Hotel", 14, 22);
+                doc.setFontSize(28);
+                doc.text("BRIS HOTEL", 20, 25);
 
-                doc.setFontSize(10);
                 doc.setFont("helvetica", "normal");
-                doc.text("HOJA DE RECLAMACIÓN VIRTUAL", 14, 30);
+                doc.setFontSize(10);
+                doc.setTextColor(220, 220, 220);
+                doc.text("EXCELENCIA EN HOSPITALIDAD", 21, 32);
 
+                doc.setTextColor(255, 255, 255);
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(12);
+                doc.text("HOJA DE RECLAMACIÓN VIRTUAL", pageWidth - 20, 25, {
+                    align: "right",
+                });
+
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(9);
+                doc.text(`REGISTRO OFICIAL: ${c.id}`, pageWidth - 20, 32, {
+                    align: "right",
+                });
+
+                // --- Body Setup ---
+                let currentY = 65;
+                const margin = 20;
+                const contentWidth = pageWidth - margin * 2;
+
+                // Section title helper
+                const drawSectionTitle = (title: string, y: number) => {
+                    doc.setFont("helvetica", "bold");
+                    doc.setFontSize(9);
+                    doc.setTextColor(117, 145, 32); // Green accent
+                    doc.text(title.toUpperCase(), margin, y);
+                    doc.setDrawColor(117, 145, 32, 0.2);
+                    doc.line(margin, y + 2, pageWidth - margin, y + 2);
+                    return y + 12;
+                };
+
+                // Field helper
+                const drawField = (label: string, value: string, y: number) => {
+                    doc.setFont("helvetica", "bold");
+                    doc.setFontSize(8);
+                    doc.setTextColor(150, 150, 150);
+                    doc.text(label.toUpperCase(), margin, y);
+
+                    doc.setFont("helvetica", "normal");
+                    doc.setFontSize(10);
+                    doc.setTextColor(60, 60, 60);
+
+                    // Handle multi-line for description
+                    if (label.toLowerCase() === "descripción") {
+                        const lines = doc.splitTextToSize(
+                            value || "-",
+                            contentWidth,
+                        );
+                        doc.text(lines, margin, y + 6);
+                        return y + 10 + lines.length * 5;
+                    }
+
+                    doc.text(value || "-", margin, y + 6);
+                    return y + 15;
+                };
+
+                // --- Content Sections ---
+
+                // 1. Consumer Identity
+                currentY = drawSectionTitle(
+                    "1. Identificación del Consumidor",
+                    currentY,
+                );
+                currentY = drawField("Nombre Completo", c.full_name, currentY);
+
+                const colWidth = contentWidth / 2;
+                doc.setFont("helvetica", "bold");
                 doc.setFontSize(8);
+                doc.setTextColor(150, 150, 150);
+                doc.text("DOCUMENTO", margin, currentY);
+                doc.text("E-MAIL", margin + colWidth, currentY);
+
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(10);
+                doc.setTextColor(60, 60, 60);
                 doc.text(
-                    `Fecha de Registro: ${new Date(c.date).toLocaleString("es-PE")}`,
-                    14,
-                    36,
+                    `${c.document_type} - ${c.document_number}`,
+                    margin,
+                    currentY + 6,
+                );
+                doc.text(c.email, margin + colWidth, currentY + 6);
+                currentY += 15;
+
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(8);
+                doc.setTextColor(150, 150, 150);
+                doc.text("TELÉFONO", margin, currentY);
+                doc.text("DOMICILIO", margin + colWidth, currentY);
+
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(10);
+                doc.setTextColor(60, 60, 60);
+                doc.text(c.phone || "No especificado", margin, currentY + 6);
+                doc.text(
+                    c.address || "No especificado",
+                    margin + colWidth,
+                    currentY + 6,
+                );
+                currentY += 25;
+
+                // 2. Complaint Detail
+                currentY = drawSectionTitle(
+                    "2. Detalle de la Reclamación",
+                    currentY,
                 );
 
-                // --- Content ---
-                let currentY = 55;
-
-                // Section 1: Client Info
-                doc.setTextColor(90, 61, 55);
-                doc.setFontSize(12);
                 doc.setFont("helvetica", "bold");
-                doc.text("1. Identificación del Consumidor", 14, currentY);
-                currentY += 5;
+                doc.setFontSize(8);
+                doc.setTextColor(150, 150, 150);
+                doc.text("TIPO", margin, currentY);
+                doc.text("FECHA DE REGISTRO", margin + colWidth, currentY);
 
-                autoTable(doc, {
-                    startY: currentY,
-                    body: [
-                        ["Nombre Completo:", c.full_name],
-                        [
-                            "Documento:",
-                            `${c.document_type} - ${c.document_number}`,
-                        ],
-                        ["E-mail:", c.email],
-                        ["Teléfono:", c.phone || "No proporcionado"],
-                        ["Dirección:", c.address || "No proporcionada"],
-                    ],
-                    theme: "plain",
-                    styles: { fontSize: 10, cellPadding: 2 },
-                    columnStyles: { 0: { fontStyle: "bold", cellWidth: 40 } },
-                });
-
-                currentY = (doc as any).lastAutoTable.finalY + 15;
-
-                // Section 2: Complaint Detail
-                doc.setTextColor(90, 61, 55);
-                doc.setFontSize(12);
                 doc.setFont("helvetica", "bold");
-                doc.text("2. Detalle de la Reclamación", 14, currentY);
-                currentY += 5;
+                doc.setFontSize(10);
+                doc.setTextColor(180, 130, 40); // Amber for emphasis
+                doc.text(c.type, margin, currentY + 6);
 
-                autoTable(doc, {
-                    startY: currentY,
-                    body: [
-                        ["Tipo:", c.type],
-                        ["Estado:", c.status],
-                        ["Descripción:", c.description],
-                    ],
-                    theme: "plain",
-                    styles: { fontSize: 10, cellPadding: 2 },
-                    columnStyles: { 0: { fontStyle: "bold", cellWidth: 40 } },
-                });
+                doc.setFont("helvetica", "normal");
+                doc.setTextColor(60, 60, 60);
+                doc.text(
+                    new Date(c.date).toLocaleString("es-PE"),
+                    margin + colWidth,
+                    currentY + 6,
+                );
+                currentY += 15;
+
+                currentY = drawField("Descripción", c.description, currentY);
+
+                // --- Decorative Seal / Status ---
+                currentY += 10;
+                doc.setDrawColor(90, 61, 55, 0.1);
+                doc.setFillColor(255, 255, 255, 0.5);
+                doc.roundedRect(pageWidth - 65, currentY, 45, 20, 3, 3, "FD");
+
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(7);
+                doc.setTextColor(90, 61, 55, 0.5);
+                doc.text(
+                    "ESTADO DEL DOCUMENTO",
+                    pageWidth - 42.5,
+                    currentY + 6,
+                    { align: "center" },
+                );
+
+                doc.setFontSize(10);
+                doc.setTextColor(
+                    c.status === "ATENDIDO" ? 117 : 90,
+                    c.status === "ATENDIDO" ? 145 : 61,
+                    c.status === "ATENDIDO" ? 32 : 55,
+                );
+                doc.text(
+                    c.status.toUpperCase(),
+                    pageWidth - 42.5,
+                    currentY + 13,
+                    { align: "center" },
+                );
 
                 // --- Footer ---
-                const footerY = doc.internal.pageSize.height - 25;
-                doc.setDrawColor(220, 220, 220);
-                doc.line(14, footerY, pageWidth - 14, footerY);
+                const footerY = pageHeight - 30;
+                doc.setDrawColor(200, 200, 200);
+                doc.setLineWidth(0.1);
+                doc.line(margin, footerY, pageWidth - margin, footerY);
 
-                doc.setFontSize(8);
-                doc.setTextColor(150);
-                const infoStr =
-                    "Este documento es una copia fiel de la reclamación registrada en nuestro sistema legal conforme a la normativa vigente.";
-                doc.text(infoStr, 14, footerY + 10);
-                doc.text(`ID Seguimiento: ${c.id}`, 14, footerY + 15);
+                doc.setFontSize(7);
+                doc.setTextColor(180, 180, 180);
+                const disclaimer =
+                    "Este documento electrónico tiene validez legal conforme a la Ley de Protección al Consumidor. Bris Hotel garantiza la integridad y confidencialidad de la información registrada.";
+                const splitDisclaimer = doc.splitTextToSize(
+                    disclaimer,
+                    contentWidth,
+                );
+                doc.text(splitDisclaimer, margin, footerY + 8);
+
+                doc.setFont("helvetica", "bold");
+                doc.text(
+                    "BRIS HOTEL NASCA - CALLE CALLAO 907, NASCA, PERÚ",
+                    pageWidth / 2,
+                    footerY + 20,
+                    { align: "center" },
+                );
 
                 const fileName = `BrisHotel_Reclamacion_${c.id}.pdf`;
-                console.log(`💾 Saving Complaint PDF: ${fileName}`);
                 doc.save(fileName);
             } catch (err) {
                 console.error("❌ Complaint PDF Error:", err);
-                alert("Error al generar el PDF de reclamación.");
+                alert("Error al generar el PDF de reclamación premium.");
             }
         };
 
