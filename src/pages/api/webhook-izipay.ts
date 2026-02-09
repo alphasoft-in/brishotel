@@ -6,7 +6,10 @@ export const prerender = false;
 
 export const POST: APIRoute = async ({ request }) => {
     const jsonHeaders = { "Content-Type": "application/json" };
-    const HMAC_KEY = import.meta.env.IZIPAY_HMAC_SHA256;
+    const mode = import.meta.env.IZIPAY_MODE || "TEST";
+    const HMAC_KEY = mode === "PRODUCTION"
+        ? import.meta.env.IZIPAY_HMAC_SHA256_PROD
+        : import.meta.env.IZIPAY_HMAC_SHA256;
 
     try {
         const formData = await request.formData();
