@@ -565,7 +565,12 @@ const statusConfig = {
                                         </tr>
                                     ) : (
                                         complaints.map((c) => (
-                                            <tr class="complaint-row hover:bg-slate-50/50 transition-colors border-b border-slate-100 last:border-0">
+                                            <tr
+                                                class="complaint-row hover:bg-slate-50/50 transition-colors border-b border-slate-100 last:border-0"
+                                                data-complaint={JSON.stringify(
+                                                    c,
+                                                )}
+                                            >
                                                 <td class="py-4 px-6 text-xs text-slate-400 font-medium">
                                                     {new Date(
                                                         c.date,
@@ -605,19 +610,41 @@ const statusConfig = {
                                                     "{c.description}"
                                                 </td>
                                                 <td class="py-4 px-6 text-right">
-                                                    {c.status ===
-                                                    "PENDIENTE" ? (
+                                                    <div class="flex items-center justify-end gap-2">
                                                         <button
-                                                            class="complaint-status-btn px-3 py-1 bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-md text-[10px] font-bold uppercase tracking-widest transition-all border border-emerald-100"
-                                                            data-id={c.id}
+                                                            class="download-complaint-pdf-btn p-2 text-rose-600 hover:bg-rose-50 rounded-lg transition-all border border-rose-100/50"
+                                                            title="Descargar PDF de Reclamación"
                                                         >
-                                                            Atender
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                class="w-4 h-4"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                stroke="currentColor"
+                                                            >
+                                                                <path
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                                                                />
+                                                            </svg>
                                                         </button>
-                                                    ) : (
-                                                        <span class="px-3 py-1 bg-slate-50 text-slate-400 rounded-md text-[10px] font-bold uppercase tracking-widest border border-slate-100">
-                                                            Atendido
-                                                        </span>
-                                                    )}
+
+                                                        {c.status ===
+                                                        "PENDIENTE" ? (
+                                                            <button
+                                                                class="complaint-status-btn px-3 py-1 bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-md text-[10px] font-bold uppercase tracking-widest transition-all border border-emerald-100"
+                                                                data-id={c.id}
+                                                            >
+                                                                Atender
+                                                            </button>
+                                                        ) : (
+                                                            <span class="px-3 py-1 bg-slate-50 text-slate-400 rounded-md text-[10px] font-bold uppercase tracking-widest border border-slate-100">
+                                                                Atendido
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))
@@ -1256,6 +1283,123 @@ const statusConfig = {
                 }
             });
         }
+
+        // --- COMPLAINT PDF EXPORT ---
+        const setupComplaintPdfExport = () => {
+            const btns = document.querySelectorAll(
+                ".download-complaint-pdf-btn",
+            );
+            btns.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const row = btn.closest("tr");
+                    if (!row || !row.dataset.complaint) return;
+
+                    try {
+                        const complaint = JSON.parse(row.dataset.complaint);
+                        generateComplaintPdf(complaint);
+                    } catch (e) {
+                        console.error("Error parsing complaint data", e);
+                    }
+                });
+            });
+        };
+
+        const generateComplaintPdf = (c: any) => {
+            try {
+                const doc = new jsPDF();
+                const pageWidth = doc.internal.pageSize.width;
+
+                // --- Header Branding (Bris Hotel Brown #5A3D37) ---
+                doc.setFillColor(90, 61, 55);
+                doc.rect(0, 0, pageWidth, 40, "F");
+
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(24);
+                doc.setFont("helvetica", "bold");
+                doc.text("Bris Hotel", 14, 22);
+
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "normal");
+                doc.text("HOJA DE RECLAMACIÓN VIRTUAL", 14, 30);
+
+                doc.setFontSize(8);
+                doc.text(
+                    `Fecha de Registro: ${new Date(c.date).toLocaleString("es-PE")}`,
+                    14,
+                    36,
+                );
+
+                // --- Content ---
+                let currentY = 55;
+
+                // Section 1: Client Info
+                doc.setTextColor(90, 61, 55);
+                doc.setFontSize(12);
+                doc.setFont("helvetica", "bold");
+                doc.text("1. Identificación del Consumidor", 14, currentY);
+                currentY += 5;
+
+                autoTable(doc, {
+                    startY: currentY,
+                    body: [
+                        ["Nombre Completo:", c.full_name],
+                        [
+                            "Documento:",
+                            `${c.document_type} - ${c.document_number}`,
+                        ],
+                        ["E-mail:", c.email],
+                        ["Teléfono:", c.phone || "No proporcionado"],
+                        ["Dirección:", c.address || "No proporcionada"],
+                    ],
+                    theme: "plain",
+                    styles: { fontSize: 10, cellPadding: 2 },
+                    columnStyles: { 0: { fontStyle: "bold", cellWidth: 40 } },
+                });
+
+                currentY = (doc as any).lastAutoTable.finalY + 15;
+
+                // Section 2: Complaint Detail
+                doc.setTextColor(90, 61, 55);
+                doc.setFontSize(12);
+                doc.setFont("helvetica", "bold");
+                doc.text("2. Detalle de la Reclamación", 14, currentY);
+                currentY += 5;
+
+                autoTable(doc, {
+                    startY: currentY,
+                    body: [
+                        ["Tipo:", c.type],
+                        ["Estado:", c.status],
+                        ["Descripción:", c.description],
+                    ],
+                    theme: "plain",
+                    styles: { fontSize: 10, cellPadding: 2 },
+                    columnStyles: { 0: { fontStyle: "bold", cellWidth: 40 } },
+                });
+
+                // --- Footer ---
+                const footerY = doc.internal.pageSize.height - 25;
+                doc.setDrawColor(220, 220, 220);
+                doc.line(14, footerY, pageWidth - 14, footerY);
+
+                doc.setFontSize(8);
+                doc.setTextColor(150);
+                const infoStr =
+                    "Este documento es una copia fiel de la reclamación registrada en nuestro sistema legal conforme a la normativa vigente.";
+                doc.text(infoStr, 14, footerY + 10);
+                doc.text(`ID Seguimiento: ${c.id}`, 14, footerY + 15);
+
+                const fileName = `BrisHotel_Reclamacion_${c.id}.pdf`;
+                console.log(`💾 Saving Complaint PDF: ${fileName}`);
+                doc.save(fileName);
+            } catch (err) {
+                console.error("❌ Complaint PDF Error:", err);
+                alert("Error al generar el PDF de reclamación.");
+            }
+        };
+
+        // Initialize complaint export
+        setupComplaintPdfExport();
     </script>
 </Layout>
 
