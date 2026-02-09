@@ -928,7 +928,8 @@ const statusConfig = {
     </div>
 
     <script>
-        import * as XLSX from "xlsx";
+        import ExcelJS from "exceljs";
+        import { saveAs } from "file-saver";
         import jsPDF from "jspdf";
         import autoTable from "jspdf-autotable";
 
@@ -949,25 +950,25 @@ const statusConfig = {
                     if (cols.length < 6) return null;
 
                     // Extract data by column index to be more robust
-                    const date = cols[0].innerText.trim();
-                    const orderId = cols[1].innerText.trim();
+                    const date = cols[0].textContent?.trim() || "";
+                    const orderId = cols[1].textContent?.trim() || "";
 
                     // Cliente column (Complex structure)
                     const clientCell = cols[2];
+                    const clientDiv =
+                        clientCell.querySelector(".flex.flex-col");
                     const clientName =
-                        clientCell.children[0]?.children[0]?.innerText.trim() ||
-                        "";
+                        clientDiv?.children[0]?.textContent?.trim() || "";
                     const clientEmail =
-                        clientCell.children[0]?.children[1]?.innerText.trim() ||
-                        "";
+                        clientDiv?.children[1]?.textContent?.trim() || "";
                     const clientDni =
-                        clientCell.children[0]?.children[2]?.innerText.trim() ||
-                        "";
+                        clientDiv?.children[2]?.textContent?.trim() || "";
                     const client = `${clientName}\n${clientEmail}\n${clientDni}`;
 
-                    const room = cols[3].innerText.trim();
-                    const amount = cols[4].innerText.trim().replace("S/ ", "");
-                    const status = cols[5].innerText.trim();
+                    const room = cols[3].textContent?.trim() || "";
+                    const amount =
+                        cols[4].textContent?.trim().replace("S/ ", "") || "";
+                    const status = cols[5].textContent?.trim() || "";
 
                     return [date, orderId, client, room, amount, status];
                 })
@@ -981,8 +982,8 @@ const statusConfig = {
 
         const exportExcelBtn = document.getElementById("export-excel-btn");
         if (exportExcelBtn) {
-            exportExcelBtn.addEventListener("click", () => {
-                console.log("📥 Excel export triggered");
+            exportExcelBtn.addEventListener("click", async () => {
+                console.log("📥 Professional Excel export triggered");
                 try {
                     const data = getTableData();
                     if (data.length === 0) {
@@ -990,44 +991,112 @@ const statusConfig = {
                         return;
                     }
 
-                    // Add Title and Metadata at the top
-                    const excelData = [
-                        ["REPORTE DE TRANSACCIONES - BRIS HOTEL"],
-                        [
-                            `Fecha de generación: ${new Date().toLocaleString("es-PE")}`,
-                        ],
-                        [],
-                        [
-                            "FECHA",
-                            "ID ORDEN",
-                            "CLIENTE",
-                            "HABITACIÓN",
-                            "MONTO",
-                            "ESTADO",
-                        ],
-                        ...data,
-                    ];
+                    const workbook = new ExcelJS.Workbook();
+                    const worksheet = workbook.addWorksheet("Transacciones");
 
-                    const ws = XLSX.utils.aoa_to_sheet(excelData);
-                    const wscols = [
-                        { wch: 20 },
-                        { wch: 15 },
-                        { wch: 40 },
-                        { wch: 15 },
-                        { wch: 12 },
-                        { wch: 12 },
-                    ];
-                    ws["!cols"] = wscols;
+                    // 1. Header Styling & Setup (Bris Hotel Brown #5A3D37)
+                    worksheet.mergeCells("A1:F1");
+                    const titleCell = worksheet.getCell("A1");
+                    titleCell.value = "BRIS HOTEL - REPORTE DE TRANSACCIONES";
+                    titleCell.font = {
+                        name: "Arial Black",
+                        size: 16,
+                        color: { argb: "FFFFFFFF" },
+                    };
+                    titleCell.alignment = {
+                        vertical: "middle",
+                        horizontal: "center",
+                    };
+                    titleCell.fill = {
+                        type: "pattern",
+                        pattern: "solid",
+                        fgColor: { argb: "FF5A3D37" },
+                    };
 
-                    const wb = XLSX.utils.book_new();
-                    XLSX.utils.book_append_sheet(wb, ws, "Transacciones");
+                    worksheet.mergeCells("A2:F2");
+                    const metaCell = worksheet.getCell("A2");
+                    metaCell.value = `Generado el: ${new Date().toLocaleString("es-PE")}`;
+                    metaCell.font = { name: "Arial", size: 10, italic: true };
+                    metaCell.alignment = { horizontal: "center" };
 
+                    // 2. Main Table Headers (Bris Hotel Green #759120)
+                    const headerRow = worksheet.addRow([
+                        "FECHA",
+                        "ID ORDEN",
+                        "CLIENTE",
+                        "HABITACIÓN",
+                        "MONTO",
+                        "ESTADO",
+                    ]);
+                    headerRow.height = 25;
+                    headerRow.eachCell((cell) => {
+                        cell.fill = {
+                            type: "pattern",
+                            pattern: "solid",
+                            fgColor: { argb: "FF759120" },
+                        };
+                        cell.font = {
+                            bold: true,
+                            color: { argb: "FFFFFFFF" },
+                            size: 11,
+                        };
+                        cell.alignment = {
+                            vertical: "middle",
+                            horizontal: "center",
+                        };
+                        cell.border = {
+                            top: { style: "thin" },
+                            left: { style: "thin" },
+                            bottom: { style: "thin" },
+                            right: { style: "thin" },
+                        };
+                    });
+
+                    // 3. Add Data Rows
+                    data.forEach((rowData) => {
+                        const row = worksheet.addRow(rowData);
+                        row.eachCell((cell, colNumber) => {
+                            cell.alignment = {
+                                vertical: "middle",
+                                wrapText: true,
+                            };
+                            if (colNumber === 5)
+                                cell.alignment.horizontal = "right"; // Amount
+                            if (colNumber === 6)
+                                cell.alignment.horizontal = "center"; // Status
+                            cell.border = {
+                                top: { style: "thin" },
+                                left: { style: "thin" },
+                                bottom: { style: "thin" },
+                                right: { style: "thin" },
+                            };
+                            cell.font = { size: 10 };
+                        });
+                    });
+
+                    // 4. Column Widths
+                    worksheet.getColumn(1).width = 25; // Fecha
+                    worksheet.getColumn(2).width = 15; // ID
+                    worksheet.getColumn(3).width = 45; // Cliente
+                    worksheet.getColumn(4).width = 20; // Hab
+                    worksheet.getColumn(5).width = 12; // Monto
+                    worksheet.getColumn(6).width = 15; // Estado
+
+                    // 5. Generate and Download
                     const fileName = `BrisHotel_Reporte_${new Date().toISOString().slice(0, 10)}.xlsx`;
-                    console.log(`💾 Saving Excel: ${fileName}`);
-                    XLSX.writeFile(wb, fileName);
+                    const buffer = await workbook.xlsx.writeBuffer();
+                    saveAs(
+                        new Blob([buffer], {
+                            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        }),
+                        fileName,
+                    );
+                    console.log(`💾 Excel saved successfully: ${fileName}`);
                 } catch (err) {
                     console.error("❌ Excel Export Error:", err);
-                    alert("Error al generar el Excel. Revisa la consola.");
+                    alert(
+                        "Error al generar el Excel profesional. Revisa la consola.",
+                    );
                 }
             });
         }
