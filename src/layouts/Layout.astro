@@ -11,12 +11,12 @@ interface Props {
 const {
 	title,
 	description = "Bris Hotel Nasca - Tu mejor opción en Nazca. Habitaciones confortables, excelente servicio y ubicación privilegiada.",
-	image = "/og-image.png",
+	image = "/assets/images/room.png",
 	canonical,
 } = Astro.props;
 
 const siteUrl =
-	Astro.site?.toString().replace(/\/$/, "") || "https://brishotelnasca.com";
+	Astro.site?.toString().replace(/\/$/, "") || "https://brishotelperu.com/";
 const canonicalURL = canonical || new URL(Astro.url.pathname, siteUrl);
 
 // Asegurar que la imagen sea absoluta
