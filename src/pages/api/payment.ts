@@ -22,16 +22,20 @@ export const ALL: APIRoute = async ({ request }) => {
 
     // 🔐 Credenciales v4 Estándar
     const USER = import.meta.env.IZIPAY_USER;
-    const PASSWORD = import.meta.env.IZIPAY_PASSWORD;
     const MODE = import.meta.env.IZIPAY_MODE || "TEST";
+
+    // Seleccionar contraseña según el modo
+    const PASSWORD = MODE === "PRODUCTION"
+      ? import.meta.env.IZIPAY_PASSWORD_PROD
+      : import.meta.env.IZIPAY_PASSWORD;
+
+    const API_URL = import.meta.env.IZIPAY_API_URL || "https://api.micuentaweb.pe";
 
     const auth = Buffer.from(`${USER}:${PASSWORD}`).toString("base64");
     const orderId = `RES-${Date.now()}`;
     const amountCents = Math.round(Number(price) * 100);
 
-
-
-    const izipayResponse = await fetch("https://api.micuentaweb.pe/api-payment/V4/Charge/CreatePayment", {
+    const izipayResponse = await fetch(`${API_URL}/api-payment/V4/Charge/CreatePayment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

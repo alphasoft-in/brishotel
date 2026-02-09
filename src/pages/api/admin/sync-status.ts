@@ -23,16 +23,21 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
         // 🔐 Credenciales v4 Estándar
         const USER = import.meta.env.IZIPAY_USER;
-        // Intentar usar producción si estamos en modo producción, si no test
-        const isProd = import.meta.env.IZIPAY_MODE === "PRODUCTION";
-        const PASSWORD = isProd ? import.meta.env.IZIPAY_PASSWORD_PROD : import.meta.env.IZIPAY_PASSWORD;
+        const MODE = import.meta.env.IZIPAY_MODE || "TEST";
+
+        // Seleccionar contraseña según el modo
+        const PASSWORD = MODE === "PRODUCTION"
+            ? import.meta.env.IZIPAY_PASSWORD_PROD
+            : import.meta.env.IZIPAY_PASSWORD;
+
+        const API_URL = import.meta.env.IZIPAY_API_URL || "https://api.micuentaweb.pe";
 
         const auth = Buffer.from(`${USER}:${PASSWORD}`).toString("base64");
 
         console.log(`🔍 Sincronizando estado para orden: ${orderId}`);
 
         // Consultar Izipay (Order/Get es el servicio para obtener detalles por orderId en v4)
-        const izipayResponse = await fetch("https://api.micuentaweb.pe/api-payment/V4/Order/Get", {
+        const izipayResponse = await fetch(`${API_URL}/api-payment/V4/Order/Get`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
