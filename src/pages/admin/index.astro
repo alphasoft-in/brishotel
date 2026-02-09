@@ -29,7 +29,9 @@ const pendingTxCount = alertsList.length;
 const pendingRevenue = alertsList.reduce((acc, curr) => acc + curr.amount, 0);
 
 // Sincronización (Last Sync Info)
-const lastSyncDate = new Date().toLocaleTimeString("es-PE");
+const lastSyncDate = new Date().toLocaleTimeString("es-PE", {
+    timeZone: "America/Lima",
+});
 
 const pendingComplaints = complaints.filter((c) => c.status === "PENDIENTE");
 const pendingComplaintsCount = pendingComplaints.length;
@@ -1532,7 +1534,7 @@ const statusConfig = {
         }
 
         if (statusText) {
-            statusText.textContent = `Última: ${new Date().toLocaleTimeString("es-PE")}`;
+            statusText.textContent = `Última: ${new Date().toLocaleTimeString("es-PE", { timeZone: "America/Lima" })}`;
         }
 
         // Si es manual, recargamos. Si es auto, podríamos decidir no recargar para no molestar,
