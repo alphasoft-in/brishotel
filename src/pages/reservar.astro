@@ -272,14 +272,16 @@ const jsUrl =
             </div>
 
             <!-- Modal Content -->
-            <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div
+                class="absolute inset-0 flex items-center justify-center p-2 sm:p-4"
+            >
                 <div
-                    class="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl transform scale-95 opacity-0 transition-all duration-300 relative overflow-hidden flex flex-col max-h-[90vh]"
+                    class="bg-white w-full max-w-xl rounded-[2rem] sm:rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] transform scale-95 opacity-0 transition-all duration-500 relative overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh]"
                     id="modal-content"
                 >
                     <!-- Modal Header -->
                     <div
-                        class="bg-white px-8 py-6 border-b border-slate-50 flex justify-between items-center relative z-10"
+                        class="bg-white px-6 sm:px-10 py-6 sm:py-8 border-b border-slate-50 flex justify-between items-center relative z-10"
                     >
                         <div>
                             <h3
@@ -320,12 +322,12 @@ const jsUrl =
 
                     <!-- Modal Body -->
                     <div
-                        class="p-8 bg-white overflow-y-auto custom-scrollbar flex-grow"
+                        class="p-6 sm:p-10 bg-white overflow-y-auto custom-scrollbar flex-grow"
                     >
                         <!-- Izipay Injection Point -->
                         <div
                             id="izipay-embed"
-                            class="w-full flex justify-center min-h-[400px]"
+                            class="w-full flex justify-center min-h-[450px]"
                         >
                         </div>
                     </div>
@@ -525,7 +527,7 @@ const jsUrl =
     /* Izipay Overrides for ultra-premium look */
     :global(.kr-embedded) {
         width: 100% !important;
-        max-width: 400px !important;
+        margin: 0 auto !important;
     }
 
     :global(.kr-smart-form) {
@@ -533,21 +535,24 @@ const jsUrl =
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
+        padding: 0 !important;
     }
 
     /* Ocultar elementos innecesarios del formulario de Izipay */
     :global(.kr-smart-form .kr-header),
     :global(.kr-smart-form .kr-footer),
-    :global(.kr-smart-form .kr-header-logo) {
+    :global(.kr-smart-form .kr-header-logo),
+    :global(.kr-smart-form .kr-form-header) {
         display: none !important;
     }
 
     /* Profesionalizar el área 3DS (Autenticación bancaria) */
     :global(.kr-smart-form .kr-3ds-wrapper) {
-        border-radius: 1.5rem !important;
+        border-radius: 2rem !important;
         overflow: hidden !important;
-        border: 1px solid #f1f5f9 !important;
-        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1) !important;
+        border: none !important;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+        min-height: 500px !important;
     }
 
     /* Ocultar la barra de URL interna que a veces pone Izipay en el iframe 3DS */
@@ -558,48 +563,52 @@ const jsUrl =
     /* Estilizar inputs */
     :global(.kr-field) {
         background-color: #f8fafc !important;
-        border: 1.5px solid #f1f5f9 !important;
-        border-radius: 1rem !important;
-        transition: all 0.2s ease !important;
+        border: 2px solid #f1f5f9 !important;
+        border-radius: 1.25rem !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        height: 54px !important;
     }
 
     :global(.kr-field:focus-within) {
-        border-color: #00a19b !important;
+        border-color: #1a1a1a !important;
         background-color: white !important;
-        box-shadow: 0 0 0 4px rgba(0, 161, 155, 0.1) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05) !important;
     }
 
     /* Estilizar labels de Izipay */
     :global(.kr-label) {
-        color: #64748b !important;
+        color: #1a1a1a !important;
         font-family: "Montserrat", sans-serif !important;
         font-weight: 700 !important;
         text-transform: uppercase !important;
-        letter-spacing: 0.05em !important;
-        font-size: 10px !important;
-        margin-bottom: 6px !important;
+        letter-spacing: 0.1em !important;
+        font-size: 11px !important;
+        margin-bottom: 8px !important;
+        margin-left: 4px !important;
     }
 
     /* Profesionalizar botones de pago */
     :global(.kr-payment-button) {
         background: #1a1a1a !important;
         color: white !important;
-        border-radius: 1rem !important;
+        border-radius: 1.25rem !important;
         font-family: "Montserrat", sans-serif !important;
-        font-weight: bold !important;
-        padding: 1rem !important;
+        font-weight: 800 !important;
+        padding: 1.25rem !important;
         text-transform: uppercase !important;
-        letter-spacing: 0.1em !important;
-        font-size: 12px !important;
-        margin-top: 1.5rem !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+        letter-spacing: 0.2em !important;
+        font-size: 13px !important;
+        margin-top: 2rem !important;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3) !important;
+        border: none !important;
     }
 
     :global(.kr-payment-button:hover) {
         background: #000 !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1) !important;
+        transform: translateY(-3px) !important;
+        box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.4) !important;
     }
 
     :global(.kr-payment-button:active) {

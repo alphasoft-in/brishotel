@@ -102,16 +102,18 @@ if (krAnswer) {
         </div>
 
         <!-- Título Principal -->
-        <div class="text-center mb-12">
+        <div class="text-center mb-12 animate-fade-in">
             <h1
-                class="text-4xl sm:text-5xl font-bold text-[#1a1a1a] merriweather mb-4 tracking-tight"
+                class="text-4xl sm:text-5xl font-extrabold text-[#1a1a1a] merriweather mb-6 tracking-tight leading-tight"
             >
                 {isSuccess ? "¡Reserva Confirmada!" : "Pago no Procesado"}
             </h1>
-            <p class="text-gray-500 montserrat text-lg max-w-md mx-auto">
+            <p
+                class="text-slate-500 montserrat text-lg max-w-md mx-auto leading-relaxed"
+            >
                 {
                     isSuccess
-                        ? "Gracias por elegir Bris Hotel. Tu estancia ha sido asegurada con éxito."
+                        ? "Gracias por elegir Bris Hotel Nasca. Tu estancia ha sido asegurada con éxito."
                         : "Lo sentimos, no pudimos completar el pago. La reserva sigue pendiente o ha sido cancelada."
                 }
             </p>
@@ -186,8 +188,10 @@ if (krAnswer) {
                                     d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                             </svg>
                         </div>
-                        <p class="text-xs font-medium montserrat">
-                            Jr. Los Pinos 123, Tarapoto
+                        <p
+                            class="text-xs font-bold text-slate-700 montserrat uppercase tracking-wider"
+                        >
+                            Calle Callao 907, Nasca, Perú
                         </p>
                     </div>
                     <div class="flex items-center gap-3 text-gray-600">
