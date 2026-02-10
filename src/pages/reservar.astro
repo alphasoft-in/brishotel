@@ -641,6 +641,7 @@ const jsUrl =
     }
 
     /* Mensajes de error con VISIBILIDAD TOTAL (Fondo Negro - Letras Blancas) */
+    /* Ocultos por defecto hasta que tengan contenido */
     :global(.kr-form-error),
     :global(.kr-field-error),
     :global(.kr-form-message),
@@ -649,15 +650,28 @@ const jsUrl =
         font-family: "Montserrat", sans-serif !important;
         font-size: 11px !important;
         font-weight: 800 !important;
-        padding: 10px 15px !important; /* Más compacto */
+        padding: 0.75rem !important; /* Mismo padding que el botón */
+        min-height: 42px !important; /* Altura similar al botón */
         border-radius: 0.75rem !important;
-        margin: 10px 0 !important; /* Menos margen vertical */
-        background-color: #1a1a1a !important; /* Negro Institucional */
-        color: #ffffff !important; /* Blanco Puro */
+        margin: 10px 0 !important;
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
         border: none !important;
         text-align: center !important;
-        display: block !important;
+        display: flex !important; /* Flex para centrar verticalmente si el texto es corto */
+        align-items: center !important;
+        justify-content: center !important;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+        box-sizing: border-box !important;
+    }
+
+    /* OCULTAR SI ESTÁ VACÍO: Evitar el "rectángulo fantasma" */
+    :global(.kr-form-error:empty),
+    :global(.kr-field-error:empty),
+    :global(.kr-form-message:empty),
+    :global(.kr-popin-error:empty),
+    :global(.kr-error-message:empty) {
+        display: none !important;
     }
 
     /* Forzar que cualquier texto interno (spans) sea blanco para que se lea SIEMPRE */
