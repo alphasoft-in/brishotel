@@ -281,28 +281,28 @@ const jsUrl =
                 >
                     <!-- Modal Header -->
                     <div
-                        class="bg-white px-6 sm:px-10 py-6 sm:py-8 border-b border-slate-50 flex justify-between items-center relative z-10"
+                        class="bg-[#00a19b] px-6 sm:px-10 py-6 sm:py-8 flex justify-between items-center relative z-10"
                     >
                         <div>
                             <h3
-                                class="text-xl font-bold text-slate-900 merriweather tracking-tight"
+                                class="text-xl font-bold text-white merriweather tracking-tight"
                             >
                                 Checkout Seguro
                             </h3>
                             <div class="flex items-center gap-2 mt-1">
                                 <span
-                                    class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"
+                                    class="w-1.5 h-1.5 rounded-full bg-white/50 animate-pulse"
                                 ></span>
                                 <p
-                                    class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.15em]"
+                                    class="text-[10px] text-white/70 font-bold uppercase tracking-[0.15em]"
                                 >
-                                    Procesado por Izipay
+                                    PAGO PROTEGIDO POR IZIPAY
                                 </p>
                             </div>
                         </div>
                         <button
                             id="close-modal-btn"
-                            class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all duration-300 active:scale-90"
+                            class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-all duration-300 active:scale-90"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -542,7 +542,10 @@ const jsUrl =
     :global(.kr-smart-form .kr-header),
     :global(.kr-smart-form .kr-footer),
     :global(.kr-smart-form .kr-header-logo),
-    :global(.kr-smart-form .kr-form-header) {
+    :global(.kr-smart-form .kr-form-header),
+    :global(.kr-header),
+    :global(.kr-security-header),
+    :global(.kr-header-text) {
         display: none !important;
     }
 
