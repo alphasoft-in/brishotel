@@ -276,16 +276,16 @@ const jsUrl =
                 class="absolute inset-0 flex items-center justify-center p-2 sm:p-4"
             >
                 <div
-                    class="bg-white w-full max-w-xl rounded-[2rem] sm:rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] transform scale-95 opacity-0 transition-all duration-500 relative overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh]"
+                    class="bg-white w-full max-w-md rounded-[2.5rem] shadow-[0_25px_60px_rgba(0,0,0,0.2)] transform scale-95 opacity-0 transition-all duration-500 relative overflow-hidden flex flex-col max-h-[92vh]"
                     id="modal-content"
                 >
                     <!-- Modal Header -->
                     <div
-                        class="bg-[#00a19b] px-6 sm:px-10 py-6 sm:py-8 flex justify-between items-center relative z-10"
+                        class="bg-[#00a19b] px-6 py-6 sm:py-8 flex justify-between items-center relative z-10"
                     >
                         <div>
                             <h3
-                                class="text-xl font-bold text-white merriweather tracking-tight"
+                                class="text-lg sm:text-xl font-bold text-white merriweather tracking-tight"
                             >
                                 Checkout Seguro
                             </h3>
@@ -294,7 +294,7 @@ const jsUrl =
                                     class="w-1.5 h-1.5 rounded-full bg-white/50 animate-pulse"
                                 ></span>
                                 <p
-                                    class="text-[10px] text-white/70 font-bold uppercase tracking-[0.15em]"
+                                    class="text-[9px] sm:text-[10px] text-white/70 font-bold uppercase tracking-[0.15em]"
                                 >
                                     PAGO PROTEGIDO POR IZIPAY
                                 </p>
@@ -322,12 +322,12 @@ const jsUrl =
 
                     <!-- Modal Body -->
                     <div
-                        class="p-6 sm:p-10 bg-white overflow-y-auto custom-scrollbar flex-grow"
+                        class="p-4 sm:p-6 bg-white overflow-y-auto custom-scrollbar flex-grow"
                     >
                         <!-- Izipay Injection Point -->
                         <div
                             id="izipay-embed"
-                            class="w-full flex justify-center min-h-[450px]"
+                            class="w-full flex justify-center items-start min-h-[450px]"
                         >
                         </div>
                     </div>
@@ -527,7 +527,9 @@ const jsUrl =
     /* Izipay Overrides for ultra-premium look */
     :global(.kr-embedded) {
         width: 100% !important;
+        max-width: 320px !important; /* Estrechar más para evitar asimetría */
         margin: 0 auto !important;
+        display: block !important;
     }
 
     :global(.kr-smart-form) {
