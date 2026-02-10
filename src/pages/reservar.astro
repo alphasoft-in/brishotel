@@ -297,7 +297,7 @@ const jsUrl =
                 >
                     <!-- Modal Header -->
                     <div
-                        class="bg-[#00a19b] px-6 py-6 sm:py-8 flex justify-between items-center relative z-10"
+                        class="bg-[#00a19b] px-6 py-4 sm:py-5 flex justify-between items-center relative z-10"
                     >
                         <div>
                             <h3
@@ -338,12 +338,12 @@ const jsUrl =
 
                     <!-- Modal Body -->
                     <div
-                        class="p-4 sm:p-6 bg-white overflow-y-auto custom-scrollbar flex-grow"
+                        class="p-4 sm:p-5 bg-white overflow-y-auto custom-scrollbar flex-grow"
                     >
                         <!-- Izipay Injection Point -->
                         <div
                             id="izipay-embed"
-                            class="w-full flex justify-center items-start min-h-[450px]"
+                            class="w-full flex justify-center items-start min-h-[380px]"
                         >
                         </div>
                     </div>
@@ -634,17 +634,17 @@ const jsUrl =
     :global(.kr-popin-error),
     :global(.kr-error-message) {
         font-family: "Montserrat", sans-serif !important;
-        font-size: 12px !important;
+        font-size: 11px !important;
         font-weight: 800 !important;
-        padding: 15px 20px !important;
-        border-radius: 1rem !important;
-        margin: 15px 0 !important;
+        padding: 10px 15px !important; /* Más compacto */
+        border-radius: 0.75rem !important;
+        margin: 10px 0 !important; /* Menos margen vertical */
         background-color: #1a1a1a !important; /* Negro Institucional */
         color: #ffffff !important; /* Blanco Puro */
         border: none !important;
         text-align: center !important;
         display: block !important;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
     }
 
     /* Forzar que cualquier texto interno (spans) sea blanco para que se lea SIEMPRE */
