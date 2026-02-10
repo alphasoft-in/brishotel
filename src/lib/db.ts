@@ -316,26 +316,42 @@ export const db = {
         if (status === 'EXITOSO' && !alreadySuccessful) {
             try {
                 const roomToBlock = currentTx?.room_name;
+                console.log(`🏠 Intentando bloquear habitación para ${orderId}. Habitación: "${roomToBlock}"`);
 
                 if (roomToBlock) {
-                    const { data: availableUnit } = await supabase
+                    // Buscamos una unidad libre de esta categoría
+                    const { data: availableUnit, error: searchError } = await supabase
                         .from('rooms')
-                        .select('id')
+                        .select('id, unit_name')
                         .eq('subtitle', roomToBlock)
                         .eq('status', 'libre')
                         .limit(1)
                         .maybeSingle();
 
+                    if (searchError) {
+                        console.error(`❌ Error buscando unidad para ${roomToBlock}:`, searchError);
+                    }
+
                     if (availableUnit) {
-                        await supabase
+                        console.log(`🔍 Unidad encontrada para bloquear: ${availableUnit.unit_name || availableUnit.id}`);
+                        const { error: blockError } = await supabase
                             .from('rooms')
                             .update({ status: 'reservado' })
                             .eq('id', availableUnit.id);
-                        console.log(`✅ Habitación bloqueada exitosamente para orden ${orderId}`);
+
+                        if (blockError) {
+                            console.error(`❌ Error al actualizar estado de habitación ${availableUnit.id}:`, blockError);
+                        } else {
+                            console.log(`✅ Habitación bloqueada exitosamente para orden ${orderId}`);
+                        }
+                    } else {
+                        console.warn(`⚠️ No se encontró ninguna unidad "libre" para la categoría: "${roomToBlock}"`);
                     }
+                } else {
+                    console.warn(`⚠️ La transacción ${orderId} no tiene un room_name asociado.`);
                 }
             } catch (error) {
-                console.error("Error auto-blocking room:", error);
+                console.error("❌ Error inesperado en auto-blocking room:", error);
             }
         }
 

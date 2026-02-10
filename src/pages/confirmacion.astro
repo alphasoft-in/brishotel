@@ -44,7 +44,7 @@ if (krAnswer) {
                 isSuccess = false;
             }
 
-            db.updateTransactionStatus(orderId, localStatus, answer);
+            await db.updateTransactionStatus(orderId, localStatus, answer);
         }
     } catch (e) {
         console.error("Error parsing kr-answer", e);
