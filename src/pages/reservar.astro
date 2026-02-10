@@ -274,32 +274,37 @@ const jsUrl =
             <!-- Modal Content -->
             <div class="absolute inset-0 flex items-center justify-center p-4">
                 <div
-                    class="bg-white w-full max-w-md rounded-[2rem] shadow-2xl transform scale-95 opacity-0 transition-all duration-300 relative overflow-hidden"
+                    class="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl transform scale-95 opacity-0 transition-all duration-300 relative overflow-hidden flex flex-col max-h-[90vh]"
                     id="modal-content"
                 >
                     <!-- Modal Header -->
                     <div
-                        class="bg-[#FDFBF9] px-6 py-4 border-b border-slate-100 flex justify-between items-center"
+                        class="bg-white px-8 py-6 border-b border-slate-50 flex justify-between items-center relative z-10"
                     >
                         <div>
                             <h3
-                                class="text-lg font-bold text-slate-900 merriweather"
+                                class="text-xl font-bold text-slate-900 merriweather tracking-tight"
                             >
-                                Pago Seguro
+                                Checkout Seguro
                             </h3>
-                            <p
-                                class="text-[10px] text-slate-500 font-bold uppercase tracking-wider"
-                            >
-                                Izipay
-                            </p>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span
+                                    class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"
+                                ></span>
+                                <p
+                                    class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.15em]"
+                                >
+                                    Procesado por Izipay
+                                </p>
+                            </div>
                         </div>
                         <button
                             id="close-modal-btn"
-                            class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-200 text-slate-500 hover:bg-slate-300 transition-colors"
+                            class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all duration-300 active:scale-90"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                class="h-4 w-4"
+                                class="h-5 w-5"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
@@ -307,18 +312,20 @@ const jsUrl =
                                 <path
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
-                                    stroke-width="2"
+                                    stroke-width="2.5"
                                     d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
                     </div>
 
                     <!-- Modal Body -->
-                    <div class="p-6 bg-white">
+                    <div
+                        class="p-8 bg-white overflow-y-auto custom-scrollbar flex-grow"
+                    >
                         <!-- Izipay Injection Point -->
                         <div
                             id="izipay-embed"
-                            class="w-full flex justify-center min-h-[300px]"
+                            class="w-full flex justify-center min-h-[400px]"
                         >
                         </div>
                     </div>
@@ -515,34 +522,102 @@ const jsUrl =
         animation: fade-in 0.3s ease-out forwards;
     }
 
-    /* Izipay Overrides for clean look */
+    /* Izipay Overrides for ultra-premium look */
     :global(.kr-embedded) {
         width: 100% !important;
+        max-width: 400px !important;
     }
+
     :global(.kr-smart-form) {
         width: 100% !important;
         background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
     }
 
-    /* Ocultar header por defecto de Izipay si molesta */
-    :global(.kr-smart-form .kr-header) {
+    /* Ocultar elementos innecesarios del formulario de Izipay */
+    :global(.kr-smart-form .kr-header),
+    :global(.kr-smart-form .kr-footer),
+    :global(.kr-smart-form .kr-header-logo) {
         display: none !important;
     }
 
-    /* Ajustar botones */
+    /* Profesionalizar el área 3DS (Autenticación bancaria) */
+    :global(.kr-smart-form .kr-3ds-wrapper) {
+        border-radius: 1.5rem !important;
+        overflow: hidden !important;
+        border: 1px solid #f1f5f9 !important;
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1) !important;
+    }
+
+    /* Ocultar la barra de URL interna que a veces pone Izipay en el iframe 3DS */
+    :global(.kr-3ds-iframe-header) {
+        display: none !important;
+    }
+
+    /* Estilizar inputs */
+    :global(.kr-field) {
+        background-color: #f8fafc !important;
+        border: 1.5px solid #f1f5f9 !important;
+        border-radius: 1rem !important;
+        transition: all 0.2s ease !important;
+    }
+
+    :global(.kr-field:focus-within) {
+        border-color: #00a19b !important;
+        background-color: white !important;
+        box-shadow: 0 0 0 4px rgba(0, 161, 155, 0.1) !important;
+    }
+
+    /* Estilizar labels de Izipay */
+    :global(.kr-label) {
+        color: #64748b !important;
+        font-family: "Montserrat", sans-serif !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+        font-size: 10px !important;
+        margin-bottom: 6px !important;
+    }
+
+    /* Profesionalizar botones de pago */
     :global(.kr-payment-button) {
-        background-color: #1a1a1a !important;
+        background: #1a1a1a !important;
         color: white !important;
-        border-radius: 0.75rem !important;
+        border-radius: 1rem !important;
         font-family: "Montserrat", sans-serif !important;
         font-weight: bold !important;
+        padding: 1rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.1em !important;
+        font-size: 12px !important;
+        margin-top: 1.5rem !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
     }
 
     :global(.kr-payment-button:hover) {
-        background-color: #000000 !important;
+        background: #000 !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1) !important;
     }
 
-    :global(.kr-field) {
-        border-radius: 0.75rem !important;
+    :global(.kr-payment-button:active) {
+        transform: translateY(0) !important;
+    }
+
+    /* Custom Scrollbar for Modal Body */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #e2e8f0;
+        border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #cbd5e1;
     }
 </style>
