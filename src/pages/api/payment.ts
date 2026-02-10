@@ -22,16 +22,18 @@ export const ALL: APIRoute = async ({ request }) => {
 
     // 🔐 Credenciales v4 Estándar
     const USER = import.meta.env.IZIPAY_USER;
-    const MODE = import.meta.env.IZIPAY_MODE || "TEST";
+    // Normalizar MODE para evitar fallos por espacios o minúsculas
+    const rawMode = import.meta.env.IZIPAY_MODE || "TEST";
+    const MODE = rawMode.trim().toUpperCase();
 
-    // Seleccionar contraseña según el modo
+    // Seleccionar contraseña según el modo de forma robusta
     const PASSWORD = MODE === "PRODUCTION"
       ? import.meta.env.IZIPAY_PASSWORD_PROD
       : import.meta.env.IZIPAY_PASSWORD;
 
     const API_URL = import.meta.env.IZIPAY_API_URL || "https://api.micuentaweb.pe";
 
-    console.log(`🔐 Auth Debug: USER=${USER?.substring(0, 4)}... | MODE=${MODE} | PWD_EXISTS=${!!PASSWORD} | PWD_LEN=${PASSWORD?.length}`);
+    console.log(`🔐 Auth Debug: USER=${USER?.substring(0, 4)}... | MODE=${MODE} | PWD_TYPE=${PASSWORD?.startsWith('prod') ? 'PROD' : 'TEST'} | PWD_LEN=${PASSWORD?.length}`);
 
     if (!USER || !PASSWORD) {
       return new Response(JSON.stringify({
