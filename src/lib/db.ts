@@ -311,6 +311,19 @@ export const db = {
         // Si ya está exitoso y volvemos a recibir EXITOSO, ignoramos la lógica de bloqueo de habitación
         const alreadySuccessful = currentTx?.status === 'EXITOSO';
 
+        if (status === 'FALLIDO' || status === 'CANCELADO') {
+            console.log(`🗑️ Eliminando transacción ${status}: ${orderId}`);
+            const { error: deleteError } = await supabase
+                .from('transactions')
+                .delete()
+                .eq('order_id', orderId);
+
+            if (deleteError) {
+                console.error(`❌ Error eliminando transacción ${orderId}:`, deleteError);
+            }
+            return !deleteError;
+        }
+
         const { error: updateError } = await supabase
             .from('transactions')
             .update({
