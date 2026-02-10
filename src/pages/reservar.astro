@@ -514,7 +514,7 @@ const jsUrl =
     /* Izipay Overrides for ultra-premium look */
     :global(.kr-embedded) {
         width: 100% !important;
-        max-width: 320px !important; /* Estrechar más para evitar asimetría */
+        max-width: 270px !important; /* Estrechar base para uniformidad total */
         margin: 0 auto !important;
         display: block !important;
     }
@@ -572,8 +572,12 @@ const jsUrl =
         border: 2px solid #f1f5f9 !important;
         border-radius: 1.25rem !important;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        height: 50px !important; /* Ligeramente más bajo */
-        margin-bottom: 8px !important; /* Reducir gap entre campos */
+        height: 50px !important;
+        margin-bottom: 8px !important;
+        width: 100% !important;
+        max-width: 270px !important; /* Forzar ancho uniforme */
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
 
     :global(.kr-field:focus-within) {
@@ -602,7 +606,7 @@ const jsUrl =
         border-radius: 0.75rem !important;
         font-family: "Montserrat", sans-serif !important;
         font-weight: 700 !important;
-        height: 44px !important; /* Altura solicitada para uniformidad */
+        height: 44px !important;
         padding: 0 !important;
         display: flex !important;
         align-items: center !important;
@@ -615,14 +619,14 @@ const jsUrl =
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12) !important;
         border: none !important;
         width: 100% !important;
-        max-width: 320px !important; /* RECTIFICADO: Mismo ancho que los inputs */
+        max-width: 270px !important; /* Uniforme con el resto */
         margin-left: auto !important;
         margin-right: auto !important;
     }
 
     /* Alinear lista de logos de tarjetas con los inputs y botón */
     :global(.kr-smart-form .kr-card-list) {
-        max-width: 320px !important; /* Mismo ancho que los campos y el botón */
+        max-width: 270px !important; /* Uniformidad absoluta */
         margin: 0 auto 10px auto !important;
         border: 1px solid #f1f5f9 !important;
         border-radius: 0.75rem !important;
@@ -658,7 +662,7 @@ const jsUrl =
         font-size: 11px !important;
         font-weight: 800 !important;
         height: 44px !important; /* EXACTAMENTE MISMO ALTO QUE EL BOTÓN */
-        max-width: 320px !important; /* MISMO ANCHO QUE INPUTS Y BOTÓN */
+        max-width: 270px !important; /* UNIFORME CON EL RESTO */
         margin: 10px auto !important; /* CENTRADO ARRIBA DEL BOTÓN */
         border-radius: 0.75rem !important;
         background-color: #1a1a1a !important;
