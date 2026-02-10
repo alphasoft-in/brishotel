@@ -635,30 +635,39 @@ const jsUrl =
         transform: translateY(0) !important;
     }
 
-    /* Mensajes de error y alertas más sutiles pero LEGIBLES */
+    /* ELIMINAR DOBLE ALERTA: Izipay a veces duplica el mensaje de error arriba y abajo */
+    :global(.kr-form-error:first-of-type) {
+        display: none !important;
+    }
+
+    /* Mensajes de error y alertas con ALTO CONTRASTE */
     :global(.kr-form-error),
     :global(.kr-field-error),
     :global(.kr-form-message),
-    :global(.kr-popin-error) {
+    :global(.kr-popin-error),
+    :global(.kr-error-message) {
         font-family: "Montserrat", sans-serif !important;
         font-size: 11px !important;
-        font-weight: 700 !important;
-        padding: 10px 15px !important;
-        border-radius: 0.75rem !important;
-        margin-top: 8px !important;
-        background-color: #fff1f2 !important; /* Rose 50 */
-        color: #be123c !important; /* Rose 700 - Mucho más legible */
-        border: 1px solid #fecdd3 !important; /* Rose 200 */
+        font-weight: 800 !important;
+        padding: 12px 15px !important;
+        border-radius: 0.5rem !important;
+        margin: 10px 0 !important;
+        background-color: #fee2e2 !important; /* Red 100 - Fondo suave pero firme */
+        color: #991b1b !important; /* Red 800 - Texto MUY oscuro para lectura perfecta */
+        border: 1.5px solid #f87171 !important; /* Red 400 */
         text-align: center !important;
         display: block !important;
-        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
     }
 
-    /* Asegurar que el texto dentro no sea blanco */
+    /* Forzar el color en cualquier elemento anidado (como spans) que Izipay use */
     :global(.kr-form-error *),
     :global(.kr-field-error *),
-    :global(.kr-form-message *) {
-        color: inherit !important;
+    :global(.kr-form-message *),
+    :global(.kr-popin-error *),
+    :global(.kr-error-message *) {
+        color: #991b1b !important;
+        font-weight: 800 !important;
     }
 
     /* Custom Scrollbar for Modal Body */
