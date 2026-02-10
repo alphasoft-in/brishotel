@@ -35,36 +35,43 @@ export const ALL: APIRoute = async ({ request }) => {
     const orderId = `RES-${Date.now()}`;
     const amountCents = Math.round(Number(price) * 100);
 
+    const payload = {
+      amount: amountCents,
+      currency: "PEN",
+      orderId: orderId,
+      customer: {
+        email: email,
+        billingDetails: {
+          firstName: firstName,
+          lastName: lastName,
+          phoneNumber: phone,
+          identityCode: dni
+        }
+      },
+      formAction: "PAYMENT",
+      paymentConfig: "SINGLE",
+      captureMode: "AUTOMATIC",
+      mode: MODE,
+    };
+
+    console.log(`🚀 Izipay Request [${orderId}]:`, {
+      url: `${API_URL}/api-payment/V4/Charge/CreatePayment`,
+      mode: MODE,
+      user: USER,
+      payload
+    });
+
     const izipayResponse = await fetch(`${API_URL}/api-payment/V4/Charge/CreatePayment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Basic ${auth}`,
       },
-      body: JSON.stringify({
-        amount: amountCents,
-        currency: "PEN",
-        orderId: orderId,
-        customer: {
-          email: email,
-          billingDetails: {
-            firstName: firstName,
-            lastName: lastName,
-            phoneNumber: phone,
-            identityCode: dni
-          }
-        },
-        // Mantenemos esto simple para evitar error 400 "Charge/CreatePayment"
-        // Izipay v4 REST no acepta ipnUrl o transactionOptions en la raíz de esta forma
-        formAction: "PAYMENT",
-        paymentConfig: "SINGLE",
-        captureMode: "AUTOMATIC",
-        mode: MODE,
-      }),
+      body: JSON.stringify(payload),
     });
 
     const responseText = await izipayResponse.text();
-
+    console.log(`📥 Izipay Response [${orderId}] (${izipayResponse.status}):`, responseText);
 
     let data;
     try {
@@ -72,8 +79,8 @@ export const ALL: APIRoute = async ({ request }) => {
     } catch (e) {
       return new Response(JSON.stringify({
         success: false,
-        error: "Error en formato de respuesta",
-        detail: responseText.substring(0, 100)
+        error: "Error en formato de respuesta de Izipay",
+        detail: responseText.substring(0, 200)
       }), { status: 502, headers: jsonHeaders });
     }
 

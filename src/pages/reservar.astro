@@ -438,8 +438,10 @@ const jsUrl =
                 throw new Error(result.error || "Error al iniciar el pago");
             }
         } catch (error) {
+            console.error("❌ Error en reserva:", error);
+            const errorMsg = error.message || "Error desconocido";
             alert(
-                "Ocurrió un error al procesar la solicitud. Por favor intenta nuevamente.",
+                `Ocurrió un error al procesar la solicitud: ${errorMsg}\n\nPor favor intenta nuevamente o contacta a soporte si el problema persiste.`,
             );
             loadingOverlay.classList.add("hidden");
 
