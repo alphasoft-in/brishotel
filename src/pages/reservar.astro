@@ -538,6 +538,18 @@ const jsUrl =
         border: none !important;
         box-shadow: none !important;
         padding: 0 !important;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    /* Expandir modal dinámicamente cuando aparece el 3DS */
+    :global(#modal-content:has(.kr-3ds-wrapper)) {
+        max-width: 550px !important;
+        transition: max-width 0.4s ease-in-out !important;
+    }
+
+    :global(#modal-content:has(.kr-3ds-wrapper) .kr-embedded) {
+        max-width: 500px !important;
+        transition: max-width 0.4s ease-in-out !important;
     }
 
     /* Ocultar elementos innecesarios del formulario de Izipay */
@@ -553,11 +565,13 @@ const jsUrl =
 
     /* Profesionalizar el área 3DS (Autenticación bancaria) */
     :global(.kr-smart-form .kr-3ds-wrapper) {
-        border-radius: 2rem !important;
+        border-radius: 1.5rem !important;
         overflow: hidden !important;
-        border: none !important;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
-        min-height: 500px !important;
+        border: 1px solid #f1f5f9 !important;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+        min-height: 520px !important;
+        width: 100% !important;
+        background: white !important;
     }
 
     /* Ocultar la barra de URL interna que a veces pone Izipay en el iframe 3DS */
