@@ -21,6 +21,22 @@ const jsUrl =
     "https://static.micuentaweb.pe/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js";
 ---
 
+<!-- Pre-carga de Izipay para máxima velocidad -->
+<script
+    is:inline
+    src={jsUrl}
+    kr-public-key={publicKey}
+    kr-language="es-PE"
+    defer></script>
+<script
+    is:inline
+    src="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic.js"
+    defer></script>
+<link
+    rel="stylesheet"
+    href="https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic-reset.min.css"
+/>
+
 <Layout
     title={`Reservar ${roomName} - Bris Hotel`}
     description={`Reserva la habitación ${roomName} en Bris Hotel Nasca. Disfruta de una estadía confortable con nosotros.`}
@@ -440,8 +456,15 @@ const jsUrl =
 
                 // 3. Inicializar Izipay
                 // Siempre reinicializamos para evitar estados sucios
-                izipayEmbed.innerHTML = "";
-                await loadIzipay(result.formToken, result.orderId);
+                izipayEmbed.innerHTML = `<div class="kr-smart-form" kr-form-token="${result.formToken}"></div>`;
+
+                // Si el objeto KR ya existe (script cargado), forzamos renderizado manual
+                if (window.KR) {
+                    window.KR.setFormConfig({
+                        formToken: result.formToken,
+                        postUrlSuccess: `/confirmacion?room=${encodeURIComponent(roomName)}&price=${price}&orderId=${result.orderId}`,
+                    });
+                }
                 isIzipayLoaded = true;
             } else {
                 throw new Error(result.error || "Error al iniciar el pago");
@@ -464,43 +487,7 @@ const jsUrl =
         }
     });
 
-    function loadIzipay(formToken, orderId) {
-        return new Promise((resolve, reject) => {
-            // Limpiar embed previo
-            // QUITAMOS kr-popin para que sea embedded puro
-            izipayEmbed.innerHTML = `<div class="kr-smart-form" kr-form-token="${formToken}"></div>`;
-
-            // Cargar Script
-            const script = document.createElement("script");
-            script.src = jsUrl;
-            script.setAttribute("kr-public-key", publicKey);
-            script.setAttribute(
-                "kr-post-url-success",
-                `/confirmacion?room=${encodeURIComponent(roomName)}&price=${price}&orderId=${orderId}`,
-            );
-            script.setAttribute("kr-language", "es-PE");
-
-            // Estilos y complementos
-            const theme = document.createElement("script");
-            theme.src =
-                "https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic.js";
-
-            const style = document.createElement("link");
-            style.rel = "stylesheet";
-            style.href =
-                "https://static.micuentaweb.pe/static/js/krypton-client/V4.0/ext/classic-reset.min.css";
-
-            script.onload = () => {
-                resolve();
-            };
-            script.onerror = () =>
-                reject(new Error("Error loading Izipay script"));
-
-            document.body.appendChild(script);
-            document.body.appendChild(theme);
-            document.head.appendChild(style);
-        });
-    }
+    // Ya no necesitamos cargar dinámicamente el script en cada submit
 </script>
 
 <style>
@@ -636,11 +623,13 @@ const jsUrl =
     }
 
     /* ELIMINAR DOBLE ALERTA: Izipay a veces duplica el mensaje de error arriba y abajo */
-    :global(.kr-form-error:first-of-type) {
+    /* La primera suele ser la del header del form, la ocultamos */
+    :global(.kr-form-error:first-of-type),
+    :global(.kr-smart-form .kr-form-error:nth-of-type(1)) {
         display: none !important;
     }
 
-    /* Mensajes de error y alertas con ALTO CONTRASTE */
+    /* Mensajes de error y alertas con ALTO CONTRASTE (NEGRO SOBRE ROJO) */
     :global(.kr-form-error),
     :global(.kr-field-error),
     :global(.kr-form-message),
@@ -652,21 +641,21 @@ const jsUrl =
         padding: 12px 15px !important;
         border-radius: 0.5rem !important;
         margin: 10px 0 !important;
-        background-color: #fee2e2 !important; /* Red 100 - Fondo suave pero firme */
-        color: #991b1b !important; /* Red 800 - Texto MUY oscuro para lectura perfecta */
-        border: 1.5px solid #f87171 !important; /* Red 400 */
+        background-color: #fee2e2 !important; /* Red 100 */
+        color: #1a1a1a !important; /* NEGRO PURO para legibilidad máxima */
+        border: 2px solid #ef4444 !important; /* Red 500 para llamar la atención */
         text-align: center !important;
         display: block !important;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
     }
 
-    /* Forzar el color en cualquier elemento anidado (como spans) que Izipay use */
+    /* Forzar el color NEGRO en cualquier elemento anidado (como spans) que Izipay use */
     :global(.kr-form-error *),
     :global(.kr-field-error *),
     :global(.kr-form-message *),
     :global(.kr-popin-error *),
     :global(.kr-error-message *) {
-        color: #991b1b !important;
+        color: #1a1a1a !important;
         font-weight: 800 !important;
     }
 
