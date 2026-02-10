@@ -602,23 +602,31 @@ const jsUrl =
         border-radius: 0.75rem !important;
         font-family: "Montserrat", sans-serif !important;
         font-weight: 700 !important;
-        padding: 0.75rem !important; /* Más elegante y menos tosco */
+        height: 44px !important; /* Altura fija para consistencia */
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
         text-transform: uppercase !important;
         letter-spacing: 0.12em !important;
         font-size: 11px !important;
-        margin-top: 0.75rem !important; /* Menos espacio arriba */
+        margin-top: 1rem !important;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12) !important;
         border: none !important;
+        width: 100% !important;
+        max-width: 280px !important; /* Estrechar botón para que coincida con inputs */
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
 
-    /* Alinear lista de logos de tarjetas con los inputs */
+    /* Alinear lista de logos de tarjetas con los inputs (ESTRECHAR AL MÁXIMO) */
     :global(.kr-smart-form .kr-card-list) {
-        max-width: 320px !important; /* Mismo ancho que los campos */
-        margin: 0 auto 15px auto !important;
+        max-width: 280px !important; /* Reducido para que coincida con los campos */
+        margin: 0 auto 10px auto !important;
         border: 1px solid #f1f5f9 !important;
-        border-radius: 1rem !important;
-        padding: 10px !important;
+        border-radius: 0.75rem !important;
+        padding: 5px 10px !important; /* Menos padding vertical */
         background: #fdfbf9 !important;
         display: flex !important;
         justify-content: center !important;
@@ -640,8 +648,7 @@ const jsUrl =
         display: none !important;
     }
 
-    /* Mensajes de error con VISIBILIDAD TOTAL (Fondo Negro - Letras Blancas) */
-    /* Ocultos por defecto hasta que tengan contenido */
+    /* Mensajes de error con VISIBILIDAD TOTAL Y MISMO ALTO QUE EL BOTÓN */
     :global(.kr-form-error),
     :global(.kr-field-error),
     :global(.kr-form-message),
@@ -650,19 +657,19 @@ const jsUrl =
         font-family: "Montserrat", sans-serif !important;
         font-size: 11px !important;
         font-weight: 800 !important;
-        padding: 0.75rem !important; /* Mismo padding que el botón */
-        min-height: 42px !important; /* Altura similar al botón */
+        height: 44px !important; /* EXACTAMENTE MISMO ALTO QUE EL BOTÓN */
+        max-width: 280px !important; /* MISMO ANCHO */
+        margin: 10px auto !important; /* CENTRADO ARRIBA DEL BOTÓN */
         border-radius: 0.75rem !important;
-        margin: 10px 0 !important;
         background-color: #1a1a1a !important;
         color: #ffffff !important;
         border: none !important;
-        text-align: center !important;
-        display: flex !important; /* Flex para centrar verticalmente si el texto es corto */
+        display: flex !important; /* Flex para centrado perfecto */
         align-items: center !important;
         justify-content: center !important;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
         box-sizing: border-box !important;
+        padding: 0 15px !important;
     }
 
     /* OCULTAR SI ESTÁ VACÍO: Evitar el "rectángulo fantasma" */
