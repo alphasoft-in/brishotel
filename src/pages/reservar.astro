@@ -635,19 +635,30 @@ const jsUrl =
         transform: translateY(0) !important;
     }
 
-    /* Mensajes de error y alertas más sutiles */
+    /* Mensajes de error y alertas más sutiles pero LEGIBLES */
     :global(.kr-form-error),
     :global(.kr-field-error),
-    :global(.kr-form-message) {
+    :global(.kr-form-message),
+    :global(.kr-popin-error) {
         font-family: "Montserrat", sans-serif !important;
-        font-size: 10px !important;
-        font-weight: 600 !important;
-        padding: 6px 12px !important;
-        border-radius: 0.5rem !important;
-        margin-top: 4px !important;
-        background-color: rgba(225, 29, 72, 0.05) !important;
-        color: #e11d48 !important;
-        border: none !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        padding: 10px 15px !important;
+        border-radius: 0.75rem !important;
+        margin-top: 8px !important;
+        background-color: #fff1f2 !important; /* Rose 50 */
+        color: #be123c !important; /* Rose 700 - Mucho más legible */
+        border: 1px solid #fecdd3 !important; /* Rose 200 */
+        text-align: center !important;
+        display: block !important;
+        transition: all 0.3s ease !important;
+    }
+
+    /* Asegurar que el texto dentro no sea blanco */
+    :global(.kr-form-error *),
+    :global(.kr-field-error *),
+    :global(.kr-form-message *) {
+        color: inherit !important;
     }
 
     /* Custom Scrollbar for Modal Body */
