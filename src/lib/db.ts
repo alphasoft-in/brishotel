@@ -291,6 +291,15 @@ export const db = {
         return !error;
     },
 
+    deleteComplaint: async (id: string) => {
+        const { error } = await supabase
+            .from('complaints')
+            .delete()
+            .eq('id', id);
+
+        return !error;
+    },
+
     updateTransactionStatus: async (orderId: string, status: string, detail?: any) => {
         // 1. Verificar estado actual para evitar duplicidad de bloqueos
         const { data: currentTx } = await supabase
