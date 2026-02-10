@@ -31,6 +31,16 @@ export const ALL: APIRoute = async ({ request }) => {
 
     const API_URL = import.meta.env.IZIPAY_API_URL || "https://api.micuentaweb.pe";
 
+    console.log(`🔐 Auth Debug: USER=${USER?.substring(0, 4)}... | MODE=${MODE} | PWD_EXISTS=${!!PASSWORD} | PWD_LEN=${PASSWORD?.length}`);
+
+    if (!USER || !PASSWORD) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: "Configuración de credenciales incompleta en el servidor",
+        debug: { hasUser: !!USER, hasPass: !!PASSWORD, mode: MODE }
+      }), { status: 500, headers: jsonHeaders });
+    }
+
     const auth = Buffer.from(`${USER}:${PASSWORD}`).toString("base64");
     const orderId = `RES-${Date.now()}`;
     const amountCents = Math.round(Number(price) * 100);
