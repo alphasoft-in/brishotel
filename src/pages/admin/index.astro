@@ -14,8 +14,13 @@ if (!verifySession(session)) {
 
 // Obtener datos iniciales
 const rooms = await db.getRoomCategories();
-const transactions = await db.getTransactions();
+const rawTransactions = await db.getTransactions();
 const complaints = await db.getComplaints();
+
+// Filtrar transacciones para el historial (Ocultar FALLIDO y CANCELADO/ANULADO)
+const transactions = rawTransactions.filter(
+    (tx) => tx.status !== "FALLIDO" && tx.status !== "CANCELADO",
+);
 
 // Cálculo de KPIs
 const successfulTx = transactions.filter((tx) => tx.status === "EXITOSO");
