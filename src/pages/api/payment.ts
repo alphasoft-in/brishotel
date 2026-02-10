@@ -35,6 +35,9 @@ export const ALL: APIRoute = async ({ request }) => {
     const orderId = `RES-${Date.now()}`;
     const amountCents = Math.round(Number(price) * 100);
 
+    // Sanitize phone number (Izipay strictly prefers digits)
+    const cleanPhone = phone.replace(/[^\d]/g, "");
+
     const payload = {
       amount: amountCents,
       currency: "PEN",
@@ -44,7 +47,7 @@ export const ALL: APIRoute = async ({ request }) => {
         billingDetails: {
           firstName: firstName,
           lastName: lastName,
-          phoneNumber: phone,
+          phoneNumber: cleanPhone,
           identityCode: dni
         }
       },
@@ -93,7 +96,7 @@ export const ALL: APIRoute = async ({ request }) => {
           lastName,
           email,
           dni,
-          phone
+          phone: cleanPhone
         });
 
         await db.addTransaction({
@@ -117,9 +120,13 @@ export const ALL: APIRoute = async ({ request }) => {
       }), { status: 200, headers: jsonHeaders });
     }
 
+    // Capture more detail from Izipay error
+    const iziError = data?.answer?.errorMessage || data?.webService || "Error de Izipay";
+    const iziCode = data?.answer?.errorCode || "N/A";
+
     return new Response(JSON.stringify({
       success: false,
-      error: data?.webService || "Error de Izipay",
+      error: `${iziError} (${iziCode})`,
       detail: data
     }), { status: 400, headers: jsonHeaders });
 
