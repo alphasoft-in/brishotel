@@ -622,40 +622,38 @@ const jsUrl =
         transform: translateY(0) !important;
     }
 
-    /* ELIMINAR DOBLE ALERTA: Izipay a veces duplica el mensaje de error arriba y abajo */
-    /* La primera suele ser la del header del form, la ocultamos */
-    :global(.kr-form-error:first-of-type),
-    :global(.kr-smart-form .kr-form-error:nth-of-type(1)) {
+    /* ELIMINAR DOBLE ALERTA: Izipay pone una arriba y otra abajo. Dejamos SOLO la de arriba. */
+    :global(.kr-form-error:last-of-type) {
         display: none !important;
     }
 
-    /* Mensajes de error y alertas con ALTO CONTRASTE (NEGRO SOBRE ROJO) */
+    /* Mensajes de error con VISIBILIDAD TOTAL (Fondo Negro - Letras Blancas) */
     :global(.kr-form-error),
     :global(.kr-field-error),
     :global(.kr-form-message),
     :global(.kr-popin-error),
     :global(.kr-error-message) {
         font-family: "Montserrat", sans-serif !important;
-        font-size: 11px !important;
+        font-size: 12px !important;
         font-weight: 800 !important;
-        padding: 12px 15px !important;
-        border-radius: 0.5rem !important;
-        margin: 10px 0 !important;
-        background-color: #fee2e2 !important; /* Red 100 */
-        color: #1a1a1a !important; /* NEGRO PURO para legibilidad máxima */
-        border: 2px solid #ef4444 !important; /* Red 500 para llamar la atención */
+        padding: 15px 20px !important;
+        border-radius: 1rem !important;
+        margin: 15px 0 !important;
+        background-color: #1a1a1a !important; /* Negro Institucional */
+        color: #ffffff !important; /* Blanco Puro */
+        border: none !important;
         text-align: center !important;
         display: block !important;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
     }
 
-    /* Forzar el color NEGRO en cualquier elemento anidado (como spans) que Izipay use */
+    /* Forzar que cualquier texto interno (spans) sea blanco para que se lea SIEMPRE */
     :global(.kr-form-error *),
     :global(.kr-field-error *),
     :global(.kr-form-message *),
     :global(.kr-popin-error *),
     :global(.kr-error-message *) {
-        color: #1a1a1a !important;
+        color: #ffffff !important;
         font-weight: 800 !important;
     }
 
