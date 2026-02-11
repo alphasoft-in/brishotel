@@ -15,6 +15,9 @@ export const ALL: APIRoute = async ({ request }) => {
     const lastName = requestUrl.searchParams.get("lastName") || "Bris Hotel";
     const dni = requestUrl.searchParams.get("dni") || "";
     const phone = requestUrl.searchParams.get("phone") || "";
+    const checkin = requestUrl.searchParams.get("checkin") || "";
+    const checkout = requestUrl.searchParams.get("checkout") || "";
+    const nights = requestUrl.searchParams.get("nights") || "1";
 
     if (!price || price === "0") {
       return new Response(JSON.stringify({ success: false, error: "Precio no válido" }), { status: 400, headers: jsonHeaders });
@@ -108,7 +111,10 @@ export const ALL: APIRoute = async ({ request }) => {
           lastName,
           email,
           dni,
-          phone: cleanPhone
+          phone: cleanPhone,
+          checkin,
+          checkout,
+          nights
         });
 
         await db.addTransaction({

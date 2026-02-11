@@ -98,7 +98,55 @@ const jsUrl =
 
                 <form id="reservation-form" class="space-y-6 flex-grow">
                     <input type="hidden" name="room" value={roomName} />
-                    <input type="hidden" name="price" value={price} />
+                    <input
+                        type="hidden"
+                        name="basePrice"
+                        id="base-price"
+                        value={price}
+                    />
+                    <input
+                        type="hidden"
+                        name="price"
+                        id="total-price-input"
+                        value={price}
+                    />
+                    <input
+                        type="hidden"
+                        name="nights"
+                        id="nights-input"
+                        value="1"
+                    />
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label
+                                for="checkin"
+                                class="text-xs font-bold text-[#00a19b] uppercase tracking-widest ml-1"
+                                >Check-in</label
+                            >
+                            <input
+                                type="date"
+                                id="checkin"
+                                name="checkin"
+                                required
+                                class="w-full p-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-[#00a19b] transition-all montserrat text-sm font-medium text-slate-700"
+                            />
+                        </div>
+                        <div class="space-y-2">
+                            <label
+                                for="checkout"
+                                class="text-xs font-bold text-[#00a19b] uppercase tracking-widest ml-1"
+                                >Check-out</label
+                            >
+                            <input
+                                type="date"
+                                id="checkout"
+                                name="checkout"
+                                required
+                                class="w-full p-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-[#00a19b] transition-all montserrat text-sm font-medium text-slate-700"
+                            />
+                        </div>
+                    </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">
@@ -241,12 +289,27 @@ const jsUrl =
                                 >{roomName}</span
                             >
                         </div>
+                        <div
+                            class="flex justify-between items-center py-4 border-b border-dashed border-slate-200"
+                        >
+                            <span
+                                class="text-xs font-bold text-slate-500 uppercase tracking-wide"
+                                >Noches</span
+                            >
+                            <span
+                                id="summary-nights"
+                                class="text-base font-bold text-slate-900 text-right"
+                                >1</span
+                            >
+                        </div>
                         <div class="flex justify-between items-center py-4">
                             <span
                                 class="text-xs font-bold text-slate-900 uppercase tracking-wide"
                                 >Total a Pagar</span
                             >
-                            <span class="text-2xl font-bold text-[#00a19b]"
+                            <span
+                                id="summary-total"
+                                class="text-2xl font-bold text-[#00a19b]"
                                 >S/ {price}</span
                             >
                         </div>
@@ -421,6 +484,60 @@ const jsUrl =
 
     closeModalBtn.addEventListener("click", closeModal);
 
+    const checkinInput = document.getElementById("checkin");
+    const checkoutInput = document.getElementById("checkout");
+    const summaryNights = document.getElementById("summary-nights");
+    const summaryTotal = document.getElementById("summary-total");
+    const totalPriceInput = document.getElementById("total-price-input");
+    const nightsInput = document.getElementById("nights-input");
+    const basePrice = parseFloat(price);
+
+    // Initial dates setup
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const formatDate = (date) => date.toISOString().split("T")[0];
+
+    if (checkinInput && checkoutInput) {
+        checkinInput.value = formatDate(today);
+        checkoutInput.value = formatDate(tomorrow);
+        checkinInput.min = formatDate(today);
+        checkoutInput.min = formatDate(tomorrow);
+
+        const updatePrices = () => {
+            const start = new Date(checkinInput.value);
+            const end = new Date(checkoutInput.value);
+
+            if (end <= start) {
+                const nextDay = new Date(start);
+                nextDay.setDate(nextDay.getDate() + 1);
+                checkoutInput.value = formatDate(nextDay);
+                return updatePrices();
+            }
+
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            const total = basePrice * diffDays;
+
+            summaryNights.textContent = diffDays;
+            summaryTotal.textContent = `S/ ${total.toFixed(2)}`;
+            totalPriceInput.value = total.toFixed(2);
+            nightsInput.value = diffDays;
+        };
+
+        checkinInput.addEventListener("change", () => {
+            const start = new Date(checkinInput.value);
+            const nextDay = new Date(start);
+            nextDay.setDate(nextDay.getDate() + 1);
+            checkoutInput.min = formatDate(nextDay);
+            updatePrices();
+        });
+
+        checkoutInput.addEventListener("change", updatePrices);
+    }
+
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -440,6 +557,9 @@ const jsUrl =
                 email: data.email,
                 dni: data.dni,
                 phone: data.phone,
+                checkin: data.checkin,
+                checkout: data.checkout,
+                nights: data.nights,
             }).toString();
 
             const response = await fetch(`/api/payment?${queryParams}`, {
@@ -462,7 +582,7 @@ const jsUrl =
                 if (window.KR) {
                     window.KR.setFormConfig({
                         formToken: result.formToken,
-                        postUrlSuccess: `/confirmacion?room=${encodeURIComponent(roomName)}&price=${price}&orderId=${result.orderId}`,
+                        postUrlSuccess: `/confirmacion?room=${encodeURIComponent(roomName)}&price=${data.price}&orderId=${result.orderId}&checkin=${data.checkin}&checkout=${data.checkout}&nights=${data.nights}`,
                     });
                 }
                 isIzipayLoaded = true;
