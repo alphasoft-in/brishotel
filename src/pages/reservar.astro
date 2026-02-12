@@ -657,6 +657,53 @@ const jsUrl =
         const closeQrModal = document.getElementById("close-qr-modal");
         const confirmQrBtn = document.getElementById("confirm-qr-btn");
 
+        // EMVCo QR Logic for Yape/Plin (Interoperable)
+        function generateEMVCo(
+            phone,
+            amount,
+            name = "BRIS HOTEL",
+            city = "NASCA",
+        ) {
+            const pad = (id, val) =>
+                id + String(val).length.toString().padStart(2, "0") + val;
+
+            // Merchant Account Information (ID 26) - Interoperable
+            const merchantInfo =
+                pad("00", "pe.gob.pe") + pad("01", "01") + pad("02", phone);
+
+            let payload = pad("00", "01"); // Version
+            payload += pad("01", "12"); // Dynamic
+            payload += pad("26", merchantInfo);
+            payload += pad("52", "0000"); // Merchant Category
+            payload += pad("53", "604"); // Currency (PEN)
+            payload += pad("54", Number(amount).toFixed(2)); // Amount
+            payload += pad("58", "PE"); // Country
+            payload += pad("59", name.substring(0, 25)); // Name
+            payload += pad("60", city.substring(0, 15)); // City
+            payload += "6304"; // Checksum marker
+
+            // Calculate CRC16 CCITT (0xFFFF)
+            function crc16(data) {
+                let crc = 0xffff;
+                for (let i = 0; i < data.length; i++) {
+                    crc ^= data.charCodeAt(i) << 8;
+                    for (let j = 0; j < 8; j++) {
+                        if (crc & 0x8000) {
+                            crc = (crc << 1) ^ 0x1021;
+                        } else {
+                            crc = crc << 1;
+                        }
+                    }
+                }
+                return (crc & 0xffff)
+                    .toString(16)
+                    .toUpperCase()
+                    .padStart(4, "0");
+            }
+
+            return payload + crc16(payload);
+        }
+
         qrPayBtn.addEventListener("click", () => {
             // Validar campos básicos
             if (!form.checkValidity()) {
@@ -667,11 +714,9 @@ const jsUrl =
             const total = totalPriceInput.value;
             qrModalTotal.textContent = `S/ ${total}`;
 
-            // Generar QR Dinámico usando API externa (GoQR)
-            // Merchant: BRIS HOTEL | Phone: 940948536
-            // Formato simplificado (Número de teléfono + Nombre) para Yape/Plin manual
-            const qrText = `YAPE:940948536|NAME:BRIS HOTEL|AMOUNT:${total}`;
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrText)}&color=007272`;
+            // Generar QR Dinámico EMVCo
+            const emvcoString = generateEMVCo("940948536", total);
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(emvcoString)}&color=007272`;
 
             qrContainer.innerHTML = `<img src="${qrUrl}" alt="QR de Pago" class="w-full h-full object-contain p-2" />`;
 
