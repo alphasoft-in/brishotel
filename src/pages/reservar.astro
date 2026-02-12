@@ -480,21 +480,20 @@ const jsUrl =
                     >
                         <div
                             id="qr-container"
-                            class="w-full max-w-[160px] aspect-square bg-white flex items-center justify-center rounded-lg shadow-inner overflow-hidden border border-slate-100 p-1"
+                            class="w-full max-w-[200px] aspect-square bg-white flex items-center justify-center rounded-lg shadow-inner overflow-hidden border border-slate-100 p-0"
                         >
                             <img
                                 id="qr-image"
                                 src="/assets/qr/yape-liliana.jpeg"
                                 alt="QR Liliana"
-                                class="w-full h-full object-contain"
+                                class="w-full h-full object-cover qr-yape-zoom transition-all duration-300"
                                 onerror="this.parentElement.innerHTML = '<div class=\'text-[9px] text-slate-400 p-4 font-bold\'>⚠️ Imagen no encontrada.</div>'"
                             />
                         </div>
                         <div class="mt-3 flex flex-col items-center w-full">
                             <span
                                 class="text-[8px] font-bold text-slate-400 uppercase tracking-widest text-center"
-                                id="qr-recipient"
-                                >Pagando a: Liliana V. Tipiani</span
+                                id="qr-recipient">Pagando a: Liliana V</span
                             >
                             <div
                                 class="flex items-center gap-2 mt-0.5 justify-center w-full"
@@ -681,12 +680,16 @@ const jsUrl =
     const updateQR = (method) => {
         if (method === "yape") {
             qrImage.src = "/assets/qr/yape-liliana.jpeg";
+            qrImage.className =
+                "w-full h-full object-cover qr-yape-zoom transition-all duration-300";
             selectYape.className =
                 "flex-1 py-2 text-[10px] font-bold rounded-lg transition-all bg-white text-[#00a19b] shadow-sm";
             selectPlin.className =
                 "flex-1 py-2 text-[10px] font-bold rounded-lg transition-all text-slate-400 hover:text-slate-600";
         } else {
             qrImage.src = "/assets/qr/plin-liliana.jpeg";
+            qrImage.className =
+                "w-full h-full object-cover qr-plin-zoom transition-all duration-300";
             selectPlin.className =
                 "flex-1 py-2 text-[10px] font-bold rounded-lg transition-all bg-white text-[#00a19b] shadow-sm";
             selectYape.className =
@@ -860,6 +863,17 @@ const jsUrl =
     }
     .animate-fade-in {
         animation: fade-in 0.3s ease-out forwards;
+    }
+
+    /* QR Cleaning and Zoom Classes */
+    .qr-plin-zoom {
+        transform: scale(1.6);
+        transform-origin: 50% 42%; /* Enfocar el QR y el nombre, ocultar instrucciones */
+    }
+
+    .qr-yape-zoom {
+        transform: scale(1.4);
+        transform-origin: 50% 48%; /* Enfocar el QR central */
     }
 
     /* Izipay Overrides for ultra-premium look */
