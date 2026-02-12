@@ -447,17 +447,32 @@ const jsUrl =
                     id="qr-modal"
                     class="bg-white w-[90%] max-w-[320px] rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col items-center p-5 text-center hidden z-[110] relative animate-fade-in border border-slate-100"
                 >
-                    <div class="mb-3">
+                    <div class="mb-4 w-full text-center">
                         <h3
                             class="text-base font-bold text-gray-900 merriweather"
                         >
-                            Pagar con Yape/Plin
+                            Escanea para Pagar
                         </h3>
-                        <p
-                            class="text-[10px] text-slate-500 mt-0.5 font-bold uppercase tracking-tighter"
+
+                        <!-- Selector de Yape / Plin -->
+                        <div
+                            class="flex bg-slate-100 p-1 rounded-xl mt-3 w-full"
                         >
-                            Ruben Tipiani Audante
-                        </p>
+                            <button
+                                id="select-yape"
+                                type="button"
+                                class="flex-1 py-2 text-[10px] font-bold rounded-lg transition-all bg-white text-[#00a19b] shadow-sm"
+                            >
+                                YAPE
+                            </button>
+                            <button
+                                id="select-plin"
+                                type="button"
+                                class="flex-1 py-2 text-[10px] font-bold rounded-lg transition-all text-slate-400 hover:text-slate-600"
+                            >
+                                PLIN
+                            </button>
+                        </div>
                     </div>
 
                     <div
@@ -467,19 +482,19 @@ const jsUrl =
                             id="qr-container"
                             class="w-full max-w-[160px] aspect-square bg-white flex items-center justify-center rounded-lg shadow-inner overflow-hidden border border-slate-100 p-1"
                         >
-                            <!-- Usar estrictamente la imagen local compartida por el usuario -->
                             <img
                                 id="qr-image"
-                                src="/assets/qr/yape-ruben.jpeg"
-                                alt="QR Yape Ruben Tipiani"
+                                src="/assets/qr/yape-liliana.jpeg"
+                                alt="QR Liliana"
                                 class="w-full h-full object-contain"
-                                onerror="this.parentElement.innerHTML = '<div class=\'text-[9px] text-slate-400 p-4 font-bold\'>⚠️ Imagen no encontrada.<br>Súbela a assets/qr/yape-ruben.jpeg</div>'"
+                                onerror="this.parentElement.innerHTML = '<div class=\'text-[9px] text-slate-400 p-4 font-bold\'>⚠️ Imagen no encontrada.</div>'"
                             />
                         </div>
                         <div class="mt-3 flex flex-col items-center w-full">
                             <span
                                 class="text-[8px] font-bold text-slate-400 uppercase tracking-widest text-center"
-                                >Monto a transferir</span
+                                id="qr-recipient"
+                                >Pagando a: Liliana V. Tipiani</span
                             >
                             <div
                                 class="flex items-center gap-2 mt-0.5 justify-center w-full"
@@ -522,8 +537,8 @@ const jsUrl =
                             <p
                                 class="text-[9px] text-emerald-800 leading-tight font-bold"
                             >
-                                Escanea, paga y pulsa el botón para enviar tu
-                                comprobante.
+                                Escanea, paga y pulsa el botón para confirmar
+                                con Liliana.
                             </p>
                         </div>
 
@@ -656,6 +671,31 @@ const jsUrl =
     const closeQrModal = document.getElementById("close-qr-modal");
     const confirmQrBtn = document.getElementById("confirm-qr-btn");
     const copyAmountBtn = document.getElementById("copy-amount-btn");
+
+    // Elementos del selector QR
+    const qrImage = document.getElementById("qr-image");
+    const selectYape = document.getElementById("select-yape");
+    const selectPlin = document.getElementById("select-plin");
+    const qrRecipient = document.getElementById("qr-recipient");
+
+    const updateQR = (method) => {
+        if (method === "yape") {
+            qrImage.src = "/assets/qr/yape-liliana.jpeg";
+            selectYape.className =
+                "flex-1 py-2 text-[10px] font-bold rounded-lg transition-all bg-white text-[#00a19b] shadow-sm";
+            selectPlin.className =
+                "flex-1 py-2 text-[10px] font-bold rounded-lg transition-all text-slate-400 hover:text-slate-600";
+        } else {
+            qrImage.src = "/assets/qr/plin-liliana.jpeg";
+            selectPlin.className =
+                "flex-1 py-2 text-[10px] font-bold rounded-lg transition-all bg-white text-[#00a19b] shadow-sm";
+            selectYape.className =
+                "flex-1 py-2 text-[10px] font-bold rounded-lg transition-all text-slate-400 hover:text-slate-600";
+        }
+    };
+
+    selectYape.addEventListener("click", () => updateQR("yape"));
+    selectPlin.addEventListener("click", () => updateQR("plin"));
 
     qrPayBtn.addEventListener("click", () => {
         // Validar campos básicos
