@@ -373,30 +373,30 @@ const jsUrl =
             >
             </div>
 
-            <!-- Modal Content -->
+            <!-- Modal Content (Izipay) -->
             <div
                 class="absolute inset-0 flex items-center justify-center p-2 sm:p-4"
             >
                 <div
-                    class="bg-white w-full max-w-md rounded-[2.5rem] shadow-[0_25px_60px_rgba(0,0,0,0.2)] transform scale-95 opacity-0 transition-all duration-500 relative overflow-hidden flex flex-col max-h-[92vh]"
+                    class="bg-white w-full max-w-sm rounded-[2rem] shadow-[0_25px_60px_rgba(0,0,0,0.2)] transform scale-95 opacity-0 transition-all duration-500 relative overflow-hidden flex flex-col max-h-[92vh]"
                     id="modal-content"
                 >
                     <!-- Modal Header -->
                     <div
-                        class="bg-[#00a19b] px-6 py-4 sm:py-5 flex justify-between items-center relative z-10"
+                        class="bg-[#00a19b] px-6 py-4 flex justify-between items-center relative z-10"
                     >
                         <div>
                             <h3
-                                class="text-lg sm:text-xl font-bold text-white merriweather tracking-tight"
+                                class="text-base sm:text-lg font-bold text-white merriweather tracking-tight"
                             >
                                 Checkout Seguro
                             </h3>
-                            <div class="flex items-center gap-2 mt-1">
+                            <div class="flex items-center gap-2 mt-0.5">
                                 <span
                                     class="w-1.5 h-1.5 rounded-full bg-white/50 animate-pulse"
                                 ></span>
                                 <p
-                                    class="text-[9px] sm:text-[10px] text-white/70 font-bold uppercase tracking-[0.15em]"
+                                    class="text-[8px] text-white/70 font-bold uppercase tracking-[0.15em]"
                                 >
                                     PAGO PROTEGIDO POR IZIPAY
                                 </p>
@@ -404,11 +404,11 @@ const jsUrl =
                         </div>
                         <button
                             id="close-modal-btn"
-                            class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-all duration-300 active:scale-90"
+                            class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-all duration-300"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                class="h-5 w-5"
+                                class="h-4 w-4"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
@@ -422,626 +422,598 @@ const jsUrl =
                         </button>
                     </div>
 
-                    <!-- Modal Body -->
                     <div
-                        class="p-4 sm:p-5 bg-white overflow-y-auto custom-scrollbar flex-grow"
+                        class="p-4 bg-white overflow-y-auto custom-scrollbar flex-grow"
                     >
-                        <!-- Izipay Injection Point -->
                         <div
                             id="izipay-embed"
-                            class="w-full flex justify-center items-start min-h-[380px]"
+                            class="w-full flex justify-center items-start min-h-[350px]"
                         >
                         </div>
                     </div>
 
-                    <!-- Security Note -->
                     <div
                         class="px-6 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-center gap-2"
                     >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-4 w-4 text-[#00a19b]"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                            ></path>
-                        </svg>
-                        <span class="text-[10px] text-slate-500 font-medium"
+                        <span
+                            class="text-[9px] text-slate-500 font-medium tracking-tight"
                             >Transacción encriptada de extremo a extremo</span
                         >
                     </div>
                 </div>
+
                 <!-- Direct QR Modal -->
                 <div
                     id="qr-modal"
-                    class="absolute inset-0 flex items-center justify-center p-2 sm:p-4 hidden z-[110]"
+                    class="bg-white w-full max-w-sm rounded-[2rem] shadow-[0_25px_60px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col items-center p-6 text-center hidden z-[110] relative"
                 >
+                    <div class="mb-4">
+                        <h3
+                            class="text-lg font-bold text-gray-900 merriweather"
+                        >
+                            Escanea para Pagar
+                        </h3>
+                        <p class="text-[11px] text-slate-500 mt-0.5">
+                            Yape / Plin Directo
+                        </p>
+                    </div>
+
                     <div
-                        class="bg-white w-full max-w-md rounded-[2.5rem] shadow-[0_25px_60px_rgba(0,0,0,0.2)] overflow-hidden flex flex-col items-center p-8 text-center"
+                        class="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-5 relative w-full flex flex-col items-center"
                     >
-                        <div class="mb-4">
-                            <h3
-                                class="text-xl font-bold text-gray-900 merriweather"
+                        <div
+                            id="qr-container"
+                            class="w-full max-w-[180px] aspect-square bg-white flex items-center justify-center rounded-xl shadow-sm overflow-hidden border border-slate-100"
+                        >
+                            <img
+                                src="/assets/qr/yape-ruben.png"
+                                alt="QR Yape"
+                                class="w-full h-full object-contain"
+                                onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=Yape%20Ruben%20Tipiani&color=007272'"
+                            />
+                        </div>
+                        <div class="mt-4 flex flex-col items-center w-full">
+                            <span
+                                class="text-[9px] font-bold text-slate-400 uppercase tracking-widest text-center"
+                                >Pagando a: Ruben Tipiani</span
                             >
-                                Escanea para Pagar
-                            </h3>
-                            <p class="text-sm text-slate-500 mt-1">
-                                Usa Yape o Plin para transferir el monto exacto
+                            <div
+                                class="flex items-center gap-3 mt-1 justify-center w-full"
+                            >
+                                <span
+                                    id="qr-modal-total"
+                                    class="text-2xl font-black text-[#00a19b]"
+                                    >S/ 0.00</span
+                                >
+                                <button
+                                    id="copy-amount-btn"
+                                    type="button"
+                                    class="p-1.5 bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-[#00a19b] hover:border-[#00a19b] transition-all flex items-center gap-1.5 text-[10px] font-bold px-3"
+                                    title="Copiar Monto"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-3.5 w-3.5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
+                                        ></path>
+                                    </svg>
+                                    Copiar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 w-full">
+                        <div
+                            class="bg-emerald-50 p-3 rounded-xl border border-emerald-100 flex items-start gap-2 text-left"
+                        >
+                            <p
+                                class="text-[10px] text-emerald-700 leading-tight font-medium"
+                            >
+                                Escanea, paga y pulsa el botón de abajo para
+                                enviar el comprobante por WhatsApp.
                             </p>
                         </div>
 
-                        <div
-                            class="bg-slate-50 p-6 rounded-3xl border-2 border-dashed border-slate-200 mb-6 relative group w-full"
+                        <button
+                            id="confirm-qr-btn"
+                            type="button"
+                            class="w-full py-3.5 bg-[#25D366] text-white rounded-xl font-bold hover:bg-[#128C7E] transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-200 text-sm"
                         >
-                            <div
-                                id="qr-container"
-                                class="w-full aspect-[2/3] max-h-[300px] bg-white flex items-center justify-center rounded-2xl shadow-sm overflow-hidden"
-                            >
-                                <!-- QR de Ruben Tipiani -->
-                                <img
-                                    src="/assets/qr/yape-ruben.png"
-                                    alt="QR Yape Ruben Tipiani"
-                                    class="w-full h-full object-contain"
-                                />
-                            </div>
-                            <div class="mt-4 flex flex-col items-center">
-                                <span
-                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-widest"
-                                    >Pagar a: Ruben Esteban Tipiani Audante</span
-                                >
-                                <div class="flex items-center gap-3 mt-2">
-                                    <span
-                                        id="qr-modal-total"
-                                        class="text-3xl font-black text-[#00a19b]"
-                                        >S/ 0.00</span
-                                    >
-                                    <button
-                                        id="copy-amount-btn"
-                                        class="p-2 bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-[#00a19b] hover:border-[#00a19b] transition-all"
-                                        title="Copiar Monto"
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            class="h-4 w-4"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
-                                            ></path>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                            <i class="fab fa-whatsapp text-lg"></i>
+                            <span>Confirmar WhatsApp</span>
+                        </button>
 
-                        <div class="space-y-4 w-full">
-                            <div
-                                class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 flex items-start gap-3 text-left"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    class="h-5 w-5 text-emerald-500 mt-0.5 flex-shrink-0"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                    ></path>
-                                </svg>
-                                <p
-                                    class="text-[11px] text-emerald-700 leading-relaxed font-medium"
-                                >
-                                    Tras realizar el escaneo y pago, pulsa el
-                                    botón de abajo para enviarnos tu comprobante
-                                    por WhatsApp y confirmar tu reserva.
-                                </p>
-                            </div>
-
-                            <button
-                                id="confirm-qr-btn"
-                                class="w-full py-4 bg-[#25D366] text-white rounded-2xl font-bold hover:bg-[#128C7E] transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-200"
-                            >
-                                <i class="fab fa-whatsapp text-lg"></i>
-                                <span>Confirmar por WhatsApp</span>
-                            </button>
-
-                            <button
-                                id="close-qr-modal"
-                                class="text-xs font-bold text-slate-400 uppercase tracking-widest hover:text-slate-600 transition-colors"
-                            >
-                                Cancelar
-                            </button>
-                        </div>
+                        <button
+                            id="close-qr-modal"
+                            type="button"
+                            class="text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-slate-600 transition-colors py-1"
+                        >
+                            Cancelar
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </main>
+</Layout>
 
-    <script is:inline define:vars={{ publicKey, roomName, price, jsUrl }}>
-        const form = document.getElementById("reservation-form");
-        const submitBtn = document.getElementById("submit-btn");
-        const loadingOverlay = document.getElementById("loading-overlay");
+<script is:inline define:vars={{ publicKey, roomName, price, jsUrl }}>
+    const form = document.getElementById("reservation-form");
+    const submitBtn = document.getElementById("submit-btn");
+    const loadingOverlay = document.getElementById("loading-overlay");
 
-        // Modal elements
-        const paymentModal = document.getElementById("payment-modal");
-        const modalBackdrop = document.getElementById("modal-backdrop");
-        const modalContent = document.getElementById("modal-content");
-        const izipayEmbed = document.getElementById("izipay-embed");
-        const closeModalBtn = document.getElementById("close-modal-btn");
+    // Modal elements
+    const paymentModal = document.getElementById("payment-modal");
+    const modalBackdrop = document.getElementById("modal-backdrop");
+    const modalContent = document.getElementById("modal-content");
+    const izipayEmbed = document.getElementById("izipay-embed");
+    const closeModalBtn = document.getElementById("close-modal-btn");
 
-        let isIzipayLoaded = false;
+    let isIzipayLoaded = false;
 
-        // UI Helpers
-        const openModal = () => {
-            paymentModal.classList.remove("hidden");
-            // Small delay for CSS transitions
-            setTimeout(() => {
-                modalBackdrop.classList.remove("opacity-0");
-                modalContent.classList.remove("scale-95", "opacity-0");
-                modalContent.classList.add("scale-100", "opacity-100");
-            }, 10);
+    // UI Helpers
+    const openModal = () => {
+        paymentModal.classList.remove("hidden");
+        // Small delay for CSS transitions
+        setTimeout(() => {
+            modalBackdrop.classList.remove("opacity-0");
+            modalContent.classList.remove("scale-95", "opacity-0");
+            modalContent.classList.add("scale-100", "opacity-100");
+        }, 10);
+    };
+
+    const closeModal = () => {
+        modalBackdrop.classList.add("opacity-0");
+        modalContent.classList.remove("scale-100", "opacity-100");
+        modalContent.classList.add("scale-95", "opacity-0");
+
+        setTimeout(() => {
+            paymentModal.classList.add("hidden");
+        }, 300);
+
+        // Reset button state
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Ir a Pagar</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>`;
+        submitBtn.classList.remove("opacity-75", "cursor-not-allowed");
+    };
+
+    closeModalBtn.addEventListener("click", closeModal);
+
+    const checkinInput = document.getElementById("checkin");
+    const checkoutInput = document.getElementById("checkout");
+    const summaryNights = document.getElementById("summary-nights");
+    const summaryTotal = document.getElementById("summary-total");
+    const totalPriceInput = document.getElementById("total-price-input");
+    const nightsInput = document.getElementById("nights-input");
+    const basePrice = parseFloat(price);
+
+    // Initial dates setup
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const formatDate = (date) => date.toISOString().split("T")[0];
+
+    if (checkinInput && checkoutInput) {
+        checkinInput.value = formatDate(today);
+        checkoutInput.value = formatDate(tomorrow);
+        checkinInput.min = formatDate(today);
+        checkoutInput.min = formatDate(tomorrow);
+
+        const updatePrices = () => {
+            const start = new Date(checkinInput.value);
+            const end = new Date(checkoutInput.value);
+
+            if (end <= start) {
+                const nextDay = new Date(start);
+                nextDay.setDate(nextDay.getDate() + 1);
+                checkoutInput.value = formatDate(nextDay);
+                return updatePrices();
+            }
+
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            const total = basePrice * diffDays;
+
+            summaryNights.textContent = diffDays;
+            summaryTotal.textContent = `S/ ${total.toFixed(2)}`;
+            totalPriceInput.value = total.toFixed(2);
+            nightsInput.value = diffDays;
         };
 
-        const closeModal = () => {
-            modalBackdrop.classList.add("opacity-0");
-            modalContent.classList.remove("scale-100", "opacity-100");
-            modalContent.classList.add("scale-95", "opacity-0");
+        checkinInput.addEventListener("change", () => {
+            const start = new Date(checkinInput.value);
+            const nextDay = new Date(start);
+            nextDay.setDate(nextDay.getDate() + 1);
+            checkoutInput.min = formatDate(nextDay);
+            updatePrices();
+        });
 
+        checkoutInput.addEventListener("change", updatePrices);
+    }
+
+    // QR Payment Logic
+    const qrPayBtn = document.getElementById("qr-pay-btn");
+    const qrModal = document.getElementById("qr-modal");
+    const qrModalTotal = document.getElementById("qr-modal-total");
+    const closeQrModal = document.getElementById("close-qr-modal");
+    const confirmQrBtn = document.getElementById("confirm-qr-btn");
+    const copyAmountBtn = document.getElementById("copy-amount-btn");
+
+    qrPayBtn.addEventListener("click", () => {
+        // Validar campos básicos
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        const total = totalPriceInput.value;
+        qrModalTotal.textContent = `S/ ${total}`;
+
+        paymentModal.classList.remove("hidden");
+        modalBackdrop.classList.remove("opacity-0");
+        modalContent.classList.add("hidden"); // Ocultar Izipay content
+        qrModal.classList.remove("hidden");
+    });
+
+    copyAmountBtn.addEventListener("click", () => {
+        const amount = totalPriceInput.value;
+        navigator.clipboard.writeText(amount).then(() => {
+            const originalIcon = copyAmountBtn.innerHTML;
+            copyAmountBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>`;
             setTimeout(() => {
-                paymentModal.classList.add("hidden");
-            }, 300);
+                copyAmountBtn.innerHTML = originalIcon;
+            }, 2000);
+        });
+    });
 
-            // Reset button state
+    closeQrModal.addEventListener("click", () => {
+        qrModal.classList.add("hidden");
+        modalContent.classList.remove("hidden");
+        closeModal();
+    });
+
+    confirmQrBtn.addEventListener("click", async () => {
+        loadingOverlay.classList.remove("hidden");
+
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            // Registrar intención de reserva manual
+            const response = await fetch("/api/manual-reservation", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Generar mensaje de WhatsApp
+                const msg =
+                    `🙌 ¡Hola! Acabo de realizar un pago por QR para mi reserva en Bris Hotel.%0A%0A` +
+                    `🏨 *Habitación:* ${data.room}%0A` +
+                    `📅 *Estancia:* ${data.checkin} al ${data.checkout} (${data.nights} noches)%0A` +
+                    `💰 *Monto:* S/ ${data.price}%0A` +
+                    `👤 *Huésped:* ${data.firstName} ${data.lastName}%0A` +
+                    `🆔 *DNI/Pasaporte:* ${data.dni}%0A` +
+                    `📌 *Orden:* ${result.orderId}%0A%0A` +
+                    `Adjunto captura de pantalla de la transferencia.`;
+
+                const waUrl = `https://wa.me/51940948536?text=${msg}`;
+                window.location.href = waUrl;
+            } else {
+                throw new Error("No se pudo registrar la reserva");
+            }
+        } catch (error) {
+            alert("Error al procesar: " + error.message);
+            loadingOverlay.classList.add("hidden");
+        }
+    });
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // UI Loading State
+        loadingOverlay.classList.remove("hidden");
+
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            // 1. Obtener Token
+            const queryParams = new URLSearchParams({
+                room: data.room,
+                price: data.price,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                dni: data.dni,
+                phone: data.phone,
+                checkin: data.checkin,
+                checkout: data.checkout,
+                nights: data.nights,
+            }).toString();
+
+            const response = await fetch(`/api/payment?${queryParams}`, {
+                method: "GET",
+                headers: { Accept: "application/json" },
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success && result.formToken) {
+                // 2. Ocultar Loading y Mostrar Modal
+                loadingOverlay.classList.add("hidden");
+                openModal();
+
+                // 3. Inicializar Izipay
+                // Siempre reinicializamos para evitar estados sucios
+                izipayEmbed.innerHTML = `<div class="kr-smart-form" kr-form-token="${result.formToken}"></div>`;
+
+                // Si el objeto KR ya existe (script cargado), forzamos renderizado manual
+                if (window.KR) {
+                    window.KR.setFormConfig({
+                        formToken: result.formToken,
+                        postUrlSuccess: `/confirmacion?room=${encodeURIComponent(roomName)}&price=${data.price}&orderId=${result.orderId}&checkin=${data.checkin}&checkout=${data.checkout}&nights=${data.nights}`,
+                    });
+                }
+                isIzipayLoaded = true;
+            } else {
+                throw new Error(result.error || "Error al iniciar el pago");
+            }
+        } catch (error) {
+            console.error("❌ Error en reserva:", error);
+            const errorMsg = error.message || "Error desconocido";
+            alert(
+                `Ocurrió un error al procesar la solicitud: ${errorMsg}\n\nPor favor intenta nuevamente o contacta a soporte si el problema persiste.`,
+            );
+            loadingOverlay.classList.add("hidden");
+
+            // Reset button
             submitBtn.disabled = false;
             submitBtn.innerHTML = `<span>Ir a Pagar</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>`;
             submitBtn.classList.remove("opacity-75", "cursor-not-allowed");
-        };
-
-        closeModalBtn.addEventListener("click", closeModal);
-
-        const checkinInput = document.getElementById("checkin");
-        const checkoutInput = document.getElementById("checkout");
-        const summaryNights = document.getElementById("summary-nights");
-        const summaryTotal = document.getElementById("summary-total");
-        const totalPriceInput = document.getElementById("total-price-input");
-        const nightsInput = document.getElementById("nights-input");
-        const basePrice = parseFloat(price);
-
-        // Initial dates setup
-        const today = new Date();
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-
-        const formatDate = (date) => date.toISOString().split("T")[0];
-
-        if (checkinInput && checkoutInput) {
-            checkinInput.value = formatDate(today);
-            checkoutInput.value = formatDate(tomorrow);
-            checkinInput.min = formatDate(today);
-            checkoutInput.min = formatDate(tomorrow);
-
-            const updatePrices = () => {
-                const start = new Date(checkinInput.value);
-                const end = new Date(checkoutInput.value);
-
-                if (end <= start) {
-                    const nextDay = new Date(start);
-                    nextDay.setDate(nextDay.getDate() + 1);
-                    checkoutInput.value = formatDate(nextDay);
-                    return updatePrices();
-                }
-
-                const diffTime = Math.abs(end - start);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                const total = basePrice * diffDays;
-
-                summaryNights.textContent = diffDays;
-                summaryTotal.textContent = `S/ ${total.toFixed(2)}`;
-                totalPriceInput.value = total.toFixed(2);
-                nightsInput.value = diffDays;
-            };
-
-            checkinInput.addEventListener("change", () => {
-                const start = new Date(checkinInput.value);
-                const nextDay = new Date(start);
-                nextDay.setDate(nextDay.getDate() + 1);
-                checkoutInput.min = formatDate(nextDay);
-                updatePrices();
-            });
-
-            checkoutInput.addEventListener("change", updatePrices);
         }
+    });
 
-        // QR Payment Logic
-        const qrPayBtn = document.getElementById("qr-pay-btn");
-        const qrModal = document.getElementById("qr-modal");
-        const qrModalTotal = document.getElementById("qr-modal-total");
-        const closeQrModal = document.getElementById("close-qr-modal");
-        const confirmQrBtn = document.getElementById("confirm-qr-btn");
-        const copyAmountBtn = document.getElementById("copy-amount-btn");
+    // Ya no necesitamos cargar dinámicamente el script en cada submit
+</script>
 
-        qrPayBtn.addEventListener("click", () => {
-            // Validar campos básicos
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-
-            const total = totalPriceInput.value;
-            qrModalTotal.textContent = `S/ ${total}`;
-
-            paymentModal.classList.remove("hidden");
-            modalBackdrop.classList.remove("opacity-0");
-            modalContent.classList.add("hidden"); // Ocultar Izipay content
-            qrModal.classList.remove("hidden");
-        });
-
-        copyAmountBtn.addEventListener("click", () => {
-            const amount = totalPriceInput.value;
-            navigator.clipboard.writeText(amount).then(() => {
-                const originalIcon = copyAmountBtn.innerHTML;
-                copyAmountBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>`;
-                setTimeout(() => {
-                    copyAmountBtn.innerHTML = originalIcon;
-                }, 2000);
-            });
-        });
-
-        closeQrModal.addEventListener("click", () => {
-            qrModal.classList.add("hidden");
-            modalContent.classList.remove("hidden");
-            closeModal();
-        });
-
-        confirmQrBtn.addEventListener("click", async () => {
-            loadingOverlay.classList.remove("hidden");
-
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-
-            try {
-                // Registrar intención de reserva manual
-                const response = await fetch("/api/manual-reservation", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data),
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    // Generar mensaje de WhatsApp
-                    const msg =
-                        `🙌 ¡Hola! Acabo de realizar un pago por QR para mi reserva en Bris Hotel.%0A%0A` +
-                        `🏨 *Habitación:* ${data.room}%0A` +
-                        `📅 *Estancia:* ${data.checkin} al ${data.checkout} (${data.nights} noches)%0A` +
-                        `💰 *Monto:* S/ ${data.price}%0A` +
-                        `👤 *Huésped:* ${data.firstName} ${data.lastName}%0A` +
-                        `🆔 *DNI/Pasaporte:* ${data.dni}%0A` +
-                        `📌 *Orden:* ${result.orderId}%0A%0A` +
-                        `Adjunto captura de pantalla de la transferencia.`;
-
-                    const waUrl = `https://wa.me/51940948536?text=${msg}`;
-                    window.location.href = waUrl;
-                } else {
-                    throw new Error("No se pudo registrar la reserva");
-                }
-            } catch (error) {
-                alert("Error al procesar: " + error.message);
-                loadingOverlay.classList.add("hidden");
-            }
-        });
-
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            // UI Loading State
-            loadingOverlay.classList.remove("hidden");
-
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-
-            try {
-                // 1. Obtener Token
-                const queryParams = new URLSearchParams({
-                    room: data.room,
-                    price: data.price,
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    email: data.email,
-                    dni: data.dni,
-                    phone: data.phone,
-                    checkin: data.checkin,
-                    checkout: data.checkout,
-                    nights: data.nights,
-                }).toString();
-
-                const response = await fetch(`/api/payment?${queryParams}`, {
-                    method: "GET",
-                    headers: { Accept: "application/json" },
-                });
-
-                const result = await response.json();
-
-                if (response.ok && result.success && result.formToken) {
-                    // 2. Ocultar Loading y Mostrar Modal
-                    loadingOverlay.classList.add("hidden");
-                    openModal();
-
-                    // 3. Inicializar Izipay
-                    // Siempre reinicializamos para evitar estados sucios
-                    izipayEmbed.innerHTML = `<div class="kr-smart-form" kr-form-token="${result.formToken}"></div>`;
-
-                    // Si el objeto KR ya existe (script cargado), forzamos renderizado manual
-                    if (window.KR) {
-                        window.KR.setFormConfig({
-                            formToken: result.formToken,
-                            postUrlSuccess: `/confirmacion?room=${encodeURIComponent(roomName)}&price=${data.price}&orderId=${result.orderId}&checkin=${data.checkin}&checkout=${data.checkout}&nights=${data.nights}`,
-                        });
-                    }
-                    isIzipayLoaded = true;
-                } else {
-                    throw new Error(result.error || "Error al iniciar el pago");
-                }
-            } catch (error) {
-                console.error("❌ Error en reserva:", error);
-                const errorMsg = error.message || "Error desconocido";
-                alert(
-                    `Ocurrió un error al procesar la solicitud: ${errorMsg}\n\nPor favor intenta nuevamente o contacta a soporte si el problema persiste.`,
-                );
-                loadingOverlay.classList.add("hidden");
-
-                // Reset button
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = `<span>Ir a Pagar</span>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>`;
-                submitBtn.classList.remove("opacity-75", "cursor-not-allowed");
-            }
-        });
-
-        // Ya no necesitamos cargar dinámicamente el script en cada submit
-    </script>
-
-    <style>
-        .merriweather {
-            font-family: "Merriweather", serif;
+<style>
+    .merriweather {
+        font-family: "Merriweather", serif;
+    }
+    .montserrat {
+        font-family: "Montserrat", sans-serif;
+    }
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
         }
-        .montserrat {
-            font-family: "Montserrat", sans-serif;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
-        @keyframes fade-in {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .animate-fade-in {
-            animation: fade-in 0.3s ease-out forwards;
-        }
+    }
+    .animate-fade-in {
+        animation: fade-in 0.3s ease-out forwards;
+    }
 
-        /* Izipay Overrides for ultra-premium look */
-        :global(.kr-embedded) {
-            width: 100% !important;
-            max-width: 270px !important; /* Estrechar base para uniformidad total */
-            margin: 0 auto !important;
-            display: block !important;
-        }
+    /* Izipay Overrides for ultra-premium look */
+    :global(.kr-embedded) {
+        width: 100% !important;
+        max-width: 270px !important; /* Estrechar base para uniformidad total */
+        margin: 0 auto !important;
+        display: block !important;
+    }
 
-        :global(.kr-smart-form) {
-            width: 100% !important;
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            padding: 0 !important;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        }
+    :global(.kr-smart-form) {
+        width: 100% !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
 
-        /* Expandir modal dinámicamente cuando aparece el 3DS */
-        :global(#modal-content:has(.kr-3ds-wrapper)) {
-            max-width: 550px !important;
-            transition: max-width 0.4s ease-in-out !important;
-        }
+    /* Expandir modal dinámicamente cuando aparece el 3DS */
+    :global(#modal-content:has(.kr-3ds-wrapper)) {
+        max-width: 550px !important;
+        transition: max-width 0.4s ease-in-out !important;
+    }
 
-        :global(#modal-content:has(.kr-3ds-wrapper) .kr-embedded) {
-            max-width: 500px !important;
-            transition: max-width 0.4s ease-in-out !important;
-        }
+    :global(#modal-content:has(.kr-3ds-wrapper) .kr-embedded) {
+        max-width: 500px !important;
+        transition: max-width 0.4s ease-in-out !important;
+    }
 
-        /* Ocultar elementos innecesarios del formulario de Izipay */
-        :global(.kr-smart-form .kr-header),
-        :global(.kr-smart-form .kr-footer),
-        :global(.kr-smart-form .kr-header-logo),
-        :global(.kr-smart-form .kr-form-header),
-        :global(.kr-header),
-        :global(.kr-security-header),
-        :global(.kr-header-text) {
-            display: none !important;
-        }
+    /* Ocultar elementos innecesarios del formulario de Izipay */
+    :global(.kr-smart-form .kr-header),
+    :global(.kr-smart-form .kr-footer),
+    :global(.kr-smart-form .kr-header-logo),
+    :global(.kr-smart-form .kr-form-header),
+    :global(.kr-header),
+    :global(.kr-security-header),
+    :global(.kr-header-text) {
+        display: none !important;
+    }
 
-        /* Profesionalizar el área 3DS (Autenticación bancaria) */
-        :global(.kr-smart-form .kr-3ds-wrapper) {
-            border-radius: 1.5rem !important;
-            overflow: hidden !important;
-            border: 1px solid #f1f5f9 !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
-            min-height: 520px !important;
-            width: 100% !important;
-            background: white !important;
-        }
+    /* Profesionalizar el área 3DS (Autenticación bancaria) */
+    :global(.kr-smart-form .kr-3ds-wrapper) {
+        border-radius: 1.5rem !important;
+        overflow: hidden !important;
+        border: 1px solid #f1f5f9 !important;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+        min-height: 520px !important;
+        width: 100% !important;
+        background: white !important;
+    }
 
-        /* Ocultar la barra de URL interna que a veces pone Izipay en el iframe 3DS */
-        :global(.kr-3ds-iframe-header) {
-            display: none !important;
-        }
+    /* Ocultar la barra de URL interna que a veces pone Izipay en el iframe 3DS */
+    :global(.kr-3ds-iframe-header) {
+        display: none !important;
+    }
 
-        /* Estilizar inputs */
-        :global(.kr-field) {
-            background-color: #f8fafc !important;
-            border: 2px solid #f1f5f9 !important;
-            border-radius: 1.25rem !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            height: 50px !important;
-            margin-bottom: 8px !important;
-            width: 100% !important;
-            max-width: 270px !important; /* Forzar ancho uniforme */
-            margin-left: auto !important;
-            margin-right: auto !important;
-        }
+    /* Estilizar inputs */
+    :global(.kr-field) {
+        background-color: #f8fafc !important;
+        border: 2px solid #f1f5f9 !important;
+        border-radius: 1.25rem !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        height: 50px !important;
+        margin-bottom: 8px !important;
+        width: 100% !important;
+        max-width: 270px !important; /* Forzar ancho uniforme */
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
 
-        :global(.kr-field:focus-within) {
-            border-color: #1a1a1a !important;
-            background-color: white !important;
-            transform: translateY(-1px) !important;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05) !important;
-        }
+    :global(.kr-field:focus-within) {
+        border-color: #1a1a1a !important;
+        background-color: white !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05) !important;
+    }
 
-        /* Estilizar labels de Izipay */
-        :global(.kr-label) {
-            color: #1a1a1a !important;
-            font-family: "Montserrat", sans-serif !important;
-            font-weight: 700 !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.1em !important;
-            font-size: 10px !important; /* Un punto menos */
-            margin-bottom: 4px !important; /* Reducir gap con el input */
-            margin-left: 4px !important;
-        }
+    /* Estilizar labels de Izipay */
+    :global(.kr-label) {
+        color: #1a1a1a !important;
+        font-family: "Montserrat", sans-serif !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.1em !important;
+        font-size: 10px !important; /* Un punto menos */
+        margin-bottom: 4px !important; /* Reducir gap con el input */
+        margin-left: 4px !important;
+    }
 
-        /* Profesionalizar botones de pago */
-        :global(.kr-payment-button) {
-            background: #1a1a1a !important;
-            color: white !important;
-            border-radius: 0.75rem !important;
-            font-family: "Montserrat", sans-serif !important;
-            font-weight: 700 !important;
-            height: 44px !important;
-            padding: 0 !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.12em !important;
-            font-size: 11px !important;
-            margin-top: 1rem !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12) !important;
-            border: none !important;
-            width: 100% !important;
-            max-width: 270px !important; /* Uniforme con el resto */
-            margin-left: auto !important;
-            margin-right: auto !important;
-        }
+    /* Profesionalizar botones de pago */
+    :global(.kr-payment-button) {
+        background: #1a1a1a !important;
+        color: white !important;
+        border-radius: 0.75rem !important;
+        font-family: "Montserrat", sans-serif !important;
+        font-weight: 700 !important;
+        height: 44px !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.12em !important;
+        font-size: 11px !important;
+        margin-top: 1rem !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12) !important;
+        border: none !important;
+        width: 100% !important;
+        max-width: 270px !important; /* Uniforme con el resto */
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
 
-        /* Alinear lista de logos de tarjetas con los inputs y botón */
-        :global(.kr-smart-form .kr-card-list) {
-            max-width: 270px !important; /* Uniformidad absoluta */
-            margin: 0 auto 10px auto !important;
-            border: 1px solid #f1f5f9 !important;
-            border-radius: 0.75rem !important;
-            padding: 8px 10px !important;
-            background: #fdfbf9 !important;
-            display: flex !important;
-            justify-content: center !important;
-            box-sizing: border-box !important;
-        }
+    /* Alinear lista de logos de tarjetas con los inputs y botón */
+    :global(.kr-smart-form .kr-card-list) {
+        max-width: 270px !important; /* Uniformidad absoluta */
+        margin: 0 auto 10px auto !important;
+        border: 1px solid #f1f5f9 !important;
+        border-radius: 0.75rem !important;
+        padding: 8px 10px !important;
+        background: #fdfbf9 !important;
+        display: flex !important;
+        justify-content: center !important;
+        box-sizing: border-box !important;
+    }
 
-        :global(.kr-payment-button:hover) {
-            background: #000 !important;
-            transform: translateY(-2px) !important;
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15) !important;
-        }
+    :global(.kr-payment-button:hover) {
+        background: #000 !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15) !important;
+    }
 
-        :global(.kr-payment-button:active) {
-            transform: translateY(0) !important;
-        }
+    :global(.kr-payment-button:active) {
+        transform: translateY(0) !important;
+    }
 
-        /* ELIMINAR DOBLE ALERTA: Izipay pone una arriba y otra abajo. Dejamos SOLO la de arriba. */
-        :global(.kr-form-error:last-of-type) {
-            display: none !important;
-        }
+    /* ELIMINAR DOBLE ALERTA: Izipay pone una arriba y otra abajo. Dejamos SOLO la de arriba. */
+    :global(.kr-form-error:last-of-type) {
+        display: none !important;
+    }
 
-        /* Mensajes de error con MISMO ALTO Y ANCHO QUE EL BOTÓN Y LOS INPUTS */
-        :global(.kr-form-error),
-        :global(.kr-field-error),
-        :global(.kr-form-message),
-        :global(.kr-popin-error),
-        :global(.kr-error-message) {
-            font-family: "Montserrat", sans-serif !important;
-            font-size: 11px !important;
-            font-weight: 800 !important;
-            height: 44px !important; /* EXACTAMENTE MISMO ALTO QUE EL BOTÓN */
-            max-width: 270px !important; /* UNIFORME CON EL RESTO */
-            margin: 10px auto !important; /* CENTRADO ARRIBA DEL BOTÓN */
-            border-radius: 0.75rem !important;
-            background-color: #1a1a1a !important;
-            color: #ffffff !important;
-            border: none !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
-            box-sizing: border-box !important;
-            padding: 0 15px !important;
-        }
+    /* Mensajes de error con MISMO ALTO Y ANCHO QUE EL BOTÓN Y LOS INPUTS */
+    :global(.kr-form-error),
+    :global(.kr-field-error),
+    :global(.kr-form-message),
+    :global(.kr-popin-error),
+    :global(.kr-error-message) {
+        font-family: "Montserrat", sans-serif !important;
+        font-size: 11px !important;
+        font-weight: 800 !important;
+        height: 44px !important; /* EXACTAMENTE MISMO ALTO QUE EL BOTÓN */
+        max-width: 270px !important; /* UNIFORME CON EL RESTO */
+        margin: 10px auto !important; /* CENTRADO ARRIBA DEL BOTÓN */
+        border-radius: 0.75rem !important;
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+        border: none !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+        box-sizing: border-box !important;
+        padding: 0 15px !important;
+    }
 
-        /* OCULTAR SI ESTÁ VACÍO: Evitar el "rectángulo fantasma" */
-        :global(.kr-form-error:empty),
-        :global(.kr-field-error:empty),
-        :global(.kr-form-message:empty),
-        :global(.kr-popin-error:empty),
-        :global(.kr-error-message:empty) {
-            display: none !important;
-        }
+    /* OCULTAR SI ESTÁ VACÍO: Evitar el "rectángulo fantasma" */
+    :global(.kr-form-error:empty),
+    :global(.kr-field-error:empty),
+    :global(.kr-form-message:empty),
+    :global(.kr-popin-error:empty),
+    :global(.kr-error-message:empty) {
+        display: none !important;
+    }
 
-        /* Forzar que cualquier texto interno (spans) sea blanco para que se lea SIEMPRE */
-        :global(.kr-form-error *),
-        :global(.kr-field-error *),
-        :global(.kr-form-message *),
-        :global(.kr-popin-error *),
-        :global(.kr-error-message *) {
-            color: #ffffff !important;
-            font-weight: 800 !important;
-        }
+    /* Forzar que cualquier texto interno (spans) sea blanco para que se lea SIEMPRE */
+    :global(.kr-form-error *),
+    :global(.kr-field-error *),
+    :global(.kr-form-message *),
+    :global(.kr-popin-error *),
+    :global(.kr-error-message *) {
+        color: #ffffff !important;
+        font-weight: 800 !important;
+    }
 
-        /* Custom Scrollbar for Modal Body */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #e2e8f0;
-            border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #cbd5e1;
-        }
-    </style>
-</Layout>
+    /* Custom Scrollbar for Modal Body */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #e2e8f0;
+        border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #cbd5e1;
+    }
+</style>
