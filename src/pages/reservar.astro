@@ -477,28 +477,51 @@ const jsUrl =
                         </div>
 
                         <div
-                            class="bg-slate-50 p-6 rounded-3xl border-2 border-dashed border-slate-200 mb-6 relative group"
+                            class="bg-slate-50 p-6 rounded-3xl border-2 border-dashed border-slate-200 mb-6 relative group w-full"
                         >
                             <div
                                 id="qr-container"
-                                class="w-48 h-48 bg-white flex items-center justify-center rounded-2xl shadow-sm"
+                                class="w-full aspect-[2/3] max-h-[300px] bg-white flex items-center justify-center rounded-2xl shadow-sm overflow-hidden"
                             >
-                                <!-- QR Generado Dinámicamente -->
-                                <div
-                                    class="animate-pulse w-full h-full bg-slate-100 rounded-2xl"
-                                >
-                                </div>
+                                <!-- QR de Ruben Tipiani -->
+                                <img
+                                    src="/assets/qr/yape-ruben.png"
+                                    alt="QR Yape Ruben Tipiani"
+                                    class="w-full h-full object-contain"
+                                />
                             </div>
                             <div class="mt-4 flex flex-col items-center">
                                 <span
                                     class="text-[10px] font-bold text-slate-400 uppercase tracking-widest"
-                                    >Total a Pagar</span
+                                    >Pagar a: Ruben Esteban Tipiani Audante</span
                                 >
-                                <span
-                                    id="qr-modal-total"
-                                    class="text-2xl font-black text-[#00a19b]"
-                                    >S/ 0.00</span
-                                >
+                                <div class="flex items-center gap-3 mt-2">
+                                    <span
+                                        id="qr-modal-total"
+                                        class="text-3xl font-black text-[#00a19b]"
+                                        >S/ 0.00</span
+                                    >
+                                    <button
+                                        id="copy-amount-btn"
+                                        class="p-2 bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-[#00a19b] hover:border-[#00a19b] transition-all"
+                                        title="Copiar Monto"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="h-4 w-4"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
+                                            ></path>
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -652,57 +675,10 @@ const jsUrl =
         // QR Payment Logic
         const qrPayBtn = document.getElementById("qr-pay-btn");
         const qrModal = document.getElementById("qr-modal");
-        const qrContainer = document.getElementById("qr-container");
         const qrModalTotal = document.getElementById("qr-modal-total");
         const closeQrModal = document.getElementById("close-qr-modal");
         const confirmQrBtn = document.getElementById("confirm-qr-btn");
-
-        // EMVCo QR Logic for Yape/Plin (Interoperable)
-        function generateEMVCo(
-            phone,
-            amount,
-            name = "BRIS HOTEL",
-            city = "NASCA",
-        ) {
-            const pad = (id, val) =>
-                id + String(val).length.toString().padStart(2, "0") + val;
-
-            // Merchant Account Information (ID 26) - Interoperable
-            const merchantInfo =
-                pad("00", "pe.gob.pe") + pad("01", "01") + pad("02", phone);
-
-            let payload = pad("00", "01"); // Version
-            payload += pad("01", "12"); // Dynamic
-            payload += pad("26", merchantInfo);
-            payload += pad("52", "0000"); // Merchant Category
-            payload += pad("53", "604"); // Currency (PEN)
-            payload += pad("54", Number(amount).toFixed(2)); // Amount
-            payload += pad("58", "PE"); // Country
-            payload += pad("59", name.substring(0, 25)); // Name
-            payload += pad("60", city.substring(0, 15)); // City
-            payload += "6304"; // Checksum marker
-
-            // Calculate CRC16 CCITT (0xFFFF)
-            function crc16(data) {
-                let crc = 0xffff;
-                for (let i = 0; i < data.length; i++) {
-                    crc ^= data.charCodeAt(i) << 8;
-                    for (let j = 0; j < 8; j++) {
-                        if (crc & 0x8000) {
-                            crc = (crc << 1) ^ 0x1021;
-                        } else {
-                            crc = crc << 1;
-                        }
-                    }
-                }
-                return (crc & 0xffff)
-                    .toString(16)
-                    .toUpperCase()
-                    .padStart(4, "0");
-            }
-
-            return payload + crc16(payload);
-        }
+        const copyAmountBtn = document.getElementById("copy-amount-btn");
 
         qrPayBtn.addEventListener("click", () => {
             // Validar campos básicos
@@ -714,16 +690,21 @@ const jsUrl =
             const total = totalPriceInput.value;
             qrModalTotal.textContent = `S/ ${total}`;
 
-            // Generar QR Dinámico EMVCo
-            const emvcoString = generateEMVCo("940948536", total);
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(emvcoString)}&color=007272`;
-
-            qrContainer.innerHTML = `<img src="${qrUrl}" alt="QR de Pago" class="w-full h-full object-contain p-2" />`;
-
             paymentModal.classList.remove("hidden");
             modalBackdrop.classList.remove("opacity-0");
             modalContent.classList.add("hidden"); // Ocultar Izipay content
             qrModal.classList.remove("hidden");
+        });
+
+        copyAmountBtn.addEventListener("click", () => {
+            const amount = totalPriceInput.value;
+            navigator.clipboard.writeText(amount).then(() => {
+                const originalIcon = copyAmountBtn.innerHTML;
+                copyAmountBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>`;
+                setTimeout(() => {
+                    copyAmountBtn.innerHTML = originalIcon;
+                }, 2000);
+            });
         });
 
         closeQrModal.addEventListener("click", () => {
